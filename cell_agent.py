@@ -55,11 +55,12 @@ class cell:
 
 		# if the position is free then create a cell there
 		if(occupation = 0)
-			daughterCell = Cell(newxPos, newyPos)
-			grid[newxPos][newyPos][0] = 1
-			return grid
-		else
-			return grid
+#			daughterCell = Cell(newxPos, newyPos)
+			cellList.append(cell(newxPos, newyPos))
+			grid[newxPos,newyPos] = 1
+#			return grid
+#		else
+#			return grid
 	#
 # Cell
 	#def GetPos(self):
