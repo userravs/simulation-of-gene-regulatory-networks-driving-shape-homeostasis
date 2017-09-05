@@ -10,7 +10,10 @@ class cell:
 		#self.health = health
 	#
 
-	def Sense(self, xPos, yPos):
+	#def Get Pos(self):
+		#return
+
+	def Sense(self):
 		# sense chemicals from the grid
 		SGF_read = grid[self.xPos, self.yPos][1] # grid contains three values on each coordinate: occupation (boolean), SGF level, LGF level
 		LGF_read = grid[self.xPos, self.yPos][2]

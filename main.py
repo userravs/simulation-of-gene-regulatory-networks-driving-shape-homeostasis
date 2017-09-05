@@ -12,6 +12,8 @@ timeSteps = 1000 # Number of simulation time steps
 p = 0.5 # Probability of splitting for any time step
 # f = 1 # Lightning probability.
 cellGrid = np.zeros([nLattice+2,nLattice+2]) # Initialize empty forest
+SGF_read = 0	# in the future values will be read from the grid
+LGF_read = 0
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #	INITIALIZATION			#
@@ -19,11 +21,8 @@ cellGrid = np.zeros([nLattice+2,nLattice+2]) # Initialize empty forest
 fig = plt.figure()
 
 # initialise mother cell
-mother_cell = cell()
-SGF_read = 0
-LGF_read = 0
-cellList = []
-tmpCellList
+mother_cell = cell(nLattice/2,nLattice/2)
+cellList = [[mother_cell.xPos,mother_cell.yPos]]
 time = 0
 print('Time running...')
 
@@ -50,14 +49,18 @@ while time < timeSteps:
         #forestLattice = FireSpread(forestLattice,ignitedTrees)
 ##        burnedTrees = len(ignitedTrees)
 ##        treeDensity.append(burnedTrees/(nLattice**2))
-    cellList = []
 
+	tmpCellList = list(cellList)		# a copy of the list of current cells is used to iterate over all the cells
+	while len(tmpCellList) > 0:				# while  the tmp list of cells is longer than 1
+		rndCell = np.random.randint(len(tmpCellList))
+		# random cell should decide and action
+		
 # first update cell status
     status = GenerateStatus(SGF_read, LGF_read)
 
 # according to cell status perform action: split or stay quiet
-    if(status == 1)
-	newGrid = Split(cellGrid)
+	if(status == 1):
+		newGrid = Split(cellGrid)
 
 # plot grid
 
