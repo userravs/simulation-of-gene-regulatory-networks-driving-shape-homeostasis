@@ -19,53 +19,93 @@ class cell:
 		LGF_read = grid[self.xPos, self.yPos][2]
 		#reads = [SGF_read, LGF_read]
 		return SGF_read, LGF_read
-	#    
+	# Sense   
 
 	def GenerateStatus(self, SGF_read, LGF_read):
 		# neural network generates a status based on the reads
-		status = 0
-		r = np.random.random
-		if r > 0.5
+		# possible states: split, move, die
+		
+		iStatus = np.random.random()
+		jStatus = np.random.random()
+		kStatus = np.random.random()
+		
+#		f = 0.5 	# probability of status 1
+		if k < f:
 			status = 1
 		return status
-	#
-
-	def Split(self, grid):
+	# GenerateStatus
+	
+	def Die(self,  grid, cellList):
+		grid[self.xPos][self.yPos] = 0
+		del cellList[rndCell]
+	# Die
+	
+	def Move(self, grid):
 		# check a randomly generated neighbour if occupied
-		r = np.random.ranint(4)
+		r = np.random.randint(4)
 		# check if spot is occupied
-		if(r = 0)
+		if r == 0:
 			# each case returns the value on grid according to the random number (neighbour)
 			newxPos = self.xPos - 1
 			newyPos = self.yPos
 
-		elif(r = 1)
+		elif r == 1:
 			newxPos = self.xPos
 			newyPos = self.yPos + 1
 
-		elif(r = 2)
+		elif r == 2:
 			newxPos = self.xPos + 1
 			newyPos = self.yPos
 
-		else
+		else:
 			newxPos = self.xPos
 			newyPos = self.yPos - 1
 
-		occupation = grid[newxPos, newyPos][0]
+		occupation = grid[newxPos][newyPos]		
+		
+		# if position if free, move there
+		if occupation == 0:
+			grid[newxPos][newyPos] = 1
+			grid[self.xPos][self.yPos] = 0
+			self.xPos = newxPos
+			self.yPos = newyPos
+	# Move
+
+	def Split(self, grid, cellList):
+		# check a randomly generated neighbour if occupied
+		r = np.random.randint(4)
+		# check if spot is occupied
+		if r == 0:
+			# each case returns the value on grid according to the random number (neighbour)
+			newxPos = self.xPos - 1
+			newyPos = self.yPos
+
+		elif r == 1:
+			newxPos = self.xPos
+			newyPos = self.yPos + 1
+
+		elif r == 2:
+			newxPos = self.xPos + 1
+			newyPos = self.yPos
+
+		else:
+			newxPos = self.xPos
+			newyPos = self.yPos - 1
+
+		occupation = grid[newxPos][newyPos]
 
 		# if the position is free then create a cell there
-		if(occupation = 0)
+		if occupation == 0:
 #			daughterCell = Cell(newxPos, newyPos)
 			cellList.append(cell(newxPos, newyPos))
-			grid[newxPos,newyPos] = 1
+			grid[newxPos][newyPos] = 1
 #			return grid
 #		else
 #			return grid
-	#
 # Cell
 	#def GetPos(self):
 	#	return [self.xPos,self.yPos]
-	#
+	# Split
 
 class environment:
 	def AntGridFigure(fieldSize, maxFoodAmount, nestPosition):    
