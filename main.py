@@ -5,14 +5,14 @@ import matplotlib.pyplot as plt
 #import matplotlib
 from cell_agent import *	# it is allowed to call from this class because there's an __init__.py file in this directory
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-#	PARAMETERS			#
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#	PARAMETERS		        	#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 nLattice = 20 # Lattice Size
 timeSteps = 5 # Number of simulation time steps
 p = 0.5 # Probability of splitting for any time step
 # f = 1 # Lightning probability.
-cellGrid = np.zeros([nLattice,nLattice]) # Initialize empty forest
+cellGrid = np.zeros([nLattice,nLattice,3]) # Initialize empty forest
 SGF_read = 0	# in the future values will be read from the grid
 LGF_read = 0
 
@@ -21,9 +21,9 @@ iy = int(nLattice/2)
 
 #def main():
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-#	INITIALIZATION			#
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#	INITIALIZATION			    #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #plt.ion()
 if matplotlib.is_interactive():
     pylab.ioff()
@@ -38,7 +38,7 @@ cellList = []
 
 # create mother cell and update the grid with its initial location
 cellList.append(cell(ix,iy))
-cellGrid[ix][iy] = 1
+cellGrid[ix][iy][0] = 1
 
 im = plt.imshow(cellGrid, origin='lower', cmap='RdYlGn', interpolation='none', vmin =-1, vmax = 1)
 plt.colorbar()
@@ -46,9 +46,12 @@ plt.colorbar()
 #plt.draw()
 
 itime = 0
+
+# DEBUG
 print('Time running...')
 
 while itime < timeSteps:
+    # DEBUG 
 	print('\ntime step #'+str(itime))
     
 	tmpCellList = list(cellList)		# a copy of the list of current cells is used to iterate over all the cells
@@ -58,24 +61,26 @@ while itime < timeSteps:
 		# random cell should decide and action
 		# first update cell status
 		status = tmpCellList[rndCell].GenerateStatus(SGF_read, LGF_read)	# get status of this cell
-		print('cell number: ' + str(len(cellList)) + '\nCell status: ' + str(status) + '\n')
+		
+        # DEBUG
+        print('cell number: ' + str(len(cellList)) + '\nCell status: ' + str(status) + '\n')
 		#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 		#		Cell Action				#
 		#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#		
 		# according to cell status perform action: split or stay quiet
-		if status == 'Quiet':
+        if status == 'Quiet':
 			tmpCellList[rndCell].Quiet(cellGrid,cellList)
 			del tmpCellList[rndCell]
 		 
-		elif status == 'Split':
+        elif status == 'Split':
 			tmpCellList[rndCell].Split(cellGrid,cellList)
 			del tmpCellList[rndCell]
 
-		elif status == 'Move':
+        elif status == 'Move':
 			tmpCellList[rndCell].Move(cellGrid,cellList)
 			del tmpCellList[rndCell]
 		 
-		else: # Die
+        else: # Die
 			tmpCellList[rndCell].Die(cellGrid,cellList) # Off the grid
 			del tmpCellList[rndCell]
 			del cellList[rndCell] # Actual death				

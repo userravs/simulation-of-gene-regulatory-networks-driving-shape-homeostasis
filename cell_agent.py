@@ -1,4 +1,3 @@
-####################################################
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -10,12 +9,37 @@ class cell:
 		self.splitCounter = 0
 		self.splitTime = 1
 		self.quietCounter = 0
-		#self.state = status
+		self.orientation = [self.xPos,self.yPos]
+		self.compass = False
+		self.state = 'Quiet'
 	# self
 
 	#def Get Pos(self):
 		#return
 
+	# TODO pass lattice size information to this method
+	def GetNeighbours(self, grid, border):
+		neighbourList = []
+		# TODO check if this works if orientation is OFF
+		if self.xPos - 1 >= 0:
+			if grid[self.xPos - 1, self.yPos][0] == 0 and self.orientation[0] != self.xPos - 1 and self.orientation[1] != self.yPos:
+				neighbourList.append([self.xPos - 1, self.yPos]) 
+		if self.xPos + 1 <= border:
+			if grid[self.xPos + 1, self.yPos][0] == 0 and self.orientation[0] != self.xPos + 1 and self.orientation[1] != self.yPos:
+				neighbourList.append([self.xPos + 1, self.yPos])
+		if self.yPos - 1 >= 0:
+			if grid[self.xPos, self.yPos - 1][0] == 0 and self.orientation[0] != self.xPos and self.orientation[1] != self.yPos - 1:
+				neighbourList.append([self.xPos, self.yPos - 1])	
+		if self.yPos + 1 <= border:
+			if grid[self.xPos, self.yPos + 1][0] == 0 and self.orientation[0] != self.xPos and self.orientation[1] != self.yPos + 1:
+				neighbourList.append([self.xPos, self.yPos + 1])
+		
+		return neighbourList
+	
+	# TODO					
+	#def CheckBorders(self)?					
+	#def CheckifOccupied(self)?
+									
 	def Sense(self):
 		# sense chemicals from the grid
 		SGF_read = grid[self.xPos, self.yPos][1] # grid contains three values on each coordinate: occupation (boolean), SGF level, LGF level
@@ -26,52 +50,79 @@ class cell:
 
 	def GenerateStatus(self, SGF_read, LGF_read):
 		# neural network generates a status based on the reads
+		
 		# possible states: split, move, die
 		iStatus = np.random.random() # Proliferate	Split
 		jStatus = np.random.random() # Move			Move
 		kStatus = 0 #np.random.random() # Apoptosis	Die
 		# values for SGF and LGF
 		#sgfAmount = np.random.randint(5)
-		#sgfAmount = np.random.randint(5)
-		# orientation
-		#polarisation: np.random.randint(4)
-		
+		#lgfAmount = np.random.randint(5)
+
+		# orientation		
+		# TODO: orientation should be inside borders
+		if self.compass == True:
+			# boundaries for orientation
+			nBoundary = 0.25
+			sBoundary = 0.5
+			eBoundary = 0.75
+			#wBoundary = 1
+			arrow = np.random.random()
+			if arrow < nBoundary:
+				# orientation North
+				self.orientation = [self.xPos - 1,self.yPos]
+			elif arrow < sBoundary:
+				# orientation South
+				self.orientation = [self.xPos + 1,self.yPos]	
+			elif arrow < eBoundary:
+				# orientation East
+				self.orientation = [self.xPos,self.yPos + 1]
+			else:	#arrow < wBoundary:
+				# orientation West
+				self.orientation = [self.xPos,self.yPos - 1]				
+			#else:
+			#	# orientation OFF
+			#	self.orientation = [self.xPos,self.yPos]				
+
+		# Generate state
 		maxVal = 0.5
 		#tmpVal = 0
 		xThreshold = 0.5
 		yThreshold = 0.01
 		
 		if iStatus < xThreshold and jStatus < xThreshold and kStatus < xThreshold:
-			state = 'Quiet'
+			self.state = 'Quiet'
 		
 		else:
 			for ix in iStatus, jStatus, kStatus:
 				if maxVal < ix:
 					maxVal = ix
 			
+			# DEBUG
 			print('split = ' + str(iStatus) + ', move = ' + str(jStatus) + '\ndie = ' + str(kStatus) + '. Max: '+ str(maxVal))
 		
 			if abs(maxVal - iStatus) <= yThreshold:
-				state = 'Split'
+				self.state = 'Split'
 
 			elif abs(maxVal - jStatus) <= yThreshold:
-				state = 'Move'
+				self.state = 'Move'
 		
 			else:	# abs(maxVal - kStatus) <= yThreshold:
-				state = 'Die'		
+				self.state = 'Die'		
 			
-		return state
+		#return state
 	# GenerateStatus
 
-	def Quiet(self,grid, cellList):
+	def Quiet(self, grid, cellList):
 		self.quietCounter += 1
 	# Quiet
 	
-	def Die(self,  grid, cellList):
-		grid[self.xPos][self.yPos] = 0
+	def Die(self, grid, cellList):
+		grid[self.xPos][self.yPos][0] = 0
 	# Die
 	
-	def OrientedMove(self, grid, cellList, orientation):
+	# TODO
+	def OrientedMove(self, grid, cellList):
 		print('ala')
 	# OrientedMove
 	
@@ -96,17 +147,27 @@ class cell:
 			newxPos = self.xPos
 			newyPos = self.yPos - 1
 
-		occupation = grid[newxPos][newyPos]		
+		occupation = grid[newxPos][newyPos][0]
 		
 		# if position if free, move there
 		if occupation == 0:
-			grid[newxPos][newyPos] = 1
-			grid[self.xPos][self.yPos] = 0
+			grid[newxPos][newyPos][0] = 1
+			grid[self.xPos][self.yPos][0] = 0
 			self.xPos = newxPos
 			self.yPos = newyPos
 	# Move
-
-	def OrientedSplit(self, grid, cellList, orientation):
+	
+	# TODO: consider borders of the grid
+	def Move2(self, grid, cellList):
+		neighbourList = self.GetNeighbours(grid, border)
+		if len(neighbourList) > 0:
+			tmpNeighbList = list(neighbourList) 
+			r = np.random.randint(len(tmpNeighbList))
+			
+	# Move2
+	
+	# TODO
+	def OrientedSplit(self, grid, cellList):
 		print('ala')	
 	# OrientedSplit
 
@@ -134,13 +195,13 @@ class cell:
 				newxPos = self.xPos
 				newyPos = self.yPos - 1
 
-			occupation = grid[newxPos][newyPos]
+			occupation = grid[newxPos][newyPos][0]
 
 				# if the position is free then create a cell there
 			if occupation == 0:
 				#	daughterCell = Cell(newxPos, newyPos)
 				cellList.append(cell(newxPos, newyPos))
-				grid[newxPos][newyPos] = 1
+				grid[newxPos][newyPos][0] = 1
 				#	return grid
 #		else
 #			return grid
