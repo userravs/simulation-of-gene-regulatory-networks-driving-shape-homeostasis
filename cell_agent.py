@@ -48,7 +48,8 @@ class cell:
 			for ix in iStatus, jStatus, kStatus:
 				if maxVal < ix:
 					maxVal = ix
-					print('split = ' + str(iStatus) + ', move = ' + str(jStatus) + '\ndie = ' + str(kStatus) + '. Max: '+ str(maxVal))
+			
+			print('split = ' + str(iStatus) + ', move = ' + str(jStatus) + '\ndie = ' + str(kStatus) + '. Max: '+ str(maxVal))
 		
 			if abs(maxVal - iStatus) <= yThreshold:
 				state = 'Split'
@@ -69,6 +70,10 @@ class cell:
 	def Die(self,  grid, cellList):
 		grid[self.xPos][self.yPos] = 0
 	# Die
+	
+	def OrientedMove(self, grid, cellList, orientation):
+		print('ala')
+	# OrientedMove
 	
 	def Move(self, grid, cellList):
 		# check a randomly generated neighbour if occupied
@@ -100,6 +105,10 @@ class cell:
 			self.xPos = newxPos
 			self.yPos = newyPos
 	# Move
+
+	def OrientedSplit(self, grid, cellList, orientation):
+		print('ala')	
+	# OrientedSplit
 
 	def Split(self, grid, cellList):
 		self.splitCounter +=1

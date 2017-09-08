@@ -2,13 +2,14 @@ import time
 import random 
 import numpy as np
 import matplotlib.pyplot as plt
+#import matplotlib
 from cell_agent import *	# it is allowed to call from this class because there's an __init__.py file in this directory
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #	PARAMETERS			#
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 nLattice = 20 # Lattice Size
-timeSteps = 100 # Number of simulation time steps
+timeSteps = 5 # Number of simulation time steps
 p = 0.5 # Probability of splitting for any time step
 # f = 1 # Lightning probability.
 cellGrid = np.zeros([nLattice,nLattice]) # Initialize empty forest
@@ -23,8 +24,12 @@ iy = int(nLattice/2)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #	INITIALIZATION			#
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-plt.ion()
+#plt.ion()
+if matplotlib.is_interactive():
+    pylab.ioff()
 fig = plt.figure()
+#plt.ioff()
+plt.gcf().show()
 
 # initialise mother cell
 #mother_cell = cell(nLattice/2,nLattice/2)
@@ -37,7 +42,7 @@ cellGrid[ix][iy] = 1
 
 im = plt.imshow(cellGrid, origin='lower', cmap='RdYlGn', interpolation='none', vmin =-1, vmax = 1)
 plt.colorbar()
-plt.show()
+#plt.show(block=False)
 #plt.draw()
 
 itime = 0
@@ -108,7 +113,7 @@ while itime < timeSteps:
 	fig.canvas.update()
 	fig.canvas.flush_events()
 	#plt.draw()
-	#plt.show()
+#	plt.show()
 	#time.sleep(0.75) 
 
 	##plt.savefig('fire_spread-p'+str(p)+'-f'+str(f)+'-timeStep'+str(time)+'.png', bbox_inches='tight')
