@@ -7,8 +7,11 @@ class cell:
 	def __init__(self, xPos, yPos):
 		self.xPos = xPos
 		self.yPos = yPos
-		#self.health = health
-	#
+		self.splitCounter = 0
+		self.splitTime = 1
+		self.quietCounter = 0
+		#self.state = status
+	# self
 
 	#def Get Pos(self):
 		#return
@@ -24,23 +27,50 @@ class cell:
 	def GenerateStatus(self, SGF_read, LGF_read):
 		# neural network generates a status based on the reads
 		# possible states: split, move, die
+		iStatus = np.random.random() # Proliferate	Split
+		jStatus = np.random.random() # Move			Move
+		kStatus = 0 #np.random.random() # Apoptosis	Die
+		# values for SGF and LGF
+		#sgfAmount = np.random.randint(5)
+		#sgfAmount = np.random.randint(5)
+		# orientation
+		#polarisation: np.random.randint(4)
 		
-		iStatus = np.random.random()
-		jStatus = np.random.random()
-		kStatus = np.random.random()
+		maxVal = 0.5
+		#tmpVal = 0
+		xThreshold = 0.5
+		yThreshold = 0.01
 		
-#		f = 0.5 	# probability of status 1
-		if k < f:
-			status = 1
-		return status
+		if iStatus < xThreshold and jStatus < xThreshold and kStatus < xThreshold:
+			state = 'Quiet'
+		
+		else:
+			for ix in iStatus, jStatus, kStatus:
+				if maxVal < ix:
+					maxVal = ix
+					print('split = ' + str(iStatus) + ', move = ' + str(jStatus) + '\ndie = ' + str(kStatus) + '. Max: '+ str(maxVal))
+		
+			if abs(maxVal - iStatus) <= yThreshold:
+				state = 'Split'
+
+			elif abs(maxVal - jStatus) <= yThreshold:
+				state = 'Move'
+		
+			else:	# abs(maxVal - kStatus) <= yThreshold:
+				state = 'Die'		
+			
+		return state
 	# GenerateStatus
+
+	def Quiet(self,grid, cellList):
+		self.quietCounter += 1
+	# Quiet
 	
 	def Die(self,  grid, cellList):
 		grid[self.xPos][self.yPos] = 0
-		del cellList[rndCell]
 	# Die
 	
-	def Move(self, grid):
+	def Move(self, grid, cellList):
 		# check a randomly generated neighbour if occupied
 		r = np.random.randint(4)
 		# check if spot is occupied
@@ -72,34 +102,37 @@ class cell:
 	# Move
 
 	def Split(self, grid, cellList):
-		# check a randomly generated neighbour if occupied
-		r = np.random.randint(4)
-		# check if spot is occupied
-		if r == 0:
-			# each case returns the value on grid according to the random number (neighbour)
-			newxPos = self.xPos - 1
-			newyPos = self.yPos
+		self.splitCounter +=1
+		
+		if self.splitCounter == self.splitTime:
+			# check a randomly generated neighbour if occupied
+			r = np.random.randint(4)
+			# check if spot is occupied
+			if r == 0:
+				# each case returns the value on grid according to the random number (neighbour)
+				newxPos = self.xPos - 1
+				newyPos = self.yPos
 
-		elif r == 1:
-			newxPos = self.xPos
-			newyPos = self.yPos + 1
+			elif r == 1:
+				newxPos = self.xPos
+				newyPos = self.yPos + 1
 
-		elif r == 2:
-			newxPos = self.xPos + 1
-			newyPos = self.yPos
+			elif r == 2:
+				newxPos = self.xPos + 1
+				newyPos = self.yPos
 
-		else:
-			newxPos = self.xPos
-			newyPos = self.yPos - 1
+			else:
+				newxPos = self.xPos
+				newyPos = self.yPos - 1
 
-		occupation = grid[newxPos][newyPos]
+			occupation = grid[newxPos][newyPos]
 
-		# if the position is free then create a cell there
-		if occupation == 0:
-#			daughterCell = Cell(newxPos, newyPos)
-			cellList.append(cell(newxPos, newyPos))
-			grid[newxPos][newyPos] = 1
-#			return grid
+				# if the position is free then create a cell there
+			if occupation == 0:
+				#	daughterCell = Cell(newxPos, newyPos)
+				cellList.append(cell(newxPos, newyPos))
+				grid[newxPos][newyPos] = 1
+				#	return grid
 #		else
 #			return grid
 # Cell

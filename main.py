@@ -8,7 +8,7 @@ from cell_agent import *	# it is allowed to call from this class because there's
 #	PARAMETERS			#
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 nLattice = 20 # Lattice Size
-timeSteps = 15 # Number of simulation time steps
+timeSteps = 100 # Number of simulation time steps
 p = 0.5 # Probability of splitting for any time step
 # f = 1 # Lightning probability.
 cellGrid = np.zeros([nLattice,nLattice]) # Initialize empty forest
@@ -44,7 +44,7 @@ itime = 0
 print('Time running...')
 
 while itime < timeSteps:
-	print('time step #'+str(itime))
+	print('\ntime step #'+str(itime))
     
 	tmpCellList = list(cellList)		# a copy of the list of current cells is used to iterate over all the cells
 	
@@ -53,46 +53,70 @@ while itime < timeSteps:
 		# random cell should decide and action
 		# first update cell status
 		status = tmpCellList[rndCell].GenerateStatus(SGF_read, LGF_read)	# get status of this cell
+		print('cell number: ' + str(len(cellList)) + '\nCell status: ' + str(status) + '\n')
+		#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+		#		Cell Action				#
+		#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#		
 		# according to cell status perform action: split or stay quiet
-		if status == 1:		# Split
+		if status == 'Quiet':
+			tmpCellList[rndCell].Quiet(cellGrid,cellList)
+			del tmpCellList[rndCell]
+		 
+		elif status == 'Split':
 			tmpCellList[rndCell].Split(cellGrid,cellList)
 			del tmpCellList[rndCell]
-		elif status == 2 	# Move
-		else:	# Die
-		
+
+		elif status == 'Move':
+			tmpCellList[rndCell].Move(cellGrid,cellList)
+			del tmpCellList[rndCell]
+		 
+		else: # Die
+			tmpCellList[rndCell].Die(cellGrid,cellList) # Off the grid
+			del tmpCellList[rndCell]
+			del cellList[rndCell] # Actual death				
+
+	### TEST! equivalent to: cellList[cell].'status'(param_x,param_y)
+	#	state = getattr(tmpCellList[rndCell], status)
+	#	action = getattr(tmpCellList[rndCell], state)
+	#	action(cellGrid, cellList)
 	# while
 	
-## IMSHOW PLOT, must be in the fire spread while            
+	## IMSHOW PLOT, must be in the fire spread while            
 
-#	plt.close()	
-#	ax = fig.add_subplot(111)
-#	#fig.suptitle('')
-##	ax.set_xlabel('Relative fire size')
-##	ax.set_ylabel('cCDF')
-##	ax.set_xscale('log')
-##	ax.set_yscale('log')
-#	ax.set_title('Rank-frequency plot')   
-#	ax.imshow(cellGrid, origin='lower', cmap='RdYlGn', interpolation='none', vmin =-1, vmax = 1)
-#	ax.legend(loc='best')
-##	plt.savefig('ex2.3.png')
-#	fig.canvas.draw()
-#	time.sleep(0.5) 
+	#~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+	#		Plot				#
+	#~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+	#plt.close()	
+	#ax = fig.add_subplot(111)
+	##fig.suptitle('')
+	##ax.set_xlabel('Relative fire size')
+	##ax.set_ylabel('cCDF')
+	##ax.set_xscale('log')
+	##ax.set_yscale('log')
+	#ax.set_title('Rank-frequency plot')   
+	#ax.imshow(cellGrid, origin='lower', cmap='RdYlGn', interpolation='none', vmin =-1, vmax = 1)
+	#ax.legend(loc='best')
+	##plt.savefig('ex2.3.png')
+	#fig.canvas.draw()
+	#time.sleep(0.5) 
 
 	plt.clf()
 	im = plt.imshow(cellGrid, origin='lower', cmap='RdYlGn', interpolation='none', vmin =-1, vmax = 1)
-#	im.set_data(cellGrid)
-#	plt.colorbar()
+	#im.set_data(cellGrid)
+	#plt.colorbar()
 	fig.canvas.update()
 	fig.canvas.flush_events()
-#	plt.draw()
-#	plt.show()
-#	time.sleep(0.75) 
+	#plt.draw()
+	#plt.show()
+	#time.sleep(0.75) 
 
-##	plt.savefig('fire_spread-p'+str(p)+'-f'+str(f)+'-timeStep'+str(time)+'.png', bbox_inches='tight')
+	##plt.savefig('fire_spread-p'+str(p)+'-f'+str(f)+'-timeStep'+str(time)+'.png', bbox_inches='tight')
 	itime +=1
+
 # while	
 
-plt.ioff()
+#plt.ioff()
 
 print(str(timeSteps)+' time steps complete')
 
