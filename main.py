@@ -52,7 +52,7 @@ print('Time running...')
 
 while itime < timeSteps:
     # DEBUG 
-	print('\ntime step #'+str(itime))
+	print('\ntime step #' + str(itime))
     
 	tmpCellList = list(cellList)		# a copy of the list of current cells is used to iterate over all the cells
 	
@@ -122,7 +122,7 @@ while itime < timeSteps:
 	#time.sleep(0.75) 
 
 	##plt.savefig('fire_spread-p'+str(p)+'-f'+str(f)+'-timeStep'+str(time)+'.png', bbox_inches='tight')
-	itime +=1
+	itime += 1
 
 # while	
 
