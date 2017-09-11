@@ -7,4 +7,7 @@
           * Plotting works: unefficient way, must improve this!
           * Adding states: move, split, die. Start to work on cell dynamics and then insert the neural network
 ### 20170911:
-          * Added new functions for moving and splitting. In principle they work regardless of the state of the compass (ON/OFF). Must test that 
+          * Added new functions for moving and splitting. In principle they work regardless of the state of the
+          compass (ON/OFF). Must test that.
+          * Must clarify the decision making: what happens if the orientation direction is out of bounds or 
+          occupied? action must fail or choose a random available spot instead?
