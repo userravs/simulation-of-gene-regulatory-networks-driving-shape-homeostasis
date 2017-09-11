@@ -6,3 +6,5 @@
 ### 20170907:
           * Plotting works: unefficient way, must improve this!
           * Adding states: move, split, die. Start to work on cell dynamics and then insert the neural network
+### 20170911:
+          * Added new functions for moving and splitting. In principle they work regardless of the state of the compass (ON/OFF). Must test that 
