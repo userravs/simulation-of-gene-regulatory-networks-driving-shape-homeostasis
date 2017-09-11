@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+#from tools import *
 
 class cell:
 	# defines whats needed when a new agent (Cell) of this class is created
@@ -41,13 +42,13 @@ class cell:
 
 	# Functions used to deal with neighbours
 	def CheckInBorders(self, xCoord, yCoord, border)
-		if xCoord - 1 >= 0 and xCoord + 1 <= border: 	# Check if the neighbour is inbounds on x axis
+		if xCoord >= 0 and xCoord <= border: 	# Check if the neighbour is inbounds on x axis
 			return False
-		elif yCoord - 1 >= 0 and yCoord + 1 <= border:	# Check if the neighbour is inbounds on y axis
+		elif yCoord >= 0 and yCoord <= border:	# Check if the neighbour is inbounds on y axis
 			return False
 		else:
 			return True
-		# CheckInBorders
+	# CheckInBorders
 
 	def CheckifPreferred(self, xCoord, yCoord):
 		if xCoord == self.orientation[0] and self.orientation[1] == 1:
@@ -75,15 +76,17 @@ class cell:
 		# neural network generates a status based on the reads
 		
 		# possible states: split, move, die
-		iStatus = np.random.random() # Proliferate	Split
-		jStatus = np.random.random() # Move			Move
-		kStatus = 0 #np.random.random() # Apoptosis	Die
+		iStatus = np.random.random() 		# Proliferate:	Split
+		jStatus = np.random.random() 		# Move:			Move
+		kStatus = 0 #np.random.random() 	# Apoptosis:	Die
 		# values for SGF and LGF
 		#sgfAmount = np.random.randint(5)
 		#lgfAmount = np.random.randint(5)
 
-		# orientation		
-		# TODO: orientation should be inside borders
+		# ORIENTATION:
+		# randomly sets a preferred neighbour (polarisation)
+		# if the direction is out of bounds then no preferred direction is stored 
+		# WARNING This code need to be revisited depending on the implementation of the NN later on
 		if self.compass == True:
 			# boundaries for orientation
 			nBoundary = 0.25
@@ -92,20 +95,33 @@ class cell:
 			#wBoundary = 1
 			arrow = np.random.random()
 			if arrow < nBoundary:
+				xCoord = self.xPos - 1
+				yCoord = self.yPos
 				# orientation North
-				self.orientation = [self.xPos - 1,self.yPos]
+				if CheckInBorders(self, xCoord, yCoord, border)
+					self.orientation = [xCoord, yCoord]
 			elif arrow < sBoundary:
 				# orientation South
-				self.orientation = [self.xPos + 1,self.yPos]	
+				xCoord = self.xPos + 1
+				yCoord = self.yPos
+				# orientation North
+				if CheckInBorders(self, xCoord, yCoord, border)
+					self.orientation = [xCoord, yCoord]
 			elif arrow < eBoundary:
 				# orientation East
-				self.orientation = [self.xPos,self.yPos + 1]
+				xCoord = self.xPos
+				yCoord = self.yPos + 1
+				# orientation North
+				if CheckInBorders(self, xCoord, yCoord, border)
+					self.orientation = [xCoord, yCoord]
 			else:	#arrow < wBoundary:
 				# orientation West
-				self.orientation = [self.xPos,self.yPos - 1]				
-			#else:
-			#	# orientation OFF
-			#	self.orientation = [self.xPos,self.yPos]				
+				xCoord = self.xPos
+				yCoord = self.yPos - 1
+				# orientation North
+				if CheckInBorders(self, xCoord, yCoord, border)
+					self.orientation = [xCoord, yCoord]
+		# if
 
 		# Generate state
 		maxVal = 0.5
@@ -115,25 +131,23 @@ class cell:
 		
 		if iStatus < xThreshold and jStatus < xThreshold and kStatus < xThreshold:
 			self.state = 'Quiet'
-		
+
 		else:
 			for ix in iStatus, jStatus, kStatus:
 				if maxVal < ix:
 					maxVal = ix
-			
+
 			# DEBUG
 			print('split = ' + str(iStatus) + ', move = ' + str(jStatus) + '\ndie = ' + str(kStatus) + '. Max: '+ str(maxVal))
-		
+
 			if abs(maxVal - iStatus) <= yThreshold:
 				self.state = 'Split'
 
 			elif abs(maxVal - jStatus) <= yThreshold:
 				self.state = 'Move'
-		
+
 			else:	# abs(maxVal - kStatus) <= yThreshold:
-				self.state = 'Die'		
-			
-		#return state
+				self.state = 'Die'
 	# GenerateStatus
 
 	def Quiet(self, grid, cellList):
@@ -171,7 +185,7 @@ class cell:
 			newyPos = self.yPos - 1
 
 		occupation = grid[newxPos][newyPos][0]
-		
+
 		# if position if free, move there
 		if occupation == 0:
 			grid[newxPos][newyPos][0] = 1
@@ -179,13 +193,41 @@ class cell:
 			self.xPos = newxPos
 			self.yPos = newyPos
 	# Move
-	
-	# TODO: consider borders of the grid
+
+	# TEST!!!	OrientedMove, works with orientation ON and OFF
 	def Move2(self, grid, cellList):
-		neighbourList = self.GetNeighbours(grid, border)
-		if len(neighbourList) > 0:
-			tmpNeighbList = list(neighbourList) 
-			r = np.random.randint(len(tmpNeighbList))
+		# create a list with the four Von Neumann neighbours
+		neighbourList = [[self.xPos - 1, self.yPos],[self.xPos + 1, self.yPos],[self.xPos, self.yPos - 1],[self.xPos, self.yPos + 1]]
+		#finalList = []
+		tmpList = []
+		movePos = []
+		needOtherNeighbours = True
+		
+		for neighbr in neighbourList: 								# for each possible neighbour:
+			if CheckInBorders(neighbr[0], neighbr[1], border):		# if neighbour is inbunds:
+				if CheckifOccupied(neighbr[0], neighbr[1], grid):	# if its occupied
+					continue
+				else:
+					if CheckifPreferred(neighbr[0], neighbr[1]):	# if is preferred
+						movePos.append(neighbr[0])					# if the position is available, the return it as available
+						movePos.append(neighbr[1])
+						needOtherNeighbours = False					# if spot is available the no need to find more available spots
+						break										# and stop looking for available spots
+					else:
+						tmpList.append(neighbr)						# list with other available neighbours
+			else:
+				continue
+		# if needed and if there's more than one spot available, the move to that spot 
+		if needOtherNeighbours and len(tmpList) > 0:
+			r = np.random.randint(len(tmpList))
+			movePos.append(tmpList[r][0])
+			movePos.append(tmpList[r][1])
+			#finalList.append(tmpList[r])
+		if len(movePos) > 0:
+			grid[movePos[0]][movePos[1]][0] = 1
+			grid[self.xPos][self.yPos][0] = 0
+			self.xPos = movePos[0]
+			self.yPos = movePos[1]
 	# Move2
 
 	# TODO
@@ -194,7 +236,7 @@ class cell:
 	# OrientedSplit
 
 	def Split(self, grid, cellList):
-		self.splitCounter +=1
+		self.splitCounter += 1
 		if self.splitCounter == self.splitTime:
 			# check a randomly generated neighbour if occupied
 			r = np.random.randint(4)
@@ -203,15 +245,12 @@ class cell:
 				# each case returns the value on grid according to the random number (neighbour)
 				newxPos = self.xPos - 1
 				newyPos = self.yPos
-
 			elif r == 1:
 				newxPos = self.xPos
 				newyPos = self.yPos + 1
-
 			elif r == 2:
 				newxPos = self.xPos + 1
 				newyPos = self.yPos
-
 			else:
 				newxPos = self.xPos
 				newyPos = self.yPos - 1
@@ -223,9 +262,45 @@ class cell:
 				#	daughterCell = Cell(newxPos, newyPos)
 				cellList.append(cell(newxPos, newyPos))
 				grid[newxPos][newyPos][0] = 1
-				#	return grid
-#		else
-#			return grid
+	# Split
+
+	# TEST!! works with polarisation ON and OFF
+	# initial for and then if are the same as in Move2, might be useful to use a single function
+	def Split2(self, grid, cellList)
+		# create a list with the four Von Neumann neighbours
+		neighbourList = [[self.xPos - 1, self.yPos],[self.xPos + 1, self.yPos],[self.xPos, self.yPos - 1],[self.xPos, self.yPos + 1]]
+		#finalList = []
+		tmpList = []
+		movePos = []
+		needOtherNeighbours = True
+		
+		for neighbr in neighbourList: 								# for each possible neighbour:
+			if CheckInBorders(neighbr[0], neighbr[1], border):		# if neighbour is inbunds:
+				if CheckifOccupied(neighbr[0], neighbr[1], grid):	# if its occupied
+					continue
+				else:
+					if CheckifPreferred(neighbr[0], neighbr[1]):	# if is preferred
+						movePos.append(neighbr[0])					# if the position is available, the return it as available
+						movePos.append(neighbr[1])
+						needOtherNeighbours = False					# if spot is available the no need to find more available spots
+						break										# and stop looking for available spots
+					else:
+						tmpList.append(neighbr)						# list with other available neighbours
+			else:
+				continue
+		# if needed and if there's more than one spot available, the move to that spot 
+		if needOtherNeighbours and len(tmpList) > 0:
+			r = np.random.randint(len(tmpList))
+			movePos.append(tmpList[r][0])
+			movePos.append(tmpList[r][1])
+			#finalList.append(tmpList[r])
+		if len(movePos) > 0:
+				cellList.append(cell(movePos[0], movePos[1]))
+				grid[movePos[0]][movePos[1]][0] = 1
+
+		
+	# Split2
+
 # Cell
 	#def GetPos(self):
 	#	return [self.xPos,self.yPos]
