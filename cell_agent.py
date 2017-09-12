@@ -2,6 +2,23 @@ import numpy as np
 import matplotlib.pyplot as plt
 #from tools import *
 
+	# Functions used to deal with neighbours
+def CheckInBorders(self, xCoord, yCoord):
+	if xCoord >= 0 and xCoord <= self.border: 	# Check if the neighbour is inbounds on x axis
+		return False
+	elif yCoord >= 0 and yCoord <= self.border:	# Check if the neighbour is inbounds on y axis
+		return False
+	else:
+		return True
+# CheckInBorders
+	
+def CheckifOccupied(self, xCoord, yCoord, grid):
+	if grid[xCoord, yCoord][0] == 1:
+		return True
+	else:
+		return False
+# CheckifOccupied
+
 class cell:
 	# defines whats needed when a new agent (Cell) of this class is created
 	def __init__(self, xPos, yPos):
@@ -13,6 +30,7 @@ class cell:
 		self.orientation = [self.xPos,self.yPos]	# Preferred direction. DEFAULT: own position
 		self.compass = False						# Polarisation ON/OFF
 		self.state = 'Quiet'						# Sate of the cell. DEFAULT: quiet
+		self.border = 0
 	# self
 
 	#def Get Pos(self):
@@ -41,13 +59,13 @@ class cell:
 		return neighbourList
 
 	# Functions used to deal with neighbours
-	def CheckInBorders(self, xCoord, yCoord, border)
-		if xCoord >= 0 and xCoord <= border: 	# Check if the neighbour is inbounds on x axis
-			return False
-		elif yCoord >= 0 and yCoord <= border:	# Check if the neighbour is inbounds on y axis
-			return False
-		else:
-			return True
+#	def CheckInBorders(self, xCoord, yCoord, border):
+#		if xCoord >= 0 and xCoord <= border: 	# Check if the neighbour is inbounds on x axis
+#			return False
+#		elif yCoord >= 0 and yCoord <= border:	# Check if the neighbour is inbounds on y axis
+#			return False
+#		else:
+#			return True
 	# CheckInBorders
 
 	def CheckifPreferred(self, xCoord, yCoord):
@@ -57,11 +75,11 @@ class cell:
 			return False
 	# CheckifPreferred
 
-	def CheckifOccupied(self, xCoord, yCoord, grid):
-		if grid[xCoord, yCoord][0] == 1:
-			return True
-		else:
-			return False
+#	def CheckifOccupied(self, xCoord, yCoord, grid):
+#		if grid[xCoord, yCoord][0] == 1:
+#			return True
+#		else:
+#			return False
 	# CheckifOccupied
 
 	def Sense(self):
@@ -87,7 +105,7 @@ class cell:
 		# randomly sets a preferred neighbour (polarisation)
 		# if the direction is out of bounds then no preferred direction is stored 
 		# WARNING This code need to be revisited depending on the implementation of the NN later on
-		if self.compass == True:
+		if self.compass:
 			# boundaries for orientation
 			nBoundary = 0.25
 			sBoundary = 0.5
@@ -98,28 +116,28 @@ class cell:
 				xCoord = self.xPos - 1
 				yCoord = self.yPos
 				# orientation North
-				if CheckInBorders(self, xCoord, yCoord, border)
+				if CheckInBorders(xCoord, yCoord, border):
 					self.orientation = [xCoord, yCoord]
 			elif arrow < sBoundary:
 				# orientation South
 				xCoord = self.xPos + 1
 				yCoord = self.yPos
 				# orientation North
-				if CheckInBorders(self, xCoord, yCoord, border)
+				if CheckInBorders(xCoord, yCoord, border):
 					self.orientation = [xCoord, yCoord]
 			elif arrow < eBoundary:
 				# orientation East
 				xCoord = self.xPos
 				yCoord = self.yPos + 1
 				# orientation North
-				if CheckInBorders(self, xCoord, yCoord, border)
+				if CheckInBorders(xCoord, yCoord, border):
 					self.orientation = [xCoord, yCoord]
 			else:	#arrow < wBoundary:
 				# orientation West
 				xCoord = self.xPos
 				yCoord = self.yPos - 1
 				# orientation North
-				if CheckInBorders(self, xCoord, yCoord, border)
+				if CheckInBorders(xCoord, yCoord, border):
 					self.orientation = [xCoord, yCoord]
 		# if
 
@@ -204,7 +222,7 @@ class cell:
 		needOtherNeighbours = True
 		
 		for neighbr in neighbourList: 								# for each possible neighbour:
-			if CheckInBorders(neighbr[0], neighbr[1], border):		# if neighbour is inbunds:
+			if CheckInBorders(neighbr[0], neighbr[1]):		# if neighbour is inbunds:
 				if CheckifOccupied(neighbr[0], neighbr[1], grid):	# if its occupied
 					continue
 				else:
@@ -266,16 +284,16 @@ class cell:
 
 	# TEST!! works with polarisation ON and OFF
 	# initial for and then if are the same as in Move2, might be useful to use a single function
-	def Split2(self, grid, cellList)
+	def Split2(self, grid, cellList):
 		# create a list with the four Von Neumann neighbours
 		neighbourList = [[self.xPos - 1, self.yPos],[self.xPos + 1, self.yPos],[self.xPos, self.yPos - 1],[self.xPos, self.yPos + 1]]
 		#finalList = []
 		tmpList = []
 		movePos = []
 		needOtherNeighbours = True
-		
+
 		for neighbr in neighbourList: 								# for each possible neighbour:
-			if CheckInBorders(neighbr[0], neighbr[1], border):		# if neighbour is inbunds:
+			if CheckInBorders(neighbr[0], neighbr[1]):		# if neighbour is inbunds:
 				if CheckifOccupied(neighbr[0], neighbr[1], grid):	# if its occupied
 					continue
 				else:
@@ -297,82 +315,5 @@ class cell:
 		if len(movePos) > 0:
 				cellList.append(cell(movePos[0], movePos[1]))
 				grid[movePos[0]][movePos[1]][0] = 1
-
-		
 	# Split2
-
 # Cell
-	#def GetPos(self):
-	#	return [self.xPos,self.yPos]
-	# Split
-
-class environment:
-	def AntGridFigure(fieldSize, maxFoodAmount, nestPosition):    
-		'''
-		This method has to be called before the looping occours, for a better performance.
-		Inspired by:
-		http://bastibe.de/2013-05-30-speeding-up-matplotlib.html
-		'''
-		#=======================================================================
-		# The Figure
-		#======================================================================= 
-		# Grid:	
-		cmapGrid = plt.cm.get_cmap('cool')#('PiYG_r')#('YlOrRd')#('Blues')#('YlOrRd')
-		figname='Environment'					# main title for plot
-		figsizeX =18						# outer plot dimensions
-		figSizeY = 9                
-		figsize=(figsizeX,figSizeY)
-		cellsFigure = plt.figure(figname,figsize)		# declare main (outer) plot
-		cellsSubPlot = cellsFigure.add_subplot(111)     	# add subplot: cell grid
-		cellsSubPlot.set_aspect('equal')			# settings for grid 
-		cellsSubPlot.set_title('Environment',fontsize=32)
-		cellsSubPlot.set_xlabel('x',fontsize=25)
-		cellsSubPlot.set_ylabel('y',fontsize=25)
-		#cellsSubPlot.grid(True,linestyle='-',color='0.75')
-		cellsSubPlot.set_xlim(-0.5, fieldSize+0.5-1)
-		cellsSubPlot.set_ylim(-0.5, fieldSize+0.5-1)     
-		plt.axis('off')
-		#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~		
-		npaAgentForagingPosY = np.array([0])
-		npaAgentForagingPosX = np.array([0])
-		npaFoodAmount = np.zeros((fieldSize,fieldSize))
-		#
-		gridPlot = cellsSubPlot.imshow(npaFoodAmount, interpolation='none', cmap=cmapGrid, vmin=0, vmax=maxFoodAmount)
-		cellsPlotFood, 	= cellsSubPlot.plot(npaAgentForagingPosY, npaAgentForagingPosX, 'p', ms=7, color='orange', label='cells foraging')
-		antPlotHome, 	= cellsSubPlot.plot(npaAgentForagingPosY, npaAgentForagingPosX, 'o', ms=10, color='blue', label='cells returning home')	
-		nestPlot, 		= cellsSubPlot.plot(nestPosition,nestPosition, 'o', ms=30, color='black', label='Nest')	
-		# Legend
-		handles, labels = cellsSubPlot.get_legend_handles_labels()
-		display = (0,1,2)
-
-		
-		# Now add the legend with some customizations.
-		cellsSubPlot.legend(numpoints=1, shadow=True, bbox_to_anchor=(0,0,-0.05, 1), fontsize=25)
-		
-		#=======================================================================
-		# # Create custom artists
-		# #cellsSubPlot.legend(scatterpoints=1, bbox_to_anchor=(0,0,-0.05, 1))
-		# cellsForaging 		= plt.Line2D((0,1),(0,0), color='violet', marker='p')
-		# cellsReturningHome 	= plt.Line2D((0,1),(0,0), color='blue', marker='o')
-		# nest				= plt.Line2D((0,1),(0,0), color='black', marker='o')
-		# #food				= plt.Line2D((0,1),(0,0), color='black', marker='s')
-		# # Create legend from custom artist/label lists
-		# cellsSubPlot.legend([handle for i,handle in enumerate(handles) if i in display]+[cellsForaging,cellsReturningHome,nest],
-		# 					[label for i,label in enumerate(labels) if i in display]+['cells foraging', 'cells returning home', 'Nest'],
-		# 					numpoints=1, bbox_to_anchor=(0,0,-0.05, 1))
-		#=======================================================================
-
-		#
-		img = plt.imshow(np.array([[0,1]]), cmap=cmapGrid)
-		img.set_visible(False)		
-		cbarAmountGrid = plt.colorbar(orientation="vertical")
-		cbarAmountGrid.set_label('Amount of food',size=25)
-		#
-		plt.ion()
-		plt.pause(0.0001)
-		cellsFigure.canvas.draw()
-		plt.ioff()
-		#
-		return cellsSubPlot, cellsFigure, cellsPlotFood, antPlotHome, gridPlot, nestPlot
-	#
-# Environment
