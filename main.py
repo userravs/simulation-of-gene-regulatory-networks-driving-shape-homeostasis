@@ -5,37 +5,35 @@ import numpy as np
 import matplotlib.pyplot as plt
 #import matplotlib
 from cell_agent import *    # it is allowed to call from this class because there's an __init__.py file in this directory
-
+from tools import *
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #    Functions                  #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-def CheckifOccupied(xCoord, yCoord, grid):
-    if grid[xCoord, yCoord][0] == 1:
-        return True
-    else:
-        return False
+#def CheckifOccupied(xCoord, yCoord, grid):
+#    if grid[xCoord, yCoord][0] == 1:
+#        return True
+#    else:
+#        return False
 
-def CheckInBorders(xCoord, yCoord, border):
-    if xCoord >= 0 and xCoord <= border:     # Check if the neighbour is inbounds on x axis
-        return False
-    elif yCoord >= 0 and yCoord <= border:    # Check if the neighbour is inbounds on y axis
-        return False
-    else:
-        return True
+#def CheckInBorders(xCoord, yCoord, border):
+#    if xCoord >= 0 and xCoord <= border:     # Check if the neighbour is inbounds on x axis
+#        return False
+#    elif yCoord >= 0 and yCoord <= border:    # Check if the neighbour is inbounds on y axis
+#        return False
+#    else:
+#        return True
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #    PARAMETERS                    #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-nLattice = 10 # Lattice Size
-timeSteps = 100 # Number of simulation time steps
-p = 0.5 # Probability of splitting for any time step
-# f = 1 # Lightning probability.
-cellGrid = np.zeros([nLattice,nLattice,3]) # Initialize empty forest
-SGF_read = 0    # in the future values will be read from the grid
+nLattice = 100 					# Lattice Size
+timeSteps = 60 					# Number of simulation time steps
+cellGrid = np.zeros([nLattice,nLattice,3]) 	# Initialize empty grid
+SGF_read = 0    				# in the future values will be read from the grid
 LGF_read = 0
 
-ix = int(nLattice/2)
+ix = int(nLattice/2)				# Initial position for the mother cell
 iy = int(nLattice/2)
 
 #def main():
@@ -60,7 +58,7 @@ cellList = []
 cellList.append(cell(ix,iy))
 cellGrid[ix][iy][0] = 1
 
-agentsGrid = cellGrid[:,:,0] # slice the grid to get the layer with the cell positions
+agentsGrid = cellGrid[:,:,0] 	# slice the grid to get the layer with the cell positions
 im = plt.imshow(agentsGrid, origin='lower', cmap='PuOr', interpolation='none', vmin =-1, vmax = 1)
 #im.set_data(agentsGrid)
 plt.colorbar()
@@ -76,15 +74,15 @@ while itime < timeSteps:
     # DEBUG 
     print('\ntime step #' + str(itime))
     
-    tmpCellList = list(cellList)        # a copy of the list of current cells is used to iterate over all the cells
+    tmpCellList = list(cellList)				# a copy of the list of current cells is used to iterate over all the cells
     
-    while len(tmpCellList) > 0:        # while  the tmp list of cells is longer than 1
-        rndCell = np.random.randint(len(tmpCellList)) # choose a random cell in the list of existing cells
+    while len(tmpCellList) > 0:					# while  the tmp list of cells is longer than 1
+        rndCell = np.random.randint(len(tmpCellList))	 	# choose a random cell in the list of existing cells
         # random cell should decide and action
         tmpCellList[rndCell].border = nLattice
         
         # first update cell status
-        status = tmpCellList[rndCell].GenerateStatus(SGF_read, LGF_read)    # get status of this cell
+        tmpCellList[rndCell].GenerateStatus(SGF_read, LGF_read)	# get status of this cell
 
         # DEBUG
         print('cell number: ' + str(len(cellList)) + '\nCell status: ' + str(tmpCellList[rndCell].state) + '\n')
@@ -92,22 +90,24 @@ while itime < timeSteps:
         #        Cell Action                #
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#        
         # according to cell status perform action: split or stay quiet
-        if tmpCellList[rndCell].state == 'Quiet':
-            tmpCellList[rndCell].Quiet(cellGrid,cellList)
-            del tmpCellList[rndCell]
+        if tmpCellList[rndCell].state == 'Quiet':		# Check the state
+            tmpCellList[rndCell].Quiet()			# call method that performs selected action
+            del tmpCellList[rndCell]				# delete cell from temporal list
          
         elif tmpCellList[rndCell].state == 'Split':
-            tmpCellList[rndCell].Split2(cellGrid,cellList)
+            tmpCellList[rndCell].Split(cellGrid,cellList)
             del tmpCellList[rndCell]
 
         elif tmpCellList[rndCell].state == 'Move':
-            tmpCellList[rndCell].Move2(cellGrid,cellList)
+            tmpCellList[rndCell].Move(cellGrid)
             del tmpCellList[rndCell]
          
+	# WARNING see TODO
         else: # Die
-            tmpCellList[rndCell].Die(cellGrid,cellList) # Off the grid
+            tmpCellList[rndCell].Die(cellGrid)			# Off the grid
             del tmpCellList[rndCell]
-            del cellList[rndCell] # Actual death                
+            # TODO this way of killing the cell doesn't work, cellList and tmpCellList not necesarily have the same length 
+            del cellList[rndCell] 				# Actual death                
 
     ### TEST! equivalent to: cellList[cell].'status'(param_x,param_y)
     #    state = getattr(tmpCellList[rndCell], status)
