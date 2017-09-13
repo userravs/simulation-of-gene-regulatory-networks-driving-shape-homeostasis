@@ -321,7 +321,7 @@ class cell:
 						tmpList.append(neighbr)			# list with other available neighbours
 			else:
 				continue
-		# if needed and if there's more than one spot available, the move to that spot 
+		# if needed and if there's more than one spot available, then move to that spot 
 		if needOtherNeighbours and len(tmpList) > 0:
 			r = np.random.randint(len(tmpList))
 			movePos.append(tmpList[r][0])

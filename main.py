@@ -52,32 +52,33 @@ plt.ion()
 #	pylab.ioff()
 fig = plt.figure()
 
-### NEW PLOTTING CODE
-ax = fig.add_subplot(131)
-ay = fig.add_subplot(132)
-az = fig.add_subplot(133)
-fig.suptitle('Cell system')
-ax.set_title('Cells') 
-ay.set_title('LGF') 
-az.set_title('SGF') 
+#### NEW PLOTTING CODE
+#ax = fig.add_subplot(131)
+#ay = fig.add_subplot(132)
+#az = fig.add_subplot(133)
+#fig.suptitle('Cell system')
+#ax.set_title('Cells') 
+#ay.set_title('LGF') 
+#az.set_title('SGF') 
 
-ax.imshow(agentsGrid, origin='lower', cmap='PuOr', interpolation='none', vmin = -1, vmax = 1)
-ay.imshow(sgfGrid, origin='lower', cmap='binary', interpolation='none', vmin = 0, vmax = 10)
-az.imshow(lgfGrid, origin='lower', cmap='binary', interpolation='none', vmin = 0, vmax = 10)
-#ax.legend(loc='best')
-fig.canvas.draw()
+#ax.imshow(agentsGrid, origin='lower', cmap='PuOr', interpolation='none', vmin = -1, vmax = 1)
+#ay.imshow(sgfGrid, origin='lower', cmap='binary', interpolation='none', vmin = 0, vmax = 10)
+#az.imshow(lgfGrid, origin='lower', cmap='binary', interpolation='none', vmin = 0, vmax = 10)
+##ax.legend(loc='best')
+##plt.show()
+#fig.canvas.draw()
 
 ### END PLOTTING CODE
 
 
 ### OLD PLOTTING CODE
-##plt.ioff()
-#plt.gcf().show()
-#im = plt.imshow(agentsGrid, origin='lower', cmap='PuOr', interpolation='none', vmin =-1, vmax = 1)
-##im.set_data(agentsGrid)
-#plt.colorbar()
-#plt.show()
-##plt.draw()
+#plt.ioff()
+plt.gcf().show()
+im = plt.imshow(agentsGrid, origin='lower', cmap='PuOr', interpolation='none', vmin =-1, vmax = 1)
+#im.set_data(agentsGrid)
+plt.colorbar()
+plt.show()
+#plt.draw()
 ### END OF OLD PLOTTING CODE
 
 itime = 0
@@ -138,9 +139,9 @@ while itime < timeSteps:
 
 ### NEW CODE
     plt.clf()
-    ax.imshow(agentsGrid, origin='lower', cmap='PuOr', interpolation='none', vmin = -1, vmax = 1)
-    ay.imshow(sgfGrid, origin='lower', cmap='binary', interpolation='none', vmin = 0, vmax = 10)
-    az.imshow(lgfGrid, origin='lower', cmap='binary', interpolation='none', vmin = 0, vmax = 10)
+    im.imshow(agentsGrid, origin='lower', cmap='PuOr', interpolation='none', vmin = -1, vmax = 1)
+    #ay.imshow(sgfGrid, origin='lower', cmap='binary', interpolation='none', vmin = 0, vmax = 10)
+    #az.imshow(lgfGrid, origin='lower', cmap='binary', interpolation='none', vmin = 0, vmax = 10)
     fig.canvas.update()
     fig.canvas.flush_events()
     #fig.canvas.draw()
