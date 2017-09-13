@@ -1,0 +1,13 @@
+The main goal of theis master project is to expand the work made by Gerlee et all. They 
+implemented a model of developing cells  to study how different individual cellular characteristics 
+drive the emergence of homeostatic structures. The model combines different sets of habilities 
+for the cells such as: sense of orientation (polarisation), comunication with surrounding 
+neighbours via difusible factors.
+Each cell has three possible statuses namely: quiet, move, die, split. The selection of a state is 
+made by a neural network which reads the environment and chooses a state. To optimise the solutions
+, i.e., the homeostatic structure, an evolutionary algorithm evolves the solutions.
+Improvements to the initial model are to be made. Initially by optimizing and increasing performance 
+of the algorithms used. Then a renewed model can be used to explore a larger solution space for the EA. 
+Expected results include: identification of minimal models characterising each class of behaviour, 
+flexibility of the genotype space, implementation of different models of cell dynamics (sets of rules, 
+dynamical systems) and obtaining desired shapes.
