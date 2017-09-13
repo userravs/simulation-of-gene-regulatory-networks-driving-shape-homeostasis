@@ -8,9 +8,9 @@ from cell_agent import *    # it is allowed to call from this class because ther
 from tools import *
 
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-#    Functions                  #
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#    	Functions                  #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #def CheckifOccupied(xCoord, yCoord, grid):
 #    if grid[xCoord, yCoord][0] == 1:
 #        return True
@@ -24,46 +24,61 @@ from tools import *
 #        return False
 #    else:
 #        return True
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-#    PARAMETERS                    #
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#    	PARAMETERS                 #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 nLattice = 100 					# Lattice Size
-timeSteps = 60 					# Number of simulation time steps
+timeSteps = 80 					# Number of simulation time steps
 cellGrid = np.zeros([nLattice,nLattice,3]) 	# Initialize empty grid
 SGF_read = 0    				# in the future values will be read from the grid
 LGF_read = 0
-
 ix = int(nLattice/2)				# Initial position for the mother cell
 iy = int(nLattice/2)
-
-#def main():
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-#    INITIALIZATION                #
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-
-plt.ion()
-#if matplotlib.is_interactive():
-#	pylab.ioff()
-fig = plt.figure()
-#plt.ioff()
-plt.gcf().show()
-
-# initialise mother cell
-#mother_cell = cell(nLattice/2,nLattice/2)
-#cellList = [[mother_cell.xPos,mother_cell.yPos]]
 cellList = []
 
 # create mother cell and update the grid with its initial location
 cellList.append(cell(ix,iy))
 cellGrid[ix][iy][0] = 1
+agentsGrid = cellGrid[:,:,0] 		# slice the grid to get the layer with the cell positions
+sgfGrid = cellGrid[:,:,1] 		# slice the grid to get the layer with the cell positions
+lgfGrid = cellGrid[:,:,2] 		# slice the grid to get the layer with the cell positions
 
-agentsGrid = cellGrid[:,:,0] 	# slice the grid to get the layer with the cell positions
-im = plt.imshow(agentsGrid, origin='lower', cmap='PuOr', interpolation='none', vmin =-1, vmax = 1)
-#im.set_data(agentsGrid)
-plt.colorbar()
-plt.show()
-#plt.draw()
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#    	INITIALIZATION             #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+plt.ion()
+#if matplotlib.is_interactive():
+#	pylab.ioff()
+fig = plt.figure()
+
+### NEW PLOTTING CODE
+ax = fig.add_subplot(131)
+ay = fig.add_subplot(132)
+az = fig.add_subplot(133)
+fig.suptitle('Cell system')
+ax.set_title('Cells') 
+ay.set_title('LGF') 
+az.set_title('SGF') 
+
+ax.imshow(agentsGrid, origin='lower', cmap='PuOr', interpolation='none', vmin = -1, vmax = 1)
+ay.imshow(sgfGrid, origin='lower', cmap='binary', interpolation='none', vmin = 0, vmax = 10)
+az.imshow(lgfGrid, origin='lower', cmap='binary', interpolation='none', vmin = 0, vmax = 10)
+#ax.legend(loc='best')
+fig.canvas.draw()
+
+### END PLOTTING CODE
+
+
+### OLD PLOTTING CODE
+##plt.ioff()
+#plt.gcf().show()
+#im = plt.imshow(agentsGrid, origin='lower', cmap='PuOr', interpolation='none', vmin =-1, vmax = 1)
+##im.set_data(agentsGrid)
+#plt.colorbar()
+#plt.show()
+##plt.draw()
+### END OF OLD PLOTTING CODE
 
 itime = 0
 
@@ -85,7 +100,7 @@ while itime < timeSteps:
         tmpCellList[rndCell].GenerateStatus(SGF_read, LGF_read)	# get status of this cell
 
         # DEBUG
-        print('cell number: ' + str(len(cellList)) + '\nCell status: ' + str(tmpCellList[rndCell].state) + '\n')
+        print('cell number: ' + str(len(cellList)) + '\nCell status: ' + str(tmpCellList[rndCell].state))# + '\n')
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         #        Cell Action                #
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#        
@@ -121,35 +136,36 @@ while itime < timeSteps:
     #        Plot                #
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-    #plt.close()    
-    #ax = fig.add_subplot(111)
-    ##fig.suptitle('')
-    ##ax.set_xlabel('Relative fire size')
-    ##ax.set_ylabel('cCDF')
-    ##ax.set_xscale('log')
-    ##ax.set_yscale('log')
-    #ax.set_title('Rank-frequency plot')   
-    #ax.imshow(cellGrid, origin='lower', cmap='RdYlGn', interpolation='none', vmin =-1, vmax = 1)
-    #ax.legend(loc='best')
-    ##plt.savefig('ex2.3.png')
+### NEW CODE
+    plt.clf()
+    ax.imshow(agentsGrid, origin='lower', cmap='PuOr', interpolation='none', vmin = -1, vmax = 1)
+    ay.imshow(sgfGrid, origin='lower', cmap='binary', interpolation='none', vmin = 0, vmax = 10)
+    az.imshow(lgfGrid, origin='lower', cmap='binary', interpolation='none', vmin = 0, vmax = 10)
+    fig.canvas.update()
+    fig.canvas.flush_events()
     #fig.canvas.draw()
     #time.sleep(0.5) 
 
-    plt.clf()
-    im = plt.imshow(agentsGrid, origin='lower', cmap='PuOr', interpolation='none', vmin =-1, vmax = 1)
-    #im.set_data(agentsGrid)
-    plt.colorbar()
-    #im.set_visible(False)
-    #plt.ion()
-    fig.canvas.update()
-    fig.canvas.flush_events()
-    #plt.ioff()
-    
-    #im.draw_artist(cellGrid)
-    #plt.show()
-    #time.sleep(0.75) 
+### NEW CODE
 
-    ##plt.savefig('fire_spread-p'+str(p)+'-f'+str(f)+'-timeStep'+str(time)+'.png', bbox_inches='tight')
+### OLD CODE
+
+#    plt.clf()
+#    im = plt.imshow(agentsGrid, origin='lower', cmap='PuOr', interpolation='none', vmin =-1, vmax = 1)
+#    #im.set_data(agentsGrid)
+#    plt.colorbar()
+#    #im.set_visible(False)
+#    #plt.ion()
+#    fig.canvas.update()
+#    fig.canvas.flush_events()
+#    #plt.ioff()
+#    #im.draw_artist(cellGrid)
+#    #plt.show()
+#    #time.sleep(0.75) 
+#    #plt.savefig('fire_spread-p'+str(p)+'-f'+str(f)+'-timeStep'+str(time)+'.png', bbox_inches='tight')
+
+### OLD CODE
+
     itime += 1
 
 # while    

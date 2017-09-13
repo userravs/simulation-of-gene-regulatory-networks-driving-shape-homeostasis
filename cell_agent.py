@@ -36,8 +36,6 @@ class cell:
 	#def Get Pos(self):
 		#return
 
-	# TODO pass lattice size information to this method
-	# 
 	# WARNING Do I use this method??
 	def GetNeighbours(self, grid, border):
 		neighbourList = []
@@ -90,6 +88,14 @@ class cell:
 		#reads = [SGF_read, LGF_read]
 		return SGF_read, LGF_read
 	# Sense   
+	
+	def sgfProduce(self, grid, amount):
+		grid[self.xPos, self.yPos][1] += amount 
+	# sgfProduce
+
+	def lgfProduce(self, grid, amount):
+		grid[self.xPos, self.yPos][2] += amount 
+	# lgfProduce
 
 	def GenerateStatus(self, SGF_read, LGF_read):
 		# neural network generates a status based on the reads
@@ -99,8 +105,8 @@ class cell:
 		jStatus = np.random.random() 		# Move:		Move
 		kStatus = 0 #np.random.random() 	# Apoptosis:	Die
 		# values for SGF and LGF
-		#sgfAmount = np.random.randint(5)
-		#lgfAmount = np.random.randint(5)
+		sgfAmount = np.random.randint(5)
+		lgfAmount = np.random.randint(5)
 
 		# ORIENTATION:
 		# randomly sets a preferred neighbour (polarisation)
@@ -151,20 +157,20 @@ class cell:
 		if iStatus < xThreshold and jStatus < xThreshold and kStatus < xThreshold:
 			self.state = 'Quiet'
 			# DEBUG
-			print('split = ' + str(iStatus) + ', move = ' + str(jStatus) + '\ndie = ' + str(kStatus) + '. Max: quiet')
+			print('split = ' + str(iStatus) + ', move = ' + str(jStatus) + '\ndie = ' + str(kStatus) + '. Max: quiet\n')
 
 		else:
 			for ix in iStatus, jStatus, kStatus:
 				if maxVal < ix:
 					maxVal = ix
-			# DEBUG
-			print('split = ' + str(iStatus) + ', move = ' + str(jStatus) + '\ndie = ' + str(kStatus) + '. Max: '+ str(maxVal))
 			if abs(maxVal - iStatus) <= yThreshold:
 				self.state = 'Split'
 			elif abs(maxVal - jStatus) <= yThreshold:
 				self.state = 'Move'
 			else:	# abs(maxVal - kStatus) <= yThreshold:
 				self.state = 'Die'
+			# DEBUG
+			print('split = ' + str(iStatus) + ', move = ' + str(jStatus) + '\ndie = ' + str(kStatus) + '. Max: '+ str(maxVal) + '\n')
 	# GenerateStatus
 
 	def Quiet(self):
@@ -182,7 +188,7 @@ class cell:
 	
 	def Move(self, grid):
 		# check a randomly generated neighbour if occupied
-		print('moving!!\n')
+		print('moving!!')
 		r = np.random.randint(4)
 		# check if spot is occupied
 		if r == 0:
@@ -206,7 +212,7 @@ class cell:
 
 		# if position if free, move there
 		if occupation == 0:
-			print('cell moved')
+			print('cell moved\n')
 			grid[newxPos][newyPos][0] = 1
 			grid[self.xPos][self.yPos][0] = 0
 			self.xPos = newxPos
@@ -258,7 +264,7 @@ class cell:
 	# OrientedSplit
 
 	def Split(self, grid, cellList):
-		print('splitting!!\n')
+		print('splitting!!')
 		self.splitCounter += 1
 		if self.splitCounter == self.splitTime:
 			self.splitCounter = 0
