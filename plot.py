@@ -22,13 +22,13 @@ class Environment:
 		lgfSubplot = cellsFigure.add_subplot(133)
 		lgfSubplot.set_title('LGF') 
 
-		plt.axis('off')
+#		plt.axis('off')
 
 		cellPlot = cellsSubplot.imshow(cellGrid, origin = 'lower', cmap = 'PuOr', interpolation = 'none', vmin = -1, vmax = 1)
 		plt.show(block=False)
-		sgfPlot = sgfSubplot.imshow(sgfGrid, origin = 'lower', cmap = 'binary', interpolation = 'none', vmin = 0, vmax = 10)
+		sgfPlot = sgfSubplot.imshow(sgfGrid, origin = 'lower', cmap = 'binary', interpolation = 'none', vmin = 0, vmax = 50)
 		plt.show(block=False)
-		lgfPlot = lgfSubplot.imshow(lgfGrid, origin = 'lower', cmap = 'binary', interpolation = 'none', vmin = 0, vmax = 10)
+		lgfPlot = lgfSubplot.imshow(lgfGrid, origin = 'lower', cmap = 'binary', interpolation = 'none', vmin = 0, vmax = 50)
 		plt.show(block=False)
 
 		plt.ion()

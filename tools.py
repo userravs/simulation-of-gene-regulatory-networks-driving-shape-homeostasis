@@ -7,9 +7,9 @@ import matplotlib.pyplot as plt
 # Tools
 
 def CheckInBorders(xCoord, yCoord, border):
-    if xCoord >= 0 and xCoord <= border:     # Check if the neighbour is inbounds on x axis
+    if xCoord < 0 or xCoord > border:     # Check if the neighbour is inbounds on x axis
         return False
-    elif yCoord >= 0 and yCoord <= border:    # Check if the neighbour is inbounds on y axis
+    elif yCoord < 0 or yCoord > border:    # Check if the neighbour is inbounds on y axis
         return False
     else:
         return True
@@ -21,3 +21,10 @@ def CheckifOccupied(xCoord, yCoord, grid):
     else:
         return False
 # CheckifOccupied
+
+def CheckifPreferred(xOri, yOri, xCoord, yCoord):
+    if xCoord == xOri and yCoord == xOri:
+        return True
+    else:
+        return False
+# CheckifPreferred
