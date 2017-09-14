@@ -11,23 +11,11 @@ from plot import *
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #    	Functions                  #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-#def CheckifOccupied(xCoord, yCoord, grid):
-#    if grid[xCoord, yCoord][0] == 1:
-#        return True
-#    else:
-#        return False
 
-#def CheckInBorders(xCoord, yCoord, border):
-#    if xCoord >= 0 and xCoord <= border:     # Check if the neighbour is inbounds on x axis
-#        return False
-#    elif yCoord >= 0 and yCoord <= border:    # Check if the neighbour is inbounds on y axis
-#        return False
-#    else:
-#        return True
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #    	PARAMETERS                 #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-nLattice = 100 					# TODO change name
+nLattice = 50 					# TODO change name
 timeSteps = 80 					# Number of simulation time steps
 cellGrid = np.zeros([nLattice,nLattice,3]) 	# Initialize empty grid
 SGF_read = 0    				# in the future values will be read from the grid
@@ -47,49 +35,8 @@ cellGrid[ix][iy][0] = 1
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #    	INITIALIZATION             #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-
-#### NEW PLOTTING SCHEME
-
+# Plot figure and subplots
 cellsFigure, cellsSubplot, sgfSubplot, lgfSubplot, cellPlot, sgfPlot, lgfPlot = Environment.CellsGridFigure(nLattice)
-
-#### END OF NEW PLOTTING SCHEME
-
-#### OLD PLOTTING SCHEME
-#plt.ion()
-##if matplotlib.is_interactive():
-##	pylab.ioff()
-#fig = plt.figure()
-
-### NEW PLOTTING CODE
-#ax = fig.add_subplot(131)
-#ay = fig.add_subplot(132)
-#az = fig.add_subplot(133)
-#fig.suptitle('Cell system')
-#ax.set_title('Cells') 
-#ay.set_title('LGF') 
-#az.set_title('SGF') 
-
-#ax.imshow(agentsGrid, origin='lower', cmap='PuOr', interpolation='none', vmin = -1, vmax = 1)
-#ay.imshow(sgfGrid, origin='lower', cmap='binary', interpolation='none', vmin = 0, vmax = 10)
-#az.imshow(lgfGrid, origin='lower', cmap='binary', interpolation='none', vmin = 0, vmax = 10)
-##ax.legend(loc='best')
-##plt.show()
-#fig.canvas.draw()
-
-### END PLOTTING CODE
-
-
-### OLD PLOTTING CODE
-#plt.ioff()
-#plt.gcf().show()
-#im = plt.imshow(agentsGrid, origin='lower', cmap='PuOr', interpolation='none', vmin =-1, vmax = 1)
-##im.set_data(agentsGrid)
-#plt.colorbar()
-#plt.show()
-##plt.draw()
-#### END OF OLD PLOTTING CODE
-
-#### END OF OLD PLOTTING SCHEME
 
 itime = 0
 
@@ -140,15 +87,10 @@ while itime < timeSteps:
     #    action = getattr(tmpCellList[rndCell], state)
     #    action(cellGrid, cellList)
     # while
-    
-    ## IMSHOW PLOT, must be in the fire spread while            
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     #        Plot                #
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-
-	#### NEW PLOTTING SCHEME
-
     Environment.AntGridPlot(cellGrid,
                 nLattice,
                 cellsFigure, 
@@ -159,53 +101,9 @@ while itime < timeSteps:
                 sgfPlot, 
                 lgfPlot)
 
-    #### END OF NEW PLOTTING SCHEME
-
-    #=========================================================================================================
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
-    #### OLD PLOTTING SCHEME
-    #### NEW CODE
-    #plt.clf()
-    #im.imshow(agentsGrid, origin='lower', cmap='PuOr', interpolation='none', vmin = -1, vmax = 1)
-    ##ay.imshow(sgfGrid, origin='lower', cmap='binary', interpolation='none', vmin = 0, vmax = 10)
-    ##az.imshow(lgfGrid, origin='lower', cmap='binary', interpolation='none', vmin = 0, vmax = 10)
-    #fig.canvas.update()
-    #fig.canvas.flush_events()
-    ##fig.canvas.draw()
-    ##time.sleep(0.5) 
-
-    #### NEW CODE
-
-    #### OLD CODE
-
-##    plt.clf()
-##    im = plt.imshow(agentsGrid, origin='lower', cmap='PuOr', interpolation='none', vmin =-1, vmax = 1)
-##    #im.set_data(agentsGrid)
-##    plt.colorbar()
-##    #im.set_visible(False)
-##    #plt.ion()
-##    fig.canvas.update()
-##    fig.canvas.flush_events()
-##    #plt.ioff()
-##    #im.draw_artist(cellGrid)
-##    #plt.show()
-##    #time.sleep(0.75) 
-##    #plt.savefig('fire_spread-p'+str(p)+'-f'+str(f)+'-timeStep'+str(time)+'.png', bbox_inches='tight')
-
-#### OLD CODE
-#### END of old plotting scheme
-
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    #=========================================================================================================
-    
-
     itime += 1
 
 # while    
-
-# WARNING part of the old plotting scheme 
-#plt.ioff()
 
 print(str(timeSteps)+' time steps complete')
 

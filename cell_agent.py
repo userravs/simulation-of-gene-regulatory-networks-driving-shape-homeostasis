@@ -2,23 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from tools import *
 
-	# Functions used to deal with neighbours
-#def CheckInBorders(self, xCoord, yCoord):
-#	if xCoord >= 0 and xCoord <= self.border: 	# Check if the neighbour is inbounds on x axis
-#		return False
-#	elif yCoord >= 0 and yCoord <= self.border:	# Check if the neighbour is inbounds on y axis
-#		return False
-#	else:
-#		return True
-# CheckInBorders
-	
-#def CheckifOccupied(self, xCoord, yCoord, grid):
-#	if grid[xCoord, yCoord][0] == 1:
-#		return True
-#	else:
-#		return False
-# CheckifOccupied
-
 class cell:
 	# defines whats needed when a new agent (Cell) of this class is created
 	def __init__(self, xPos, yPos):
@@ -57,29 +40,12 @@ class cell:
 		# returns a list of possible neighbours which are not the prefered
 		return neighbourList
 
-	# Functions used to deal with neighbours
-#	def CheckInBorders(self, xCoord, yCoord, border):
-#		if xCoord >= 0 and xCoord <= border: 	# Check if the neighbour is inbounds on x axis
-#			return False
-#		elif yCoord >= 0 and yCoord <= border:	# Check if the neighbour is inbounds on y axis
-#			return False
-#		else:
-#			return True
-	# CheckInBorders
-
 	def CheckifPreferred(self, xCoord, yCoord):
 		if xCoord == self.orientation[0] and self.orientation[1] == 1:
 			return True
 		else:
 			return False
 	# CheckifPreferred
-
-#	def CheckifOccupied(self, xCoord, yCoord, grid):
-#		if grid[xCoord, yCoord][0] == 1:
-#			return True
-#		else:
-#			return False
-	# CheckifOccupied
 
 	def Sense(self):
 		# sense chemicals from the grid
