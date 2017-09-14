@@ -3,10 +3,10 @@ import time
 import random 
 import numpy as np
 import matplotlib.pyplot as plt
-#import matplotlib
+# self made classes
 from cell_agent import *    # it is allowed to call from this class because there's an __init__.py file in this directory
 from tools import *
-
+from plot import *
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #    	Functions                  #
@@ -27,7 +27,7 @@ from tools import *
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #    	PARAMETERS                 #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-nLattice = 100 					# Lattice Size
+nLattice = 100 					# TODO change name
 timeSteps = 80 					# Number of simulation time steps
 cellGrid = np.zeros([nLattice,nLattice,3]) 	# Initialize empty grid
 SGF_read = 0    				# in the future values will be read from the grid
@@ -39,20 +39,28 @@ cellList = []
 # create mother cell and update the grid with its initial location
 cellList.append(cell(ix,iy))
 cellGrid[ix][iy][0] = 1
-agentsGrid = cellGrid[:,:,0] 		# slice the grid to get the layer with the cell positions
-sgfGrid = cellGrid[:,:,1] 		# slice the grid to get the layer with the cell positions
-lgfGrid = cellGrid[:,:,2] 		# slice the grid to get the layer with the cell positions
+#agentsGrid = cellGrid[:,:,0] 		# slice the grid to get the layer with the cell positions
+#sgfGrid = cellGrid[:,:,1] 		# slice the grid to get the layer with the cell positions
+#lgfGrid = cellGrid[:,:,2] 		# slice the grid to get the layer with the cell positions
+
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #    	INITIALIZATION             #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-plt.ion()
-#if matplotlib.is_interactive():
-#	pylab.ioff()
-fig = plt.figure()
+#### NEW PLOTTING SCHEME
 
-#### NEW PLOTTING CODE
+cellsFigure, cellsSubplot, sgfSubplot, lgfSubplot, cellPlot, sgfPlot, lgfPlot = Environment.CellsGridFigure(nLattice)
+
+#### END OF NEW PLOTTING SCHEME
+
+#### OLD PLOTTING SCHEME
+#plt.ion()
+##if matplotlib.is_interactive():
+##	pylab.ioff()
+#fig = plt.figure()
+
+### NEW PLOTTING CODE
 #ax = fig.add_subplot(131)
 #ay = fig.add_subplot(132)
 #az = fig.add_subplot(133)
@@ -73,13 +81,15 @@ fig = plt.figure()
 
 ### OLD PLOTTING CODE
 #plt.ioff()
-plt.gcf().show()
-im = plt.imshow(agentsGrid, origin='lower', cmap='PuOr', interpolation='none', vmin =-1, vmax = 1)
-#im.set_data(agentsGrid)
-plt.colorbar()
-plt.show()
-#plt.draw()
-### END OF OLD PLOTTING CODE
+#plt.gcf().show()
+#im = plt.imshow(agentsGrid, origin='lower', cmap='PuOr', interpolation='none', vmin =-1, vmax = 1)
+##im.set_data(agentsGrid)
+#plt.colorbar()
+#plt.show()
+##plt.draw()
+#### END OF OLD PLOTTING CODE
+
+#### END OF OLD PLOTTING SCHEME
 
 itime = 0
 
@@ -137,41 +147,65 @@ while itime < timeSteps:
     #        Plot                #
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-### NEW CODE
-    plt.clf()
-    im.imshow(agentsGrid, origin='lower', cmap='PuOr', interpolation='none', vmin = -1, vmax = 1)
-    #ay.imshow(sgfGrid, origin='lower', cmap='binary', interpolation='none', vmin = 0, vmax = 10)
-    #az.imshow(lgfGrid, origin='lower', cmap='binary', interpolation='none', vmin = 0, vmax = 10)
-    fig.canvas.update()
-    fig.canvas.flush_events()
-    #fig.canvas.draw()
-    #time.sleep(0.5) 
+	#### NEW PLOTTING SCHEME
 
-### NEW CODE
+    Environment.AntGridPlot(cellGrid,
+                nLattice,
+                cellsFigure, 
+                cellsSubplot, 
+                sgfSubplot, 
+                lgfSubplot, 
+                cellPlot, 
+                sgfPlot, 
+                lgfPlot)
 
-### OLD CODE
+    #### END OF NEW PLOTTING SCHEME
 
-#    plt.clf()
-#    im = plt.imshow(agentsGrid, origin='lower', cmap='PuOr', interpolation='none', vmin =-1, vmax = 1)
-#    #im.set_data(agentsGrid)
-#    plt.colorbar()
-#    #im.set_visible(False)
-#    #plt.ion()
-#    fig.canvas.update()
-#    fig.canvas.flush_events()
-#    #plt.ioff()
-#    #im.draw_artist(cellGrid)
-#    #plt.show()
-#    #time.sleep(0.75) 
-#    #plt.savefig('fire_spread-p'+str(p)+'-f'+str(f)+'-timeStep'+str(time)+'.png', bbox_inches='tight')
+    #=========================================================================================================
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    #### OLD PLOTTING SCHEME
+    #### NEW CODE
+    #plt.clf()
+    #im.imshow(agentsGrid, origin='lower', cmap='PuOr', interpolation='none', vmin = -1, vmax = 1)
+    ##ay.imshow(sgfGrid, origin='lower', cmap='binary', interpolation='none', vmin = 0, vmax = 10)
+    ##az.imshow(lgfGrid, origin='lower', cmap='binary', interpolation='none', vmin = 0, vmax = 10)
+    #fig.canvas.update()
+    #fig.canvas.flush_events()
+    ##fig.canvas.draw()
+    ##time.sleep(0.5) 
 
-### OLD CODE
+    #### NEW CODE
+
+    #### OLD CODE
+
+##    plt.clf()
+##    im = plt.imshow(agentsGrid, origin='lower', cmap='PuOr', interpolation='none', vmin =-1, vmax = 1)
+##    #im.set_data(agentsGrid)
+##    plt.colorbar()
+##    #im.set_visible(False)
+##    #plt.ion()
+##    fig.canvas.update()
+##    fig.canvas.flush_events()
+##    #plt.ioff()
+##    #im.draw_artist(cellGrid)
+##    #plt.show()
+##    #time.sleep(0.75) 
+##    #plt.savefig('fire_spread-p'+str(p)+'-f'+str(f)+'-timeStep'+str(time)+'.png', bbox_inches='tight')
+
+#### OLD CODE
+#### END of old plotting scheme
+
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #=========================================================================================================
+    
 
     itime += 1
 
 # while    
 
-plt.ioff()
+# WARNING part of the old plotting scheme 
+#plt.ioff()
 
 print(str(timeSteps)+' time steps complete')
 
