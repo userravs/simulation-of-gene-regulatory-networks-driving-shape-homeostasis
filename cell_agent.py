@@ -8,10 +8,12 @@ class cell:
         self.xPos = xPos                          # Initial position on x axis
         self.yPos = yPos                          # Initial position on y axis
         self.splitCounter = 0                     # Counter for splitting
-        self.splitTime = 1                        # Time scale for splitting
+        self.splitTime = 2                        # Time scale for splitting
+        self.dieCounter = 0                       # Counter for dying
+        self.dieTime = 3                         # Time scale for dying        
         self.quietCounter = 0                     # Quiet counter
         self.orientation = [self.xPos,self.yPos]  # Preferred direction. DEFAULT: own position
-        self.compass = False                      # Polarisation: ON/OFF
+        self.compass = True                      # Polarisation: ON/OFF
         self.state = 'Quiet'                      # State of the cell. DEFAULT: quiet
         self.border = 0                           # size of the lattice
         self.sgfAmount = 0
@@ -64,7 +66,7 @@ class cell:
         # possible states: split, move, die
         iStatus = np.random.random()        # Proliferate:  Split
         jStatus = np.random.random()        # Move:         Move
-        kStatus = 0 #np.random.random()     # Apoptosis:    Die
+        kStatus = np.random.random()     # Apoptosis:    Die
         # values for SGF and LGF
         self.sgfAmount = np.random.randint(5)
         self.lgfAmount = np.random.randint(5)
@@ -75,9 +77,9 @@ class cell:
         # WARNING This code need to be revisited depending on the implementation of the NN later on
         if self.compass:
             # boundaries for orientation
-            nBoundary = 0.25
-            sBoundary = 0.5
-            eBoundary = 0.75
+            nBoundary = 0.15
+            #sBoundary = 0.5
+            #eBoundary = 0.75
             #wBoundary = 1
             arrow = np.random.random()
             if arrow < nBoundary:
@@ -86,20 +88,20 @@ class cell:
                 # orientation North
                 if CheckInBorders(xCoord, yCoord, border):
                     self.orientation = [xCoord, yCoord]
-            elif arrow < sBoundary:
-                # orientation South
-                xCoord = self.xPos + 1
-                yCoord = self.yPos
-                # orientation North
-                if CheckInBorders(xCoord, yCoord, border):
-                    self.orientation = [xCoord, yCoord]
-            elif arrow < eBoundary:
-                # orientation East
-                xCoord = self.xPos
-                yCoord = self.yPos + 1
-                # orientation North
-                if CheckInBorders(xCoord, yCoord, border):
-                    self.orientation = [xCoord, yCoord]
+            #elif arrow < sBoundary:
+                ## orientation South
+                #xCoord = self.xPos + 1
+                #yCoord = self.yPos
+                ## orientation North
+                #if CheckInBorders(xCoord, yCoord, border):
+                    #self.orientation = [xCoord, yCoord]
+            #elif arrow < eBoundary:
+                ## orientation East
+                #xCoord = self.xPos
+                #yCoord = self.yPos + 1
+                ## orientation North
+                #if CheckInBorders(xCoord, yCoord, border):
+                    #self.orientation = [xCoord, yCoord]
             else:	#arrow < wBoundary:
                 # orientation West
                 xCoord = self.xPos
@@ -139,7 +141,7 @@ class cell:
     # Quiet
 
     def Die(self, grid):
-        grid[self.xPos][self.yPos][0] = 0
+            grid[self.xPos][self.yPos][0] = 0
     # Die
 
     # TODO or not...

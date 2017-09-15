@@ -23,7 +23,7 @@ def CheckifOccupied(xCoord, yCoord, grid):
 # CheckifOccupied
 
 def CheckifPreferred(xOri, yOri, xCoord, yCoord):
-    if xCoord == xOri and yCoord == xOri:
+    if xCoord == xOri and yCoord == yOri:
         return True
     else:
         return False

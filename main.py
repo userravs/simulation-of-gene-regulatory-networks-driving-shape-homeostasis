@@ -15,8 +15,8 @@ from plot import *
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #    	PARAMETERS                 #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-nLattice = 40                              # TODO change name
-timeSteps = 50                              # Number of simulation time steps
+nLattice = 100                              # TODO change name
+timeSteps = 200                              # Number of simulation time steps
 cellGrid = np.zeros([nLattice,nLattice,3])  # Initialize empty grid
 SGF_read = 0                                # in the future values will be read from the grid
 LGF_read = 0
@@ -79,10 +79,12 @@ while itime < timeSteps:
          
 	# WARNING see TODO
         else: # Die
-            tmpCellList[rndCell].Die(cellGrid)      # Off the grid
-            del tmpCellList[rndCell]
-            # TODO this way of killing the cell doesn't work, cellList and tmpCellList not necesarily have the same length 
-            del cellList[rndCell]                   # Actual death                
+            tmpCellList[rndCell].dieCounter += 1
+            if tmpCellList[rndCell].dieCounter == tmpCellList[rndCell].dieTime:
+                tmpCellList[rndCell].Die(cellGrid)      # Off the grid
+                del tmpCellList[rndCell]
+                # TODO this way of killing the cell doesn't work, cellList and tmpCellList not necesarily have the same length 
+                del cellList[rndCell]                   # Actual death                
 
     ### TEST! equivalent to: cellList[cell].'status'(param_x,param_y)
     #    state = getattr(tmpCellList[rndCell], status)
