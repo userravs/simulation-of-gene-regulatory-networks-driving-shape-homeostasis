@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
+from matplotlib.colors import ListedColormap
 
 class Environment:
 
@@ -24,14 +24,25 @@ class Environment:
         lgfSubplot.set_title('LGF') 
 
     #		plt.axis('off')
-
-        cellPlot = cellsSubplot.imshow(cellGrid, origin = 'lower', cmap = 'hsv', interpolation = 'none', vmin = -1, vmax = 3)
+        
+        #discrete color scheme
+        #cMap = ListedColormap(['white', 'green', 'blue','red'])
+        
+        cellPlot = cellsSubplot.imshow(cellGrid, origin = 'lower', cmap = 'bwr', interpolation = 'none', vmin = -1, vmax = 3)
+        #cbar1 = colorbar(cellPlot, ticks = [0, 1, 2, 3])
+        #cellsSubplot.set_yticklabels(['no cell', 'quiet', 'moved', 'splitted'])  # vertically oriented colorbar
         plt.show(block=False)
+
         sgfPlot = sgfSubplot.imshow(sgfGrid, origin = 'lower', cmap = 'binary', interpolation = 'none', vmin = 0, vmax = 50)
-        plt.show(block=False)
-        lgfPlot = lgfSubplot.imshow(lgfGrid, origin = 'lower', cmap = 'binary', interpolation = 'none', vmin = 0, vmax = 50)
+        #cbar2 = cellsFigure.colorbar(sgfPlot) #, ticks=[0, 1, 2, 3])
+        #cbar2.sgfPlot.set_yticklabels(['no cell', 'quiet', 'moved', 'splitted'])  # vertically oriented colorbar        
         plt.show(block=False)
 
+        lgfPlot = lgfSubplot.imshow(lgfGrid, origin = 'lower', cmap = 'binary', interpolation = 'none', vmin = 0, vmax = 50)
+        #cbar3 = cellsFigure.colorbar(lgfPlot) #, ticks=[0, 1, 2, 3])
+        #cbar3.lgfPlot.set_yticklabels(['no cell', 'quiet', 'moved', 'splitted'])  # vertically oriented colorbar
+        plt.show(block=False)
+        
         plt.ion()
         plt.pause(0.001)
         cellsFigure.canvas.draw()

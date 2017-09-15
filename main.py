@@ -43,14 +43,14 @@ while itime < timeSteps:
     # DEBUG 
     print('\ntime step #' + str(itime))
     
-    tmpCellList = list(cellList)                                # a copy of the list of current cells is used to iterate over all the cells
-    
-    while len(tmpCellList) > 0:                                 # while  the tmp list of cells is longer than 1
-        rndCell = np.random.randint(len(tmpCellList))           # choose a random cell in the list of existing cells
+    tmpCellList = list(cellList)                                    # a copy of the list of current cells is used to iterate over all the cells
+    while len(tmpCellList) > 0:                                     # while  the tmp list of cells is longer than 1
+        rndCell = np.random.randint(len(tmpCellList))               # choose a random cell in the list of existing cells
         # random cell should decide and action
-        tmpCellList[rndCell].border = nLattice
+        tmpCellList[rndCell].border = nLattice                      # store lattice size
+        SGF_reading, LGF_reading = tmpCellList[rndCell].Sense()     # read chemicals
         # first update cell status
-        tmpCellList[rndCell].GenerateStatus(SGF_read, LGF_read) # get status of this cell
+        tmpCellList[rndCell].GenerateStatus(SGF_read, LGF_read)     # get status of this cell
 
         # DEBUG
         print('cell number: ' + str(len(cellList)) + '\nCell status: ' + str(tmpCellList[rndCell].state))# + '\n')
@@ -58,11 +58,11 @@ while itime < timeSteps:
         #        Cell Action                #
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#        
         # according to cell status perform action: split or stay quiet
-        if tmpCellList[rndCell].state == 'Quiet':       # Check the state
-            tmpCellList[rndCell].Quiet(cellGrid)        # call method that performs selected action
+        if tmpCellList[rndCell].state == 'Quiet':                   # Check the state
+            tmpCellList[rndCell].Quiet(cellGrid)                    # call method that performs selected action
             tmpCellList[rndCell].sgfProduce(cellGrid)
             tmpCellList[rndCell].lgfProduce(cellGrid)
-            del tmpCellList[rndCell]                    # delete cell from temporal list
+            del tmpCellList[rndCell]                                # delete cell from temporal list
          
         elif tmpCellList[rndCell].state == 'Split':
             tmpCellList[rndCell].Split2(cellGrid,cellList)
@@ -78,14 +78,14 @@ while itime < timeSteps:
         else: # Die
             tmpCellList[rndCell].dieCounter += 1
             if tmpCellList[rndCell].dieCounter == tmpCellList[rndCell].dieTime:
-                tmpCellList[rndCell].Die(cellGrid)      # Off the grid, method also changes the "amidead" switch to True
+                tmpCellList[rndCell].Die(cellGrid)                  # Off the grid, method also changes the "amidead" switch to True
                 del tmpCellList[rndCell]
                 # TODO this way of killing the cell doesn't work, cellList and tmpCellList not necesarily have the same length 
                 # del cellList[rndCell]                 # Actual death                
 
     #deathNote = []
     listLength = len(cellList) - 1
-    for jCell in range(listLength,-1,-1):                  # checks every cell and if it was set to die then do
+    for jCell in range(listLength,-1,-1):                           # checks every cell and if it was set to die then do
         #print('len(cellList): ' + str(len(cellList)) + '. Current element: ' + str(jCell))
         if cellList[jCell].amidead:
             print('cell died!')

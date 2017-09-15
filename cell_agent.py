@@ -47,10 +47,10 @@ class cell:
 
     def Sense(self):
         # sense chemicals from the grid
-        SGF_read = grid[self.xPos, self.yPos][1] # grid contains three values on each coordinate: 
-        LGF_read = grid[self.xPos, self.yPos][2] # occupation (boolean), SGF level, LGF level
+        SGF_reading = grid[self.xPos, self.yPos][1] # grid contains three values on each coordinate: 
+        LGF_reading = grid[self.xPos, self.yPos][2] # occupation (boolean), SGF level, LGF level
         #reads = [SGF_read, LGF_read]
-        return SGF_read, LGF_read
+        return SGF_reading, LGF_reading
     # Sense   
 
     def sgfProduce(self, grid):
