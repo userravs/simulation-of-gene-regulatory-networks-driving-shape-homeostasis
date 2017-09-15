@@ -16,7 +16,7 @@ def CheckInBorders(xCoord, yCoord, border):
 # CheckInBorders
     
 def CheckifOccupied(xCoord, yCoord, grid):
-    if grid[xCoord, yCoord][0] == 1:
+    if grid[xCoord, yCoord][0] != 0:
         return True
     else:
         return False

@@ -5,11 +5,12 @@ import matplotlib.pyplot as plt
 class Environment:
 
     def CellsGridFigure(fieldSize):
-        cellsFigure = plt.figure(figsize=(15,5))				# initilize FIGURE, does is need name, figsize?
+        plt.close()
+        cellsFigure = plt.figure(figsize=(15,5))                # initilize FIGURE, does is need name, figsize?
 
         cellsFigure.suptitle('Cell system')
 
-        cellGrid = np.zeros([fieldSize, fieldSize])		# may need a new name, same as in main...
+        cellGrid = np.zeros([fieldSize, fieldSize])             # may need a new name, same as in main...
         sgfGrid = np.zeros([fieldSize, fieldSize])
         lgfGrid = np.zeros([fieldSize, fieldSize])
 
@@ -24,7 +25,7 @@ class Environment:
 
     #		plt.axis('off')
 
-        cellPlot = cellsSubplot.imshow(cellGrid, origin = 'lower', cmap = 'PuOr', interpolation = 'none', vmin = -1, vmax = 1)
+        cellPlot = cellsSubplot.imshow(cellGrid, origin = 'lower', cmap = 'hsv', interpolation = 'none', vmin = -1, vmax = 3)
         plt.show(block=False)
         sgfPlot = sgfSubplot.imshow(sgfGrid, origin = 'lower', cmap = 'binary', interpolation = 'none', vmin = 0, vmax = 50)
         plt.show(block=False)

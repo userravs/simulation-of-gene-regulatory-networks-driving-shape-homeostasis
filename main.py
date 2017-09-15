@@ -15,7 +15,7 @@ from plot import *
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #    	PARAMETERS                 #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-nLattice = 100                              # TODO change name
+nLattice = 50                              # TODO change name
 timeSteps = 200                              # Number of simulation time steps
 cellGrid = np.zeros([nLattice,nLattice,3])  # Initialize empty grid
 SGF_read = 0                                # in the future values will be read from the grid
@@ -27,9 +27,6 @@ cellList = []
 # create mother cell and update the grid with its initial location
 cellList.append(cell(ix,iy))
 cellGrid[ix][iy][0] = 1
-#agentsGrid = cellGrid[:,:,0]               # slice the grid to get the layer with the cell positions
-#sgfGrid = cellGrid[:,:,1]                  # slice the grid to get the layer with the cell positions
-#lgfGrid = cellGrid[:,:,2]                  # slice the grid to get the layer with the cell positions
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #    	INITIALIZATION             #
@@ -62,7 +59,7 @@ while itime < timeSteps:
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#        
         # according to cell status perform action: split or stay quiet
         if tmpCellList[rndCell].state == 'Quiet':       # Check the state
-            tmpCellList[rndCell].Quiet()                # call method that performs selected action
+            tmpCellList[rndCell].Quiet(cellGrid)        # call method that performs selected action
             tmpCellList[rndCell].sgfProduce(cellGrid)
             tmpCellList[rndCell].lgfProduce(cellGrid)
             del tmpCellList[rndCell]                    # delete cell from temporal list
@@ -81,15 +78,27 @@ while itime < timeSteps:
         else: # Die
             tmpCellList[rndCell].dieCounter += 1
             if tmpCellList[rndCell].dieCounter == tmpCellList[rndCell].dieTime:
-                tmpCellList[rndCell].Die(cellGrid)      # Off the grid
+                tmpCellList[rndCell].Die(cellGrid)      # Off the grid, method also changes the "amidead" switch to True
                 del tmpCellList[rndCell]
                 # TODO this way of killing the cell doesn't work, cellList and tmpCellList not necesarily have the same length 
-                del cellList[rndCell]                   # Actual death                
+                # del cellList[rndCell]                 # Actual death                
 
+    #deathNote = []
+    listLength = len(cellList) - 1
+    for jCell in range(listLength,-1,-1):                  # checks every cell and if it was set to die then do
+        #print('len(cellList): ' + str(len(cellList)) + '. Current element: ' + str(jCell))
+        if cellList[jCell].amidead:
+            print('cell died!')
+            #deathNote.append(jCell)
+            del cellList[jCell]
+    
+    
+    
     ### TEST! equivalent to: cellList[cell].'status'(param_x,param_y)
     #    state = getattr(tmpCellList[rndCell], status)
     #    action = getattr(tmpCellList[rndCell], state)
     #    action(cellGrid, cellList)
+    
     # while
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~#

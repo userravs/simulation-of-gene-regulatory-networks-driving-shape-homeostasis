@@ -5,18 +5,19 @@ from tools import *
 class cell:
     # defines whats needed when a new agent (Cell) of this class is created
     def __init__(self, xPos, yPos):
-        self.xPos = xPos                          # Initial position on x axis
-        self.yPos = yPos                          # Initial position on y axis
-        self.splitCounter = 0                     # Counter for splitting
-        self.splitTime = 2                        # Time scale for splitting
-        self.dieCounter = 0                       # Counter for dying
-        self.dieTime = 3                         # Time scale for dying        
-        self.quietCounter = 0                     # Quiet counter
-        self.orientation = [self.xPos,self.yPos]  # Preferred direction. DEFAULT: own position
-        self.compass = True                      # Polarisation: ON/OFF
-        self.state = 'Quiet'                      # State of the cell. DEFAULT: quiet
-        self.border = 0                           # size of the lattice
-        self.sgfAmount = 0
+        self.xPos = xPos                            # Initial position on x axis
+        self.yPos = yPos                            # Initial position on y axis
+        self.splitCounter = 0                       # Counter for splitting
+        self.splitTime = 2                          # Time scale for splitting
+        self.dieCounter = 0                         # Counter for dying
+        self.dieTime = 3                            # Time scale for dying
+        self.amidead = False                        # Cell dead or alive
+        self.quietCounter = 0                       # Quiet counter
+        self.orientation = [self.xPos,self.yPos]    # Preferred direction. DEFAULT: own position
+        self.compass = False                         # Polarisation: ON/OFF
+        self.state = 'Quiet'                        # State of the cell. DEFAULT: quiet
+        self.border = 0                             # size of the lattice
+        self.sgfAmount = 0                          # Amount of "pheromone" to deposit in the grid
         self.lgfAmount = 0
     # self
 
@@ -24,25 +25,25 @@ class cell:
         #return
 
     # WARNING Do I use this method??
-    def GetNeighbours(self, grid, border):
-        neighbourList = []
-        # TODO check if this works if orientation is OFF
-        # if orientation is OFF the method returns the probable neighbours
-        if self.xPos - 1 >= 0: # if coordinate is in-bounds
-            if grid[self.xPos - 1, self.yPos][0] == 0 and self.orientation[0] != self.xPos - 1 and self.orientation[1] != self.yPos:
-                # if is not occupied and not the preferred neighbour
-                neighbourList.append([self.xPos - 1, self.yPos]) 
-        if self.xPos + 1 <= border:
-            if grid[self.xPos + 1, self.yPos][0] == 0 and self.orientation[0] != self.xPos + 1 and self.orientation[1] != self.yPos:
-                neighbourList.append([self.xPos + 1, self.yPos])
-        if self.yPos - 1 >= 0:
-            if grid[self.xPos, self.yPos - 1][0] == 0 and self.orientation[0] != self.xPos and self.orientation[1] != self.yPos - 1:
-                neighbourList.append([self.xPos, self.yPos - 1])
-        if self.yPos + 1 <= border:
-            if grid[self.xPos, self.yPos + 1][0] == 0 and self.orientation[0] != self.xPos and self.orientation[1] != self.yPos + 1:
-                neighbourList.append([self.xPos, self.yPos + 1])
-        # returns a list of possible neighbours which are not the prefered
-        return neighbourList
+    #def GetNeighbours(self, grid, border):
+        #neighbourList = []
+        ## TODO check if this works if orientation is OFF
+        ## if orientation is OFF the method returns the probable neighbours
+        #if self.xPos - 1 >= 0: # if coordinate is in-bounds
+            #if grid[self.xPos - 1, self.yPos][0] == 0 and self.orientation[0] != self.xPos - 1 and self.orientation[1] != self.yPos:
+                ## if is not occupied and not the preferred neighbour
+                #neighbourList.append([self.xPos - 1, self.yPos]) 
+        #if self.xPos + 1 <= border:
+            #if grid[self.xPos + 1, self.yPos][0] == 0 and self.orientation[0] != self.xPos + 1 and self.orientation[1] != self.yPos:
+                #neighbourList.append([self.xPos + 1, self.yPos])
+        #if self.yPos - 1 >= 0:
+            #if grid[self.xPos, self.yPos - 1][0] == 0 and self.orientation[0] != self.xPos and self.orientation[1] != self.yPos - 1:
+                #neighbourList.append([self.xPos, self.yPos - 1])
+        #if self.yPos + 1 <= border:
+            #if grid[self.xPos, self.yPos + 1][0] == 0 and self.orientation[0] != self.xPos and self.orientation[1] != self.yPos + 1:
+                #neighbourList.append([self.xPos, self.yPos + 1])
+        ## returns a list of possible neighbours which are not the prefered
+        #return neighbourList
 
     def Sense(self):
         # sense chemicals from the grid
@@ -66,7 +67,7 @@ class cell:
         # possible states: split, move, die
         iStatus = np.random.random()        # Proliferate:  Split
         jStatus = np.random.random()        # Move:         Move
-        kStatus = np.random.random()     # Apoptosis:    Die
+        kStatus = np.random.random()        # Apoptosis:    Die
         # values for SGF and LGF
         self.sgfAmount = np.random.randint(5)
         self.lgfAmount = np.random.randint(5)
@@ -136,22 +137,18 @@ class cell:
             print('split = ' + str(iStatus) + ', move = ' + str(jStatus) + '\ndie = ' + str(kStatus) + '. Max: '+ str(maxVal) + '\n')
     # GenerateStatus
 
-    def Quiet(self):
+    def Quiet(self,grid):
+        grid[self.xPos][self.yPos][0] = 1
         self.quietCounter += 1
     # Quiet
 
     def Die(self, grid):
-            grid[self.xPos][self.yPos][0] = 0
+        self.amidead = True
+        grid[self.xPos][self.yPos][0] = 0
     # Die
-
-    # TODO or not...
-    def OrientedMove(self, grid, cellList):
-        print('ala')
-    # OrientedMove
 
     def Move(self, grid):
         # check a randomly generated neighbour if occupied
-        print('moving!!')
         r = np.random.randint(4)
         # check if spot is occupied
         if r == 0:
@@ -184,7 +181,7 @@ class cell:
             print('move failed\n')
     # Move
 
-    # TEST!!!	OrientedMove, works with orientation ON and OFF
+    # OrientedMove, works with orientation ON and OFF
     def Move2(self, grid):
         # create a list with the four Von Neumann neighbours
         neighbourList = [[self.xPos - 1, self.yPos],[self.xPos + 1, self.yPos],[self.xPos, self.yPos - 1],[self.xPos, self.yPos + 1]]
@@ -193,7 +190,6 @@ class cell:
         movePos = []
         needOtherNeighbours = True
         border = self.border - 1
-
 
         for neighbr in neighbourList:                               # for each possible neighbour:
             if CheckInBorders(neighbr[0], neighbr[1], border):      # if neighbour is inbunds:
@@ -222,22 +218,17 @@ class cell:
             movePos.append(tmpList[r][1])
             #finalList.append(tmpList[r])
         if len(movePos) > 0:
-            grid[movePos[0]][movePos[1]][0] = 1
+            grid[movePos[0]][movePos[1]][0] = 2                     # to plot with a different color
             grid[self.xPos][self.yPos][0] = 0
             self.xPos = movePos[0]
             self.yPos = movePos[1]
             print('cell moved!')
         else:
+            grid[self.xPos][self.yPos][0] = 1
             print('moving failed\n')
     # Move2
 
-    # TODO
-    def OrientedSplit(self, grid, cellList):
-        print('ala')	
-    # OrientedSplit
-
     def Split(self, grid, cellList):
-        print('splitting!!')
         self.splitCounter += 1
         if self.splitCounter == self.splitTime:
             self.splitCounter = 0
@@ -269,10 +260,9 @@ class cell:
                 print('split failed\n')
     # Split
 
-    # TEST!! works with polarisation ON and OFF
+    # works with polarisation ON and OFF
     # initial for and then if are the same as in Move2, might be useful to use a single function
     def Split2(self, grid, cellList):
-        print('splitting!!')
         self.splitCounter += 1
         if self.splitCounter == self.splitTime:
             self.splitCounter = 0
@@ -312,10 +302,12 @@ class cell:
                 movePos.append(tmpList[r][1])
                 #finalList.append(tmpList[r])
             if len(movePos) > 0:
+                grid[self.xPos][self.yPos][0] = 3
                 cellList.append(cell(movePos[0], movePos[1]))
                 grid[movePos[0]][movePos[1]][0] = 1
                 print('new cell created!')
             else:
+                grid[self.xPos][self.yPos][0] = 1
                 print('split failed\n')
         else:
             print('split counter + 1\n')
