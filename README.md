@@ -1,4 +1,9 @@
+
+
 # CA
+
+## Useful links
+* ffmpeg -f image2 -pattern_type glob -framerate 24 -i 'cell_system-*.png' -s 1024x1024 cell_system.avi
 
 ## Thesis events
 ### 20170901: Started working 

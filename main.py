@@ -48,7 +48,7 @@ while itime < timeSteps:
         rndCell = np.random.randint(len(tmpCellList))               # choose a random cell in the list of existing cells
         # random cell should decide and action
         tmpCellList[rndCell].border = nLattice                      # store lattice size
-        SGF_reading, LGF_reading = tmpCellList[rndCell].Sense()     # read chemicals
+        SGF_reading, LGF_reading = tmpCellList[rndCell].Sense(cellGrid)     # read chemicals
         # first update cell status
         tmpCellList[rndCell].GenerateStatus(SGF_read, LGF_read)     # get status of this cell
 
@@ -112,7 +112,7 @@ while itime < timeSteps:
                 lgfSubplot, 
                 cellPlot, 
                 sgfPlot, 
-                lgfPlot)
+                lgfPlot,itime)
 
     itime += 1
 

@@ -60,24 +60,24 @@ class Environment:
             lgfSubplot, 
             cellPlot, 
             sgfPlot, 
-            lgfPlot):
+            lgfPlot,tStep):
 
         cell_data = cellGrid[:,:,0] 		# slice the grid to get the layer with the cell positions
         sgf_data = cellGrid[:,:,1] 		# slice the grid to get the layer with the cell positions
         lgf_data = cellGrid[:,:,2] 		# slice the grid to get the layer with the cell positions
 
-        Environment.UpdatePlot(cellsFigure, cellsSubplot, sgfSubplot, lgfSubplot, cellPlot, sgfPlot, lgfPlot, cell_data, sgf_data, lgf_data)
+        Environment.UpdatePlot(cellsFigure, cellsSubplot, sgfSubplot, lgfSubplot, cellPlot, sgfPlot, lgfPlot, cell_data, sgf_data, lgf_data,tStep)
 
-    def UpdatePlot(	cellsFigure, 
-            cellsSubplot, 
-            sgfSubplot, 
-            lgfSubplot, 
-            cellPlot, 
-            sgfPlot, 
-            lgfPlot,
-            cell_data, 
-            sgf_data,
-            lgf_data):
+    def UpdatePlot( cellsFigure, 
+                    cellsSubplot, 
+                    sgfSubplot, 
+                    lgfSubplot, 
+                    cellPlot, 
+                    sgfPlot, 
+                    lgfPlot,
+                    cell_data, 
+                    sgf_data,
+                    lgf_data,tStep):
         #
         cellPlot.set_data(cell_data)
         sgfPlot.set_data(sgf_data)
@@ -90,5 +90,6 @@ class Environment:
         #
         cellsFigure.canvas.update()
         cellsFigure.canvas.flush_events()
+        plt.savefig('cell_system-' + '{:03d}'.format(tStep) + '.png', bbox_inches='tight')
     # UpdatePlot
     # Environment

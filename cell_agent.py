@@ -45,7 +45,7 @@ class cell:
         ## returns a list of possible neighbours which are not the prefered
         #return neighbourList
 
-    def Sense(self):
+    def Sense(self, grid):
         # sense chemicals from the grid
         SGF_reading = grid[self.xPos, self.yPos][1] # grid contains three values on each coordinate: 
         LGF_reading = grid[self.xPos, self.yPos][2] # occupation (boolean), SGF level, LGF level
