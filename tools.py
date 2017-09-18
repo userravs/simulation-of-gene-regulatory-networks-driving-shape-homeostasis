@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 #class Tools:
 #    def SortList(self, neighbours):
 #        sortedNeighbours = list(neighbours)
-# Tools
 
+# Tools
 def CheckInBorders(xCoord, yCoord, border):
     if xCoord < 0 or xCoord > border:     # Check if the neighbour is inbounds on x axis
         return False
@@ -28,3 +28,11 @@ def CheckifPreferred(xOri, yOri, xCoord, yCoord):
     else:
         return False
 # CheckifPreferred
+
+def sgfDiffEq(s, sigma, deltaS, deltaT):
+    return s + deltaT*(-deltaS*s + sigma)
+# sgfDiffEq
+
+def lgfDiffEq(l, lambda, deltaL, deltaT, D):
+    return l + deltaT*(-deltaL*l + lambda)
+# sgfDiffEq
