@@ -1,11 +1,19 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
+from mpl_toolkits.axes_grid1 import ImageGrid
 
 class Environment:
 
     def CellsGridFigure(fieldSize):
         plt.close()
+        
+        #discrete color scheme
+        lala8 = ListedColormap(['w', 'g', 'b', 'r'])
+        #ListedColormap(['white', 'green', 'blue','red'], name = 'cell_cMap')
+        #colors = ["white", "green", "blue", "red"]
+        #cmap = ListedColormap(colors)
+
         cellsFigure = plt.figure(figsize=(15,5))                # initilize FIGURE, does is need name, figsize?
 
         cellsFigure.suptitle('Cell system')
@@ -23,13 +31,21 @@ class Environment:
         lgfSubplot = cellsFigure.add_subplot(133)
         lgfSubplot.set_title('LGF') 
 
-    #		plt.axis('off')
+    #   plt.axis('off')
         
-        #discrete color scheme
-        #cMap = ListedColormap(['white', 'green', 'blue','red'])
+        #heatmap = cellsSubplot.pcolor(data, cmap=cMap)
         
-        cellPlot = cellsSubplot.imshow(cellGrid, origin = 'lower', cmap = 'bwr', interpolation = 'none', vmin = -1, vmax = 3)
-        #cbar1 = colorbar(cellPlot, ticks = [0, 1, 2, 3])
+        cellPlot = cellsSubplot.imshow(cellGrid, origin = 'lower', cmap = lala8, interpolation = 'none', vmin = 0, vmax = 3)
+        
+        #legend
+        cbar = plt.colorbar(cellPlot)
+        cbar.cellsSubplot.get_yaxis().set_ticks([])
+        for j, lab in enumerate(['$dead$','$quiet$','$moving$','$divided$']):
+            cbar.cellsSubplot.text(.5, (2 * j + 1) / 8.0, lab, ha='center', va='center')
+        cbar.cellsSubplot.get_yaxis().labelpad = 15
+        cbar.cellsSubplot.set_ylabel('state', rotation=270)
+        
+        #cbar1 = colorbar(cellPlot, ticks = [0, 1, 2, 3]) bwr
         #cellsSubplot.set_yticklabels(['no cell', 'quiet', 'moved', 'splitted'])  # vertically oriented colorbar
         plt.show(block=False)
 
@@ -90,6 +106,6 @@ class Environment:
         #
         cellsFigure.canvas.update()
         cellsFigure.canvas.flush_events()
-        plt.savefig('cell_system-' + '{:03d}'.format(tStep) + '.png', bbox_inches='tight')
+        #plt.savefig('cell_system-' + '{:03d}'.format(tStep) + '.png', bbox_inches='tight')
     # UpdatePlot
     # Environment
