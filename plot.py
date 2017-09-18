@@ -14,7 +14,12 @@ class Environment:
         #colors = ["white", "green", "blue", "red"]
         #cmap = ListedColormap(colors)
 
-        cellsFigure = plt.figure(figsize=(15,5))                # initilize FIGURE, does is need name, figsize?
+        #cellsFigure = plt.figure(figsize=(15,5))                # initilize FIGURE, does is need name, figsize?
+        cellsFigure, (cellsSubplot,sgfSubplot,lgfSubplot) = plt.subplots(1, 3, figsize = (15,5))
+
+        cellsSubplot.set_aspect('equal')
+        sgfSubplot.set_aspect('equal')
+        lgfSubplot.set_aspect('equal')
 
         cellsFigure.suptitle('Cell system')
 
@@ -22,41 +27,49 @@ class Environment:
         sgfGrid = np.zeros([fieldSize, fieldSize])
         lgfGrid = np.zeros([fieldSize, fieldSize])
 
-        cellsSubplot = cellsFigure.add_subplot(131)
-        cellsSubplot.set_title('Cells') 
 
-        sgfSubplot = cellsFigure.add_subplot(132)
-        sgfSubplot.set_title('SGF') 
+        cellsSubplot.set_title('Cells')
 
-        lgfSubplot = cellsFigure.add_subplot(133)
-        lgfSubplot.set_title('LGF') 
+#        cellsSubplot.axis('off')
 
-    #   plt.axis('off')
-        
-        #heatmap = cellsSubplot.pcolor(data, cmap=cMap)
+        sgfSubplot.set_title('SGF')
+#        sgfSubplot.axis('off')
+
+        lgfSubplot.set_title('LGF')
+ #       lgfSubplot.axis('off')
         
         cellPlot = cellsSubplot.imshow(cellGrid, origin = 'lower', cmap = lala8, interpolation = 'none', vmin = 0, vmax = 3)
-        
-        #legend
-        cbar = plt.colorbar(cellPlot)
-        cbar.cellsSubplot.get_yaxis().set_ticks([])
+        cbar1 = cellsFigure.colorbar(cellPlot, ax=cellsSubplot, ticks=[0, 1, 2, 3], orientation='horizontal')#, shrink=0.75)
+        #cbar1.ax.set_yticklabels(['dead', 'quiet', 'moving', 'splitting'])
+        ##legend
+        #cbar = plt.colorbar(cellPlot)
+
+        cellPlot.axes.xaxis.set_ticklabels([])
+        cellPlot.axes.yaxis.set_ticklabels([])
+#        cellPlot.axes.get_xaxis().set_visible(False)
+#        cellPlot.axes.get_yaxis().set_visible(False)
+
+        cbar1.ax.get_yaxis().set_ticks([])
         for j, lab in enumerate(['$dead$','$quiet$','$moving$','$divided$']):
-            cbar.cellsSubplot.text(.5, (2 * j + 1) / 8.0, lab, ha='center', va='center')
-        cbar.cellsSubplot.get_yaxis().labelpad = 15
-        cbar.cellsSubplot.set_ylabel('state', rotation=270)
+            cbar1.ax.text(.5, (2 * j + 1) / 8.0, lab, ha='center', va='center')#, rotation=270)
+        cbar1.ax.get_yaxis().labelpad = 15
+        cbar1.ax.set_ylabel('states', rotation=270)
         
         #cbar1 = colorbar(cellPlot, ticks = [0, 1, 2, 3]) bwr
         #cellsSubplot.set_yticklabels(['no cell', 'quiet', 'moved', 'splitted'])  # vertically oriented colorbar
-        plt.show(block=False)
+#        plt.show(block=False)
 
-        sgfPlot = sgfSubplot.imshow(sgfGrid, origin = 'lower', cmap = 'binary', interpolation = 'none', vmin = 0, vmax = 50)
+        sgfPlot = sgfSubplot.imshow(sgfGrid, origin = 'lower', cmap = 'Blues', interpolation = 'none', vmin = 0, vmax = 100)
+        cbar2 = cellsFigure.colorbar(sgfPlot, ax=sgfSubplot, orientation='horizontal')
         #cbar2 = cellsFigure.colorbar(sgfPlot) #, ticks=[0, 1, 2, 3])
         #cbar2.sgfPlot.set_yticklabels(['no cell', 'quiet', 'moved', 'splitted'])  # vertically oriented colorbar        
-        plt.show(block=False)
+#        plt.show(block=False)
 
-        lgfPlot = lgfSubplot.imshow(lgfGrid, origin = 'lower', cmap = 'binary', interpolation = 'none', vmin = 0, vmax = 50)
+        lgfPlot = lgfSubplot.imshow(lgfGrid, origin = 'lower', cmap = 'Reds', interpolation = 'none', vmin = 0, vmax = 100)
+        cbar3 = cellsFigure.colorbar(lgfPlot, ax=lgfSubplot, orientation='horizontal')
         #cbar3 = cellsFigure.colorbar(lgfPlot) #, ticks=[0, 1, 2, 3])
         #cbar3.lgfPlot.set_yticklabels(['no cell', 'quiet', 'moved', 'splitted'])  # vertically oriented colorbar
+
         plt.show(block=False)
         
         plt.ion()
@@ -69,20 +82,31 @@ class Environment:
     # CellsGridFigure
 
     def AntGridPlot(cellGrid,
-            nLattice,
-            cellsFigure, 
-            cellsSubplot, 
-            sgfSubplot, 
-            lgfSubplot, 
-            cellPlot, 
-            sgfPlot, 
-            lgfPlot,tStep):
+                    nLattice,
+                    cellsFigure, 
+                    cellsSubplot, 
+                    sgfSubplot, 
+                    lgfSubplot, 
+                    cellPlot, 
+                    sgfPlot, 
+                    lgfPlot,
+                    tStep):
 
-        cell_data = cellGrid[:,:,0] 		# slice the grid to get the layer with the cell positions
-        sgf_data = cellGrid[:,:,1] 		# slice the grid to get the layer with the cell positions
-        lgf_data = cellGrid[:,:,2] 		# slice the grid to get the layer with the cell positions
+        cell_data = cellGrid[:,:,0]         # slice the grid to get the layer with the cell positions
+        sgf_data = cellGrid[:,:,1]          # slice the grid to get the layer with the cell positions
+        lgf_data = cellGrid[:,:,2]          # slice the grid to get the layer with the cell positions
 
-        Environment.UpdatePlot(cellsFigure, cellsSubplot, sgfSubplot, lgfSubplot, cellPlot, sgfPlot, lgfPlot, cell_data, sgf_data, lgf_data,tStep)
+        Environment.UpdatePlot( cellsFigure,
+                                cellsSubplot,
+                                sgfSubplot,
+                                lgfSubplot,
+                                cellPlot,
+                                sgfPlot,
+                                lgfPlot,
+                                cell_data,
+                                sgf_data,
+                                lgf_data,
+                                tStep)
 
     def UpdatePlot( cellsFigure, 
                     cellsSubplot, 
@@ -93,7 +117,8 @@ class Environment:
                     lgfPlot,
                     cell_data, 
                     sgf_data,
-                    lgf_data,tStep):
+                    lgf_data,
+                    tStep):
         #
         cellPlot.set_data(cell_data)
         sgfPlot.set_data(sgf_data)
