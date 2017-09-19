@@ -51,24 +51,15 @@ class Environment:
 
         cbar1.ax.get_yaxis().set_ticks([])
         for j, lab in enumerate(['$dead$','$quiet$','$moving$','$divided$']):
-            cbar1.ax.text(.5, (2 * j + 1) / 8.0, lab, ha='center', va='center')#, rotation=270)
+            cbar1.ax.text((2 * j + 1) / 8.0, .5, lab, ha='center', va='center')#, rotation=270)
         cbar1.ax.get_yaxis().labelpad = 15
         cbar1.ax.set_ylabel('states', rotation=270)
         
-        #cbar1 = colorbar(cellPlot, ticks = [0, 1, 2, 3]) bwr
-        #cellsSubplot.set_yticklabels(['no cell', 'quiet', 'moved', 'splitted'])  # vertically oriented colorbar
-#        plt.show(block=False)
-
         sgfPlot = sgfSubplot.imshow(sgfGrid, origin = 'lower', cmap = 'Blues', interpolation = 'none', vmin = 0, vmax = 8)
         cbar2 = cellsFigure.colorbar(sgfPlot, ax=sgfSubplot, orientation='horizontal')
-        #cbar2 = cellsFigure.colorbar(sgfPlot) #, ticks=[0, 1, 2, 3])
-        #cbar2.sgfPlot.set_yticklabels(['no cell', 'quiet', 'moved', 'splitted'])  # vertically oriented colorbar        
-#        plt.show(block=False)
 
         lgfPlot = lgfSubplot.imshow(lgfGrid, origin = 'lower', cmap = 'Reds', interpolation = 'none', vmin = 0, vmax = 100)
         cbar3 = cellsFigure.colorbar(lgfPlot, ax=lgfSubplot, orientation='horizontal')
-        #cbar3 = cellsFigure.colorbar(lgfPlot) #, ticks=[0, 1, 2, 3])
-        #cbar3.lgfPlot.set_yticklabels(['no cell', 'quiet', 'moved', 'splitted'])  # vertically oriented colorbar
 
         plt.show(block=False)
         
@@ -93,8 +84,8 @@ class Environment:
                     tStep):
 
         cell_data = cellGrid[:,:,0]         # slice the grid to get the layer with the cell positions
-        sgf_data = cellGrid[:,:,1]          # slice the grid to get the layer with the cell positions
-        lgf_data = cellGrid[:,:,2]          # slice the grid to get the layer with the cell positions
+        sgf_data = cellGrid[:,:,1]          # slice the grid to get the layer with the SGF profile
+        lgf_data = cellGrid[:,:,2]          # slice the grid to get the layer with the LGF profile
 
         Environment.UpdatePlot( cellsFigure,
                                 cellsSubplot,
