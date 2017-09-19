@@ -59,7 +59,7 @@ class Environment:
         #cellsSubplot.set_yticklabels(['no cell', 'quiet', 'moved', 'splitted'])  # vertically oriented colorbar
 #        plt.show(block=False)
 
-        sgfPlot = sgfSubplot.imshow(sgfGrid, origin = 'lower', cmap = 'Blues', interpolation = 'none', vmin = 0, vmax = 100)
+        sgfPlot = sgfSubplot.imshow(sgfGrid, origin = 'lower', cmap = 'Blues', interpolation = 'none', vmin = 0, vmax = 8)
         cbar2 = cellsFigure.colorbar(sgfPlot, ax=sgfSubplot, orientation='horizontal')
         #cbar2 = cellsFigure.colorbar(sgfPlot) #, ticks=[0, 1, 2, 3])
         #cbar2.sgfPlot.set_yticklabels(['no cell', 'quiet', 'moved', 'splitted'])  # vertically oriented colorbar        

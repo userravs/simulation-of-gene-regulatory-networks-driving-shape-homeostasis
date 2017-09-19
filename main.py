@@ -9,11 +9,11 @@ from tools import *
 from plot import *
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-#    	Functions                  #
+#       Functions                  #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-#    	PARAMETERS                 #
+#       PARAMETERS                 #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 nLattice = 50                              # TODO change name
 timeSteps = 200                              # Number of simulation time steps
@@ -23,7 +23,8 @@ LGF_read = 0
 ix = int(nLattice/2)                        # Initial position for the mother cell
 iy = int(nLattice/2)
 cellList = []
-
+deltaT = 1
+deltaS = 0.5
 # create mother cell and update the grid with its initial location
 cellList.append(cell(ix,iy))
 cellGrid[ix][iy][0] = 1
@@ -60,46 +61,48 @@ while itime < timeSteps:
         # according to cell status perform action: split or stay quiet
         if tmpCellList[rndCell].state == 'Quiet':                   # Check the state
             tmpCellList[rndCell].Quiet(cellGrid)                    # call method that performs selected action
-            tmpCellList[rndCell].sgfProduce(cellGrid)
+            cellGrid[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos][1] = sgfDiffEq(SGF_reading, tmpCellList[rndCell].sgfAmount, deltaS, deltaT)            
+#            tmpCellList[rndCell].sgfProduce(cellGrid)
             tmpCellList[rndCell].lgfProduce(cellGrid)
             del tmpCellList[rndCell]                                # delete cell from temporal list
          
         elif tmpCellList[rndCell].state == 'Split':
             tmpCellList[rndCell].Split2(cellGrid,cellList)
-            tmpCellList[rndCell].sgfProduce(cellGrid)
+            cellGrid[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos][1] = sgfDiffEq(SGF_reading, tmpCellList[rndCell].sgfAmount, deltaS, deltaT)
+#            tmpCellList[rndCell].sgfProduce(cellGrid)
             tmpCellList[rndCell].lgfProduce(cellGrid)
             del tmpCellList[rndCell]
 
         elif tmpCellList[rndCell].state == 'Move':
             tmpCellList[rndCell].Move2(cellGrid)
+            cellGrid[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos][1] = sgfDiffEq(SGF_reading, tmpCellList[rndCell].sgfAmount, deltaS, deltaT)
             del tmpCellList[rndCell]
          
-	# WARNING see TODO
         else: # Die
             tmpCellList[rndCell].dieCounter += 1
             if tmpCellList[rndCell].dieCounter == tmpCellList[rndCell].dieTime:
                 tmpCellList[rndCell].Die(cellGrid)                  # Off the grid, method also changes the "amidead" switch to True
+                cellGrid[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos][1] = sgfDiffEq(SGF_reading, 0, deltaS, deltaT)
                 del tmpCellList[rndCell]
-                # TODO this way of killing the cell doesn't work, cellList and tmpCellList not necesarily have the same length 
-                # del cellList[rndCell]                 # Actual death                
+            else:
+                cellGrid[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos][1] = sgfDiffEq(SGF_reading, tmpCellList[rndCell].sgfAmount, deltaS, deltaT)
+        
+        # after the cell reads the grid and performs an action the pheromone is updated according to the diff eq
+        
+    # while
 
-    #deathNote = []
+    # A list of cell that "died" is stored to later actually kill the cells...
     listLength = len(cellList) - 1
-    for jCell in range(listLength,-1,-1):                           # checks every cell and if it was set to die then do
+    for jCell in range(listLength,-1,-1):                     # checks every cell and if it was set to die then do, in reverse order
         #print('len(cellList): ' + str(len(cellList)) + '. Current element: ' + str(jCell))
         if cellList[jCell].amidead:
             print('cell died!')
-            #deathNote.append(jCell)
             del cellList[jCell]
-    
-    
     
     ### TEST! equivalent to: cellList[cell].'status'(param_x,param_y)
     #    state = getattr(tmpCellList[rndCell], status)
     #    action = getattr(tmpCellList[rndCell], state)
     #    action(cellGrid, cellList)
-    
-    # while
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     #        Plot                #
@@ -115,10 +118,11 @@ while itime < timeSteps:
                 lgfPlot,itime)
 
     itime += 1
-
+    
 # while    
 
 print(str(timeSteps)+' time steps complete')
 
+# TODO look this up
 #if __name__ == '__main__':
 #    main()
