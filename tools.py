@@ -16,9 +16,9 @@ def CheckInBorders(xCoord, yCoord, border):
 # CheckInBorders
     
 def CheckifOccupied(xCoord, yCoord, grid):
-    if grid[xCoord, yCoord][0] != 0:
+    if grid[xCoord, yCoord][0] > 0:         # if value on grid is 1 (quiet), 2 (moved) or 3 (splitted) then spot is occupied
         return True
-    else:
+    else:                                   # else, value is 0 (empty) or -1 (cell was there before but died) then spot is available
         return False
 # CheckifOccupied
 
@@ -30,7 +30,8 @@ def CheckifPreferred(xOri, yOri, xCoord, yCoord):
 # CheckifPreferred
 
 def sgfDiffEq(s, sigma, deltaS, deltaT):
-    return s + deltaT*(-deltaS*s + sigma)
+    updatedVal = s + deltaT*(sigma - deltaS*s)
+    return updatedVal
 # sgfDiffEq
 
 #def lgfDiffEq(l, lambda, deltaL, deltaT, D):

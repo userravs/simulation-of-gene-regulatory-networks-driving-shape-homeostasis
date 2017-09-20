@@ -14,12 +14,19 @@ class cell:
         self.amidead = False                        # Cell dead or alive
         self.quietCounter = 0                       # Quiet counter
         self.orientation = [self.xPos,self.yPos]    # Preferred direction. DEFAULT: own position
-        self.compass = False                         # Polarisation: ON/OFF
+        self.compass = True                         # Polarisation: ON/OFF
         self.state = 'Quiet'                        # State of the cell. DEFAULT: quiet
         self.border = 0                             # size of the lattice
         self.sgfAmount = 0                          # Amount of "pheromone" to deposit in the grid
         self.lgfAmount = 0
     # self
+    
+    #   Values stored in grid according to state:
+    #       -1  =>  a cell was there before but died or moved away
+    #       0   =>  spot has been always empty i.e. available
+    #       1   =>  quiet cell
+    #       2   =>  moving cell
+    #       3   =>  divided cell
 
     #def Get Pos(self):
         #return
@@ -103,7 +110,7 @@ class cell:
                 ## orientation North
                 #if CheckInBorders(xCoord, yCoord, border):
                     #self.orientation = [xCoord, yCoord]
-            else:	#arrow < wBoundary:
+            else:   #arrow < wBoundary:
                 # orientation West
                 xCoord = self.xPos
                 yCoord = self.yPos - 1
@@ -131,7 +138,7 @@ class cell:
                 self.state = 'Split'
             elif abs(maxVal - jStatus) <= yThreshold:
                 self.state = 'Move'
-            else:	# abs(maxVal - kStatus) <= yThreshold:
+            else:   # abs(maxVal - kStatus) <= yThreshold:
                 self.state = 'Die'
             # DEBUG
             print('split = ' + str(iStatus) + ', move = ' + str(jStatus) + '\ndie = ' + str(kStatus) + '. Max: '+ str(maxVal) + '\n')
@@ -144,7 +151,7 @@ class cell:
 
     def Die(self, grid):
         self.amidead = True
-        grid[self.xPos][self.yPos][0] = 0
+        grid[self.xPos][self.yPos][0] = -1
     # Die
 
     def Move(self, grid):
@@ -216,15 +223,15 @@ class cell:
             r = np.random.randint(len(tmpList))
             movePos.append(tmpList[r][0])
             movePos.append(tmpList[r][1])
-            #finalList.append(tmpList[r])
+
         if len(movePos) > 0:
-            grid[movePos[0]][movePos[1]][0] = 2                     # to plot with a different color
-            grid[self.xPos][self.yPos][0] = 0
-            self.xPos = movePos[0]
+            grid[movePos[0]][movePos[1]][0] = 2                     # new position gets a 2 value to mark as moving cell
+            grid[self.xPos][self.yPos][0] = -1                      # old position gets a -1 value to indicate that there was a cell there before
+            self.xPos = movePos[0]                                  # update position
             self.yPos = movePos[1]
             print('cell moved!')
         else:
-            grid[self.xPos][self.yPos][0] = 1
+            grid[self.xPos][self.yPos][0] = 1                       # if moving fails then cell is marked as quiet
             print('moving failed\n')
     # Move2
 
