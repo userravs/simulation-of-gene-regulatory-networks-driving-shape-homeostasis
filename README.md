@@ -23,12 +23,29 @@
 ### 20170913:
 * Started implementing the more stable and fast plotting scheme.
 * Read some articles about NN. Must:
-        * Do some research about which type of NN is adequate for the model.
-        * Is the NN used originally in the model the best for the task?
-        * Should I use available libraries or write my own code for NN.
-        * Think about how to record a video/timelapse if the cell structure
+	* Do some research about which type of NN is adequate for the model.
+	* Is the NN used originally in the model the best for the task?
+	* Should I use available libraries or write my own code for NN.
+	* Think about how to record a video/timelapse if the cell structure
 
 ### 20170914:
 * Fixed plotting. Now works like a charm. Fast and smooth.
 * Fixed move2 and split2 functions. Borders of the grid and orientation. Orientation needs some testing though.
 * Need to fix the Die method
+
+### 20170920:
+#### Done:
+* Die method is correct now
+* Dynamics for SGF.
+* Code cleaning.
+* Now I'm using the following code for the grid:
+	* -1: There was a cell on this spot before but muved away or died.
+	* 0: spot has been always empty.
+	* 1: a quiet cell lies here
+	* 2: a cell moved to this spot
+	* 3: cell just gave birth
+#### To do:
+* Double check action functions: quiet, move, die, split, generateStatus, orientation system
+* Test decaying dynamics of SGF
+* Implement dynamics for LGF
+* Implement self-made NN
