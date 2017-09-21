@@ -10,7 +10,7 @@
 
 ## Thesis events
 ### 20170901: Started working 
-* Cell on a grid capable to reproduce.
+* Cell in a grid capable to reproduce.
 
 ### 20170907:
 * Plotting works: unefficient way, must improve this!
@@ -26,7 +26,7 @@
 	* Do some research about which type of NN is adequate for the model.
 	* Is the NN used originally in the model the best for the task?
 	* Should I use available libraries or write my own code for NN.
-	* Think about how to record a video/timelapse if the cell structure
+	* Think about how to record a video/timelapse of the cell structure
 
 ### 20170914:
 * Fixed plotting. Now works like a charm. Fast and smooth.
@@ -49,3 +49,9 @@
 * Test decaying dynamics of SGF
 * Implement dynamics for LGF
 * Implement self-made NN
+
+### 20170921
+#### To do:
+* Write more comments in the code, everything should be as clear as possible
+* Have to update the SGF and LGF via matrix operations
+* Draw a flow diagram of the main code. (!)
