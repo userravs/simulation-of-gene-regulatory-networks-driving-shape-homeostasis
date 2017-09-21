@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.sparse import diags
+#from scipy.sparse import diags
 
 #class Tools:
 #    def SortList(self, neighbours):
@@ -29,14 +29,34 @@ def CheckifPreferred(xOri, yOri, xCoord, yCoord):
         return False
 # CheckifPreferred
 
+# TODO redo with matrix approach
 def sgfDiffEq(s, sigma, deltaS, deltaT):
     updatedVal = s + deltaT*(sigma - deltaS*s)
     return updatedVal
 # sgfDiffEq
 
-#def lgfDiffEq(l, lambda, deltaL, deltaT, D):
-#    return l + deltaT*(-deltaL*l + lambda)
+def lgfDiffEq(i_matrix, t_matrix, l_matrix, lambda_matrix, deltaL, deltaT, D):
+        l_halfTstep = 
+    return l + deltaT*(-deltaL*l + lambda)
 # sgfDiffEq
+
+def GenerateTMatrix(size):
+    t_matrix = np.zeros([size,size])
+    for ix in range(size - 1):
+        t_matrix[ix,ix] = 2
+        t_matrix[ix,ix + 1] = 1
+        t_matrix[ix + 1,ix] = 1
+    t_matrix[0,0] = -1
+    t_matrix[size - 1, size - 1] = -1
+    return t_matrix        
+# GenerateTMatrix
+
+def GenerateIMatrix(size):
+    I_matrix = np.zeros([size,size])
+    for ix in range(size):
+        t_matrix[ix,ix] = 1
+    return I_matrix
+# GenerateIMatrix
 
 #def diffusion_FTCS(deltaT, deltaS, t_max, y_max, const, init_cond):
     ## diffusion number (has to be less than 0.5 for the 

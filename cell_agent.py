@@ -14,7 +14,7 @@ class cell:
         self.amidead = False                        # Cell dead or alive
         self.quietCounter = 0                       # Quiet counter
         self.orientation = [self.xPos,self.yPos]    # Preferred direction. DEFAULT: own position
-        self.compass = True                         # Polarisation: ON/OFF
+        self.compass = False                         # Polarisation: ON/OFF
         self.state = 'Quiet'                        # State of the cell. DEFAULT: quiet
         self.border = 0                             # size of the lattice
         self.sgfAmount = 0                          # Amount of "pheromone" to deposit in the grid
