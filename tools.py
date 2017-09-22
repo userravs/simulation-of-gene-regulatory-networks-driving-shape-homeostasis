@@ -1,4 +1,5 @@
 import numpy as np
+from scipy import linalg
 #from scipy.sparse import diags
 
 #class Tools:
@@ -35,9 +36,15 @@ def sgfDiffEq(s, sigma, deltaS, deltaT):
     return updatedVal
 # sgfDiffEq
 
-def lgfDiffEq(i_matrix, t_matrix, l_matrix, lambda_matrix, deltaL, deltaT, D):
-        l_halfTstep = 
-    return l + deltaT*(-deltaL*l + lambda)
+def lgfDiffEq(i_matrix, t_matrix, l_matrix, lambda_matrix, deltaL, deltaT, deltaR, D):
+        alpha = D*deltaT/(deltaR**2)                            # constant
+        f = (deltaT/2.)*(lambda_matrix - deltaL*l_matrix)       # term that takes into account LFG production for half time step
+        g = linalg.inv(i_matrix - (alpha/2.)*t_matrix)          # inverse of some intermediate matrix
+        h = i_matrix + (alpha/2.)*t_matrix                      # some intermediate matrix
+        l_halftStep = g@(l_matrix@h + f)                        # half time step calculation for LGF values
+        f = (deltaT/2.)*(lambda_matrix - deltaL*l_halftStep)    # updated term...
+        l_tStep = (h@l_halftStep + f)@g                         # final computation
+    return l_tStep 
 # sgfDiffEq
 
 def GenerateTMatrix(size):
