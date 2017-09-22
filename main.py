@@ -11,8 +11,8 @@ from plot import *
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #       PARAMETERS                 #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-nLattice = 15                              # TODO change name
-timeSteps = 30                              # Number of simulation time steps
+nLattice = 50                              # TODO change name
+timeSteps = 200                              # Number of simulation time steps
 cellGrid = np.zeros([nLattice,nLattice,3])  # Initialize empty grid
 SGF_read = 0                                # in the future values will be read from the grid
 LGF_read = 0
@@ -25,8 +25,8 @@ deltaS = 0.5                                # decay rate for SGF
 deltaL = 0.1                                # decay rate for LGF
 diffConst = 1.                              # diffusion constant D [dimentionless]
 itime = 0                                   # time counter
-t_matrix = GenerateTMatrix(nLattice)        # T matrix for LGF operations
-i_matrix = GenerateIMatrix(nLattice)        # I matrix for LGF operations
+#t_matrix = GenerateTMatrix(nLattice)        # T matrix for LGF operations
+#i_matrix = GenerateIMatrix(nLattice)        # I matrix for LGF operations
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #       INITIALIZATION             #
@@ -51,7 +51,8 @@ while itime < timeSteps:
         for jPos in range(nLattice):
             if cellGrid[iPos,jPos][0] == -1:
                         cellGrid[iPos,jPos][1] = sgfDiffEq(cellGrid[iPos,jPos][1], 0, deltaS, deltaT)
-#                        cellGrid[iPos,jPos][2] = lgfDiffEq(cellGrid[iPos,jPos][2], 0, deltaL, deltaT)
+                        # WARNING lgf returns a MATRIX not a value
+#                        cellGrid[iPos,jPos][2] = lgfDiffEq(i_matrix, t_matrix, l_matrix, lambda_matrix, deltaL, deltaT, deltaR, D)
     
     # this matrixes must be updated everytime so that if there's no production in one spot that spot contains a zero
     # but must not loose the informations that contains, i.e. must use it before setting it to zero
@@ -71,6 +72,7 @@ while itime < timeSteps:
         # 4th step => update SGF and LGF amounts on the grid
         # WARNING S_ij and L_ij functions are concentrations!! 
         cellGrid[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos][1] = sgfDiffEq(SGF_reading, tmpCellList[rndCell].sgfAmount, deltaS, deltaT)
+#        cellGrid[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos][2] = lgfDiffEq(i_matrix, t_matrix, l_matrix, lambda_matrix, deltaL, deltaT, deltaR, D)
         
         # 5th step => random cell should decide and action
         tmpCellList[rndCell].GenerateStatus(SGF_read, LGF_read)     # get status of this cell
@@ -89,14 +91,14 @@ while itime < timeSteps:
             tmpCellList[rndCell].Quiet(cellGrid)                    # call method that performs selected action
 #            cellGrid[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos][1] = sgfDiffEq(SGF_reading, tmpCellList[rndCell].sgfAmount, deltaS, deltaT)            
 #            tmpCellList[rndCell].sgfProduce(cellGrid)
-            tmpCellList[rndCell].lgfProduce(cellGrid)
+#            tmpCellList[rndCell].lgfProduce(cellGrid)
             del tmpCellList[rndCell]                                # delete cell from temporal list
          
         elif tmpCellList[rndCell].state == 'Split':
             tmpCellList[rndCell].Split2(cellGrid,cellList)
 #            cellGrid[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos][1] = sgfDiffEq(SGF_reading, tmpCellList[rndCell].sgfAmount, deltaS, deltaT)
 #            tmpCellList[rndCell].sgfProduce(cellGrid)
-            tmpCellList[rndCell].lgfProduce(cellGrid)
+#            tmpCellList[rndCell].lgfProduce(cellGrid)
             del tmpCellList[rndCell]
 
         elif tmpCellList[rndCell].state == 'Move':
@@ -105,8 +107,8 @@ while itime < timeSteps:
             del tmpCellList[rndCell]
          
         else: # Die
-            tmpCellList[rndCell].dieCounter += 1
-            if tmpCellList[rndCell].dieCounter == tmpCellList[rndCell].dieTime:
+            tmpCellList[rndCell].deathCounter += 1
+            if tmpCellList[rndCell].deathCounter == tmpCellList[rndCell].deathTime:
                 tmpCellList[rndCell].Die(cellGrid)                  # Off the grid, method also changes the "amidead" switch to True
 #                cellGrid[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos][1] = sgfDiffEq(SGF_reading, 0, deltaS, deltaT)
                 del tmpCellList[rndCell]
@@ -143,7 +145,7 @@ while itime < timeSteps:
                 sgfPlot, 
                 lgfPlot,itime)
     
-    time.sleep(0.5)
+    #time.sleep(0.5)
     itime += 1
     
 # while    

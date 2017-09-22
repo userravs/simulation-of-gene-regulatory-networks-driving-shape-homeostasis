@@ -5,31 +5,28 @@ from tools import *
 class cell:
     # defines whats needed when a new agent (Cell) of this class is created
     def __init__(self, xPos, yPos):
+        self.state = 'Quiet'                        # State of the cell. DEFAULT: quiet
         self.xPos = xPos                            # Initial position on x axis
         self.yPos = yPos                            # Initial position on y axis
+        self.compass = False                         # Polarisation: ON/OFF => True/False
+        self.orientation = [self.xPos,self.yPos]    # Preferred direction. DEFAULT: own position
         self.splitCounter = 0                       # Counter for splitting
         self.splitTime = 2                          # Time scale for splitting
-        self.dieCounter = 0                         # Counter for dying
-        self.dieTime = 3                            # Time scale for dying
+        self.deathCounter = 0                       # Countdown to extinction
+        self.deathTime = 3                          # Time scale for dying
         self.amidead = False                        # Cell dead or alive
         self.quietCounter = 0                       # Quiet counter
-        self.orientation = [self.xPos,self.yPos]    # Preferred direction. DEFAULT: own position
-        self.compass = False                         # Polarisation: ON/OFF
-        self.state = 'Quiet'                        # State of the cell. DEFAULT: quiet
         self.border = 0                             # size of the lattice
         self.sgfAmount = 0                          # Amount of "pheromone" to deposit in the grid
         self.lgfAmount = 0
     # self
     
     #   Values stored in grid according to state:
-    #       -1  =>  a cell was there before but died or moved away
+    #      -1   =>  a cell was there before but died or moved away
     #       0   =>  spot has been always empty i.e. available
     #       1   =>  quiet cell
     #       2   =>  moving cell
     #       3   =>  divided cell
-
-    #def Get Pos(self):
-        #return
 
     # WARNING Do I use this method??
     #def GetNeighbours(self, grid, border):
@@ -60,13 +57,13 @@ class cell:
         return SGF_reading, LGF_reading
     # Sense   
 
-    def sgfProduce(self, grid):
-        grid[self.xPos, self.yPos][1] += self.sgfAmount
-    # sgfProduce
+    #def sgfProduce(self, grid):
+        #grid[self.xPos, self.yPos][1] += self.sgfAmount
+    ## sgfProduce
 
-    def lgfProduce(self, grid):
-        grid[self.xPos, self.yPos][2] += self.lgfAmount
-    # lgfProduce
+    #def lgfProduce(self, grid):
+        #grid[self.xPos, self.yPos][2] += self.lgfAmount
+    ## lgfProduce
 
     def GenerateStatus(self, SGF_read, LGF_read):
         # neural network generates a status based on the reads
