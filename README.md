@@ -55,3 +55,15 @@
 * Write more comments in the code, everything should be as clear as possible
 * Have to update the SGF and LGF via matrix operations
 * Draw a flow diagram of the main code. (!)
+
+### 20170925
+#### Done:
+* Cleaning of repo, code
+* Implemented matrix scheme of SGF and LGF dynamics. Needs testing!
+* Flow diagrams have sketch
+
+#### To do:
+* Test every cell action and SGF/LGF dynamics.
+* Start implementation of NN.
+* Digital version of flow charts
+* Discuss order of updates in cell dynamics
