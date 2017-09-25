@@ -13,7 +13,7 @@ from plot import *
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 # TODO: organize in different categories...
 nLattice = 5                              # TODO change name
-timeSteps = 10                              # Number of simulation time steps
+timeSteps = 100                              # Number of simulation time steps
 cellGrid = np.zeros([nLattice,nLattice,3])  # Initialize empty grid
 SGF_read = 0.                                # in the future values will be read from the grid
 LGF_read = 0.
@@ -35,7 +35,7 @@ i_matrix = GenerateIMatrix(nLattice)        # I matrix for LGF operations
 # create mother cell and update the grid with its initial location
 cellList.append(cell(ix,iy))
 cellGrid[ix][iy][0] = 1
-cellGrid[ix][iy][2] = 20.
+#cellGrid[ix][iy][2] = 20.
 
 # Plot figure and subplots
 cellsFigure, cellsSubplot, sgfSubplot, lgfSubplot, cellPlot, sgfPlot, lgfPlot = Environment.CellsGridFigure(nLattice)
@@ -47,17 +47,10 @@ while itime < timeSteps:
     # DEBUG 
     print('\ntime step #' + str(itime))
     
-    ## TODO matrix approach!!
     ## decay chemicals in spots where there is some but no cell
-    #for iPos in range(nLattice):
-        #for jPos in range(nLattice):
-            #if cellGrid[iPos,jPos][0] == -1:
-                        #cellGrid[iPos,jPos][1] = sgfDiffEq(cellGrid[iPos,jPos][1], 0, deltaS, deltaT)
-                        # WARNING lgf returns a MATRIX not a value
-                        # cellGrid[iPos,jPos][2] = lgfDiffEq(i_matrix, t_matrix, l_matrix, lambda_matrix, deltaL, deltaT, deltaR, D)
     
     # this matrixes must be updated everytime so that if there's no production in one spot that spot contains a zero
-    # but must not loose contained information, i.e. must use it before setting it to zero
+    # but must not lose contained information, i.e. must use it before setting it to zero
     sigma_m = np.zeros([nLattice,nLattice])     # matrix representation of SGF production
     lambda_m = np.zeros([nLattice,nLattice])    # matrix representation of LGF production
     
@@ -72,17 +65,13 @@ while itime < timeSteps:
         SGF_reading, LGF_reading = tmpCellList[rndCell].Sense(cellGrid)
         
         # 3rd step => update SGF and LGF amounts on the 'production' matrices sigma & lambda
-        # WARNING S_ij and L_ij functions are concentrations!!         
-        # cellGrid[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos][1] = sgfDiffEq(SGF_reading, tmpCellList[rndCell].sgfAmount, deltaS, deltaT)
-        # cellGrid[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos][2] = lgfDiffEq(i_matrix, t_matrix, l_matrix, lambda_matrix, deltaL, deltaT, deltaR, D)
         
         # 4th step => random cell should decide and action
         tmpCellList[rndCell].GenerateStatus(SGF_read, LGF_read)     # get status of this cell
-        # matrix operations...
+        # production matrices get updated values
         sigma_m[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos] = tmpCellList[rndCell].sgfAmount
         lambda_m[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos] = tmpCellList[rndCell].lgfAmount
 
-                
         # DEBUG
         print('cell number: ' + str(len(cellList)) + '\nCell status: ' + str(tmpCellList[rndCell].state))# + '\n')
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -132,8 +121,8 @@ while itime < timeSteps:
     for iPos in range(nLattice):
         for jPos in range(nLattice):
             chemsum += cellGrid[iPos,jPos,2]
-            if cellGrid[iPos,jPos,2] < 0.01:
-                cellGrid[iPos,jPos,2] = 0
+            #if cellGrid[iPos,jPos,2] < 0.01:
+                #cellGrid[iPos,jPos,2] = 0
     print('grid after update...\n' + str(cellGrid[:,:,2]))
     print('################################chemical total = ' + str(chemsum))
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~#

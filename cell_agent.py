@@ -195,6 +195,7 @@ class cell:
         border = self.border - 1
 
         for neighbr in neighbourList:                               # for each possible neighbour:
+            # TODO its more likely to have neighbours than to be out of bounds... need to swap next two ifs
             if CheckInBorders(neighbr[0], neighbr[1], border):      # if neighbour is inbunds:
                 if CheckifOccupied(neighbr[0], neighbr[1], grid):   # if its occupied
                     print(str(neighbr) + ': neighbour occupied')
@@ -205,7 +206,7 @@ class cell:
                     if CheckifPreferred(xOri, yOri, neighbr[0], neighbr[1]):    # if is preferred
                         movePos.append(neighbr[0])                  # if available, the return it as available
                         movePos.append(neighbr[1])
-                        needOtherNeighbours = False                 # if available the no need to find more spots
+                        needOtherNeighbours = False                 # if available there's no need to find more spots
                         print(str(neighbr) + ': preferred position available')
                         break                                       # and stop looking for available spots
                     else:
