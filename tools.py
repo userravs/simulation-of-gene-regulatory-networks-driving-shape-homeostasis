@@ -49,7 +49,7 @@ def lgfDiffEq(i_matrix, t_matrix, l_matrix, lambda_matrix, deltaL, deltaT, delta
     g = linalg.inv(i_matrix - (alpha/2.)*t_matrix)          # inverse of some intermediate matrix
     h = i_matrix + (alpha/2.)*t_matrix                      # some intermediate matrix
     l_halftStep = g@(l_matrix@h + f)                        # half time step calculation for LGF values
-    print('grid after half time step...\n' + str(l_halftStep))
+    #print('grid after half time step...\n' + str(l_halftStep))
     f = (deltaT/2.)*(lambda_matrix - deltaL*l_halftStep)    # updated term...
     l_tStep = (h@l_halftStep + f)@g                         # final computation
     return l_tStep
@@ -121,3 +121,10 @@ def GenerateIMatrix(size):
         #V[1:-1] = np.linalg.solve(A,B)  # solve the equation using numpy
     #return y,t,V,s
 # diffusion_Laasonen
+
+def NeuralNetwork(sgf_lecture, lgf_lecture):
+    nNodes = 10  # number of nodes
+    # random matrix is generated, later via EA
+    weightsMatrix = np.random.randint(-1,2,size = (nNodes,6))
+    
+# NeuralNetwork
