@@ -70,7 +70,7 @@ def lgfDiffEq2(i_matrix, t_matrix, l_matrix, lambda_matrix, deltaL, deltaT, delt
 def GenerateTMatrix(size):
     t_matrix = np.zeros([size,size])
     for ix in range(size - 1):
-        t_matrix[ix,ix] = 2.
+        t_matrix[ix,ix] = -2.
         t_matrix[ix,ix + 1] = 1.
         t_matrix[ix + 1,ix] = 1.
     t_matrix[0,0] = -1.

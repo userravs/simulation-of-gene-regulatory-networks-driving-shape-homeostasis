@@ -12,8 +12,8 @@ from plot import *
 #       PARAMETERS                 #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 # TODO: organize in different categories...
-nLattice = 3                              # TODO change name
-timeSteps = 30                              # Number of simulation time steps
+nLattice = 5                              # TODO change name
+timeSteps = 10                              # Number of simulation time steps
 cellGrid = np.zeros([nLattice,nLattice,3])  # Initialize empty grid
 SGF_read = 0.                                # in the future values will be read from the grid
 LGF_read = 0.
@@ -23,8 +23,8 @@ cellList = []                               # List for cell agents
 deltaT = 1.                                  # time step for discretisation [T]
 deltaR = 1.                                  # space step for discretisation [L]  
 deltaS = 0.5                                # decay rate for SGF
-deltaL = 0.                                 # decay rate for LGF
-diffConst = 0.005                              # diffusion constant D [dimentionless]
+deltaL = 0.1                                 # decay rate for LGF
+diffConst = 0.05                              # diffusion constant D [dimentionless]
 itime = 0                                   # time counter
 t_matrix = GenerateTMatrix(nLattice)        # T matrix for LGF operations
 i_matrix = GenerateIMatrix(nLattice)        # I matrix for LGF operations
@@ -80,7 +80,7 @@ while itime < timeSteps:
         tmpCellList[rndCell].GenerateStatus(SGF_read, LGF_read)     # get status of this cell
         # matrix operations...
         sigma_m[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos] = tmpCellList[rndCell].sgfAmount
-        #lambda_m[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos] = tmpCellList[rndCell].lgfAmount
+        lambda_m[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos] = tmpCellList[rndCell].lgfAmount
 
                 
         # DEBUG
@@ -91,34 +91,21 @@ while itime < timeSteps:
         # according to cell status perform action: split or stay quiet
         if tmpCellList[rndCell].state == 'Quiet':                   # Check the state
             tmpCellList[rndCell].Quiet(cellGrid)                    # call method that performs selected action
-#            cellGrid[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos][1] = sgfDiffEq(SGF_reading, tmpCellList[rndCell].sgfAmount, deltaS, deltaT)            
-#            tmpCellList[rndCell].sgfProduce(cellGrid)
-#            tmpCellList[rndCell].lgfProduce(cellGrid)
             del tmpCellList[rndCell]                                # delete cell from temporal list
          
         elif tmpCellList[rndCell].state == 'Split':
             tmpCellList[rndCell].Split2(cellGrid,cellList)
-#            cellGrid[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos][1] = sgfDiffEq(SGF_reading, tmpCellList[rndCell].sgfAmount, deltaS, deltaT)
-#            tmpCellList[rndCell].sgfProduce(cellGrid)
-#            tmpCellList[rndCell].lgfProduce(cellGrid)
             del tmpCellList[rndCell]
 
         elif tmpCellList[rndCell].state == 'Move':
             tmpCellList[rndCell].Move2(cellGrid)
-#            cellGrid[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos][1] = sgfDiffEq(SGF_reading, tmpCellList[rndCell].sgfAmount, deltaS, deltaT)
             del tmpCellList[rndCell]
          
         else: # Die
             tmpCellList[rndCell].deathCounter += 1
             if tmpCellList[rndCell].deathCounter == tmpCellList[rndCell].deathTime:
                 tmpCellList[rndCell].Die(cellGrid)                  # Off the grid, method also changes the "amidead" switch to True
-#                cellGrid[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos][1] = sgfDiffEq(SGF_reading, 0, deltaS, deltaT)
                 del tmpCellList[rndCell]
-#            else:
-#                cellGrid[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos][1] = sgfDiffEq(SGF_reading, tmpCellList[rndCell].sgfAmount, deltaS, deltaT)
-        
-        # after the cell reads the grid and performs an action the pheromone is updated according to the diff eq
-        
     # while
 
     # A list of cells that "died" is stored to later actually kill the cells...

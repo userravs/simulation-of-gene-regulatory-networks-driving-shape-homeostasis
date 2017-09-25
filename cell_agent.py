@@ -74,7 +74,7 @@ class cell:
         kStatus = np.random.random()        # Apoptosis:    Die
         # values for SGF and LGF
         self.sgfAmount = np.random.randint(5)
-        self.lgfAmount = 0#np.random.randint(5)
+        self.lgfAmount = np.random.randint(5)
 
         # ORIENTATION:
         # randomly sets a preferred neighbour (polarisation)
