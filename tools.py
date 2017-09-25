@@ -49,8 +49,20 @@ def lgfDiffEq(i_matrix, t_matrix, l_matrix, lambda_matrix, deltaL, deltaT, delta
     g = linalg.inv(i_matrix - (alpha/2.)*t_matrix)          # inverse of some intermediate matrix
     h = i_matrix + (alpha/2.)*t_matrix                      # some intermediate matrix
     l_halftStep = g@(l_matrix@h + f)                        # half time step calculation for LGF values
+    print('grid after half time step...\n' + str(l_halftStep))
     f = (deltaT/2.)*(lambda_matrix - deltaL*l_halftStep)    # updated term...
     l_tStep = (h@l_halftStep + f)@g                         # final computation
+    return l_tStep
+# sgfDiffEq
+
+def lgfDiffEq2(i_matrix, t_matrix, l_matrix, lambda_matrix, deltaL, deltaT, deltaR, D):
+    alpha = D*deltaT/(deltaR**2)                            # constant
+    f = (deltaT/2.)*(lambda_matrix - deltaL*l_matrix)       # term that takes into account LFG production for half time step
+    g = linalg.inv(i_matrix - (alpha/2.)*t_matrix)          # inverse of some intermediate matrix
+    h = i_matrix + (alpha/2.)*t_matrix                      # some intermediate matrix
+    l_halftStep = (l_matrix@h + f)@g                        # half time step calculation for LGF values
+    f = (deltaT/2.)*(lambda_matrix - deltaL*l_halftStep)    # updated term...
+    l_tStep = g@(h@l_halftStep + f)                         # final computation
     return l_tStep
 # sgfDiffEq
 
@@ -58,11 +70,11 @@ def lgfDiffEq(i_matrix, t_matrix, l_matrix, lambda_matrix, deltaL, deltaT, delta
 def GenerateTMatrix(size):
     t_matrix = np.zeros([size,size])
     for ix in range(size - 1):
-        t_matrix[ix,ix] = 2
-        t_matrix[ix,ix + 1] = 1
-        t_matrix[ix + 1,ix] = 1
-    t_matrix[0,0] = -1
-    t_matrix[size - 1, size - 1] = -1
+        t_matrix[ix,ix] = 2.
+        t_matrix[ix,ix + 1] = 1.
+        t_matrix[ix + 1,ix] = 1.
+    t_matrix[0,0] = -1.
+    t_matrix[size - 1, size - 1] = -1.
     return t_matrix        
 # GenerateTMatrix
 
@@ -70,7 +82,7 @@ def GenerateTMatrix(size):
 def GenerateIMatrix(size):
     I_matrix = np.zeros([size,size])
     for ix in range(size):
-        I_matrix[ix,ix] = 1
+        I_matrix[ix,ix] = 1.
     return I_matrix
 # GenerateIMatrix
 

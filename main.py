@@ -12,19 +12,19 @@ from plot import *
 #       PARAMETERS                 #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 # TODO: organize in different categories...
-nLattice = 50                              # TODO change name
-timeSteps = 100                              # Number of simulation time steps
+nLattice = 3                              # TODO change name
+timeSteps = 30                              # Number of simulation time steps
 cellGrid = np.zeros([nLattice,nLattice,3])  # Initialize empty grid
-SGF_read = 0                                # in the future values will be read from the grid
-LGF_read = 0
+SGF_read = 0.                                # in the future values will be read from the grid
+LGF_read = 0.
 ix = int(nLattice/2)                        # Initial position for the mother cell
 iy = int(nLattice/2)                        # Initial position for the mother cell
-cellList = []                               # List containing cell agents
-deltaT = 1                                  # time step for discretisation [T]
-deltaR = 1                                  # space step for discretisation [L]  
+cellList = []                               # List for cell agents
+deltaT = 1.                                  # time step for discretisation [T]
+deltaR = 1.                                  # space step for discretisation [L]  
 deltaS = 0.5                                # decay rate for SGF
-deltaL = 2.                                 # decay rate for LGF
-diffConst = 0.2                              # diffusion constant D [dimentionless]
+deltaL = 0.                                 # decay rate for LGF
+diffConst = 0.005                              # diffusion constant D [dimentionless]
 itime = 0                                   # time counter
 t_matrix = GenerateTMatrix(nLattice)        # T matrix for LGF operations
 i_matrix = GenerateIMatrix(nLattice)        # I matrix for LGF operations
@@ -35,6 +35,7 @@ i_matrix = GenerateIMatrix(nLattice)        # I matrix for LGF operations
 # create mother cell and update the grid with its initial location
 cellList.append(cell(ix,iy))
 cellGrid[ix][iy][0] = 1
+cellGrid[ix][iy][2] = 20.
 
 # Plot figure and subplots
 cellsFigure, cellsSubplot, sgfSubplot, lgfSubplot, cellPlot, sgfPlot, lgfPlot = Environment.CellsGridFigure(nLattice)
@@ -79,7 +80,7 @@ while itime < timeSteps:
         tmpCellList[rndCell].GenerateStatus(SGF_read, LGF_read)     # get status of this cell
         # matrix operations...
         sigma_m[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos] = tmpCellList[rndCell].sgfAmount
-        lambda_m[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos] = tmpCellList[rndCell].lgfAmount
+        #lambda_m[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos] = tmpCellList[rndCell].lgfAmount
 
                 
         # DEBUG
@@ -138,7 +139,16 @@ while itime < timeSteps:
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     cellGrid[:,:,1] = sgfDiffEq2(cellGrid[:,:,1], sigma_m, deltaS, deltaT)
     cellGrid[:,:,2] = lgfDiffEq(i_matrix, t_matrix, cellGrid[:,:,2], lambda_m, deltaL, deltaT, deltaR, diffConst)
+ 
 
+    chemsum = 0
+    for iPos in range(nLattice):
+        for jPos in range(nLattice):
+            chemsum += cellGrid[iPos,jPos,2]
+            if cellGrid[iPos,jPos,2] < 0.01:
+                cellGrid[iPos,jPos,2] = 0
+    print('grid after update...\n' + str(cellGrid[:,:,2]))
+    print('################################chemical total = ' + str(chemsum))
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     #        Plot               #
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~#
