@@ -30,40 +30,49 @@ def CheckifPreferred(xOri, yOri, xCoord, yCoord):
         return False
 # CheckifPreferred
 
-# TODO redo with matrix approach
+# SGF dynamics, single value update approach 
 def sgfDiffEq(s, sigma, deltaS, deltaT):
     updatedVal = s + deltaT*(sigma - deltaS*s)
     return updatedVal
 # sgfDiffEq
 
-#def lgfDiffEq(i_matrix, t_matrix, l_matrix, lambda_matrix, deltaL, deltaT, deltaR, D):
-        #alpha = D*deltaT/(deltaR**2)                            # constant
-        #f = (deltaT/2.)*(lambda_matrix - deltaL*l_matrix)       # term that takes into account LFG production for half time step
-        #g = linalg.inv(i_matrix - (alpha/2.)*t_matrix)          # inverse of some intermediate matrix
-        #h = i_matrix + (alpha/2.)*t_matrix                      # some intermediate matrix
-        #l_halftStep = g@(l_matrix@h + f)                        # half time step calculation for LGF values
-        #f = (deltaT/2.)*(lambda_matrix - deltaL*l_halftStep)    # updated term...
-        #l_tStep = (h@l_halftStep + f)@g                         # final computation
-    #return l_tStep
-## sgfDiffEq
+# SGF dynamics with matrix approach
+def sgfDiffEq2(s_matrix, sigma_matrix, deltaS, deltaT):
+    updated_matrix = s_matrix + deltaT*(sigma_matrix - deltaS*s_matrix)
+    return updated_matrix
+# sgfDiffEq
 
-#def GenerateTMatrix(size):
-    #t_matrix = np.zeros([size,size])
-    #for ix in range(size - 1):
-        #t_matrix[ix,ix] = 2
-        #t_matrix[ix,ix + 1] = 1
-        #t_matrix[ix + 1,ix] = 1
-    #t_matrix[0,0] = -1
-    #t_matrix[size - 1, size - 1] = -1
-    #return t_matrix        
-## GenerateTMatrix
+# LGF dynamics with matrix approach
+def lgfDiffEq(i_matrix, t_matrix, l_matrix, lambda_matrix, deltaL, deltaT, deltaR, D):
+    alpha = D*deltaT/(deltaR**2)                            # constant
+    f = (deltaT/2.)*(lambda_matrix - deltaL*l_matrix)       # term that takes into account LFG production for half time step
+    g = linalg.inv(i_matrix - (alpha/2.)*t_matrix)          # inverse of some intermediate matrix
+    h = i_matrix + (alpha/2.)*t_matrix                      # some intermediate matrix
+    l_halftStep = g@(l_matrix@h + f)                        # half time step calculation for LGF values
+    f = (deltaT/2.)*(lambda_matrix - deltaL*l_halftStep)    # updated term...
+    l_tStep = (h@l_halftStep + f)@g                         # final computation
+    return l_tStep
+# sgfDiffEq
 
-#def GenerateIMatrix(size):
-    #I_matrix = np.zeros([size,size])
-    #for ix in range(size):
-        #t_matrix[ix,ix] = 1
-    #return I_matrix
-## GenerateIMatrix
+# T matrix, used in LGF dynamics
+def GenerateTMatrix(size):
+    t_matrix = np.zeros([size,size])
+    for ix in range(size - 1):
+        t_matrix[ix,ix] = 2
+        t_matrix[ix,ix + 1] = 1
+        t_matrix[ix + 1,ix] = 1
+    t_matrix[0,0] = -1
+    t_matrix[size - 1, size - 1] = -1
+    return t_matrix        
+# GenerateTMatrix
+
+# Identity matrix
+def GenerateIMatrix(size):
+    I_matrix = np.zeros([size,size])
+    for ix in range(size):
+        I_matrix[ix,ix] = 1
+    return I_matrix
+# GenerateIMatrix
 
 #def diffusion_FTCS(deltaT, deltaS, t_max, y_max, const, init_cond):
     ## diffusion number (has to be less than 0.5 for the 
