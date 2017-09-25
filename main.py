@@ -143,7 +143,8 @@ while itime < timeSteps:
                 lgfSubplot, 
                 cellPlot, 
                 sgfPlot, 
-                lgfPlot,itime)
+                lgfPlot,
+                itime)
     
     #time.sleep(0.5)
     itime += 1

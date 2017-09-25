@@ -126,7 +126,6 @@ class cell:
             self.state = 'Quiet'
             # DEBUG
             print('split = ' + str(iStatus) + ', move = ' + str(jStatus) + '\ndie = ' + str(kStatus) + '. Max: quiet\n')
-
         else:
             for ix in iStatus, jStatus, kStatus:
                 if maxVal < ix:
@@ -255,7 +254,7 @@ class cell:
             #occupation = grid[newxPos][newyPos][0]
             # if the position is free then create a cell there
             if grid[newxPos][newyPos][0] == 0:
-                #	daughterCell = Cell(newxPos, newyPos)
+                # daughterCell = Cell(newxPos, newyPos)
                 # DEBUG
                 print('new cell created!\n')
                 cellList.append(cell(newxPos, newyPos))
