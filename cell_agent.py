@@ -4,7 +4,7 @@ from tools import *
 
 class cell:
     # defines whats needed when a new agent (Cell) of this class is created
-    def __init__(self, xPos, yPos, W, w, phi, theta):
+    def __init__(self, xPos, yPos):#, W, w, phi, theta):
         self.state = 'Quiet'                        # State of the cell. DEFAULT: quiet
         self.xPos = xPos                            # Initial position on x axis
         self.yPos = yPos                            # Initial position on y axis
@@ -20,10 +20,10 @@ class cell:
         self.sgfAmount = 0                          # Amount of "pheromone" to deposit in the grid
         self.lgfAmount = 0
         # Neural network stuff
-        self.wMatrix = w
-        self.WMatrix = W
-        self.phi = phi
-        self.theta = theta
+        #self.wMatrix = w
+        #self.WMatrix = W
+        #self.phi = phi
+        #self.theta = theta
     # self
     
     #   Values stored in grid according to state:
@@ -72,20 +72,20 @@ class cell:
 
     def GenerateStatus(self, SGF_lecture, LGF_lecture):
         # neural network generates a status based on the reads
-        inputs = np.array([SGF_lecture, LGF_lecture])
+        #inputs = np.array([SGF_lecture, LGF_lecture])
         # Neural network first implementation
-        O = np.zeros([6])
-        O = NeuralNetwork(inputs, self.WMatrix, self.wMatrix, self.phi, self.theta)
+        #O = np.zeros([6])
+        #O = NeuralNetwork(inputs, self.WMatrix, self.wMatrix, self.phi, self.theta)
 
         
         border = self.border
         # possible states: split, move, die
-        iStatus = O[0]#np.random.random()        # Proliferate:  Split
-        jStatus = O[1]#np.random.random()        # Move:         Move
-        kStatus = O[2]#np.random.random()        # Apoptosis:    Die
+        iStatus = np.random.random() #O[0]        # Proliferate:  Split
+        jStatus = np.random.random() #O[1]        # Move:         Move
+        kStatus = np.random.random() #O[2]        # Apoptosis:    Die
         # values for SGF and LGF
-        self.sgfAmount = O[3]#np.random.randint(5)
-        self.lgfAmount = O[4]#np.random.randint(5)
+        self.sgfAmount = np.random.randint(5) #O[4]
+        self.lgfAmount = np.random.randint(5) #O[5]
         
         # ORIENTATION:
         # randomly sets a preferred neighbour (polarisation)
@@ -318,7 +318,7 @@ class cell:
                 #finalList.append(tmpList[r])
             if len(movePos) > 0:
                 grid[self.xPos][self.yPos][0] = 3
-                cellList.append(cell(movePos[0], movePos[1],self.WMatrix,self.wMatrix,self.phi,self.theta))
+                cellList.append(cell(movePos[0], movePos[1]))#,self.WMatrix,self.wMatrix,self.phi,self.theta))
                 grid[movePos[0]][movePos[1]][0] = 1
                 print('new cell created!')
             else:

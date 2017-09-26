@@ -48,7 +48,7 @@ phi = 4*np.random.random(size=6)-2 #np.array([-0.75,0,-1.75,0.7,-0.9,-1])
 #       INITIALIZATION             #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 # create mother cell and update the grid with its initial location
-cellList.append(cell(ix,iy,WMatrix,wMatrix,phi,theta))
+cellList.append(cell(ix,iy))#,WMatrix,wMatrix,phi,theta))
 cellGrid[ix][iy][0] = 1
 #cellGrid[ix][iy][2] = 20.
 
