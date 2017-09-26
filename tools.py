@@ -42,6 +42,7 @@ def sgfDiffEq2(s_matrix, sigma_matrix, deltaS, deltaT):
     return updated_matrix
 # sgfDiffEq
 
+# TODO use linalg solve to make it fastes and more numerically stable
 # LGF dynamics with matrix approach
 def lgfDiffEq(i_matrix, t_matrix, l_matrix, lambda_matrix, deltaL, deltaT, deltaR, D):
     alpha = D*deltaT/(deltaR**2)                            # constant
@@ -122,9 +123,20 @@ def GenerateIMatrix(size):
     #return y,t,V,s
 # diffusion_Laasonen
 
-def NeuralNetwork(sgf_lecture, lgf_lecture):
-    nNodes = 10  # number of nodes
-    # random matrix is generated, later via EA
-    weightsMatrix = np.random.randint(-1,2,size = (nNodes,6))
+def NeuralNetwork(inputs, WMatrix, wMatrix, phi, theta):
+    #nNodes = 10  # number of nodes
+    V = np.zeros([6])
+    O = np.zeros([6])
+    bj = wMatrix@inputs - theta
+    for ix in range(len(bj)):
+        V[ix] = TransferFunction(bj[ix],2)
     
+    bi = WMatrix@V - phi
+    for ix in range(len(bi)):
+        O[ix] = TransferFunction(bi[ix],2)
+    return O
 # NeuralNetwork
+
+def TransferFunction(x,beta):
+    return 1./(1 + np.exp(-beta*x))
+# TransferFunction
