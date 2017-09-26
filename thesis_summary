@@ -1,5 +1,4 @@
 The main goal of the master thesis project is to expand the work made by Gerlee et al. (missing/fix reference). 
-
 They implemented a computational model of developing cells on a grid.
 Their aim was to study how different 
 individual cellular characteristics drive the emergence of homeostatic structures. The model combines 
