@@ -9,7 +9,7 @@ class Environment:
         plt.close()
         
         #discrete color scheme
-        cMap = ListedColormap(['w', 'g', 'b', 'r'])
+        cMap = ListedColormap(['w', 'g', 'b', 'k'])
 
         cellsFigure, (cellsSubplot,sgfSubplot,lgfSubplot) = plt.subplots(1, 3, figsize = (15,5))
 
@@ -51,10 +51,10 @@ class Environment:
         cbar1.ax.get_yaxis().labelpad = 15
         cbar1.ax.set_ylabel('states', rotation = 270)
         
-        sgfPlot = sgfSubplot.imshow(sgfGrid, origin = 'lower', cmap = 'Blues', interpolation = 'none', vmin = 0, vmax = 8)
+        sgfPlot = sgfSubplot.imshow(sgfGrid, origin = 'lower', cmap = 'Reds', interpolation = 'none', vmin = 0, vmax = 8)
         cbar2 = cellsFigure.colorbar(sgfPlot, ax = sgfSubplot, orientation = 'horizontal')
 
-        lgfPlot = lgfSubplot.imshow(lgfGrid, origin = 'lower', cmap = 'Reds', interpolation = 'none', vmin = 0, vmax = 20)
+        lgfPlot = lgfSubplot.imshow(lgfGrid, origin = 'lower', cmap = 'Blues', interpolation = 'none', vmin = 0, vmax = 20)
         cbar3 = cellsFigure.colorbar(lgfPlot, ax = lgfSubplot, orientation = 'horizontal')
 
         plt.show(block = False)
