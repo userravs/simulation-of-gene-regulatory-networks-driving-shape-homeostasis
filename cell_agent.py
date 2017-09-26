@@ -27,9 +27,8 @@ class cell:
     # self
     
     #   Values stored in grid according to state:
-    #      -1   =>  a cell was there before but died or moved away
     #       0   =>  spot has been always empty i.e. available
-    #       1   =>  quiet cell
+    #       1   =>  quiet cell, or move/split failed/didn't reach the activation value
     #       2   =>  moving cell
     #       3   =>  divided cell
 
@@ -94,8 +93,8 @@ class cell:
         if self.compass:
             # boundaries for orientation
             nBoundary = 0.15
-            #sBoundary = 0.5
-            #eBoundary = 0.75
+            sBoundary = 0.5
+            eBoundary = 0.75
             #wBoundary = 1
             arrow = np.random.random()
             if arrow < nBoundary:
@@ -104,20 +103,20 @@ class cell:
                 # orientation North
                 if CheckInBorders(xCoord, yCoord, border):
                     self.orientation = [xCoord, yCoord]
-            #elif arrow < sBoundary:
-                ## orientation South
-                #xCoord = self.xPos + 1
-                #yCoord = self.yPos
-                ## orientation North
-                #if CheckInBorders(xCoord, yCoord, border):
-                    #self.orientation = [xCoord, yCoord]
-            #elif arrow < eBoundary:
-                ## orientation East
-                #xCoord = self.xPos
-                #yCoord = self.yPos + 1
-                ## orientation North
-                #if CheckInBorders(xCoord, yCoord, border):
-                    #self.orientation = [xCoord, yCoord]
+            elif arrow < sBoundary:
+                # orientation South
+                xCoord = self.xPos + 1
+                yCoord = self.yPos
+                # orientation North
+                if CheckInBorders(xCoord, yCoord, border):
+                    self.orientation = [xCoord, yCoord]
+            elif arrow < eBoundary:
+                # orientation East
+                xCoord = self.xPos
+                yCoord = self.yPos + 1
+                # orientation North
+                if CheckInBorders(xCoord, yCoord, border):
+                    self.orientation = [xCoord, yCoord]
             else:   #arrow < wBoundary:
                 # orientation West
                 xCoord = self.xPos
@@ -125,6 +124,8 @@ class cell:
                 # orientation North
                 if CheckInBorders(xCoord, yCoord, border):
                     self.orientation = [xCoord, yCoord]
+        else:                                           # update orientation as current position if compass False
+            self.orientation = [self.xPos, self.yPos]
         # if
 
         # Generate state
@@ -133,10 +134,11 @@ class cell:
         xThreshold = 0.5
         yThreshold = 0.01
         
+        # TODO is the order of this operations the ideal?
         if iStatus < xThreshold and jStatus < xThreshold and kStatus < xThreshold:
             self.state = 'Quiet'
             # DEBUG
-            print('split = ' + str(iStatus) + ', move = ' + str(jStatus) + '\ndie = ' + str(kStatus) + '. Max: quiet\n')
+            #print('split = ' + str(iStatus) + ', move = ' + str(jStatus) + '\ndie = ' + str(kStatus) + '. Max: quiet\n')
         else:
             for ix in iStatus, jStatus, kStatus:
                 if maxVal < ix:
@@ -148,7 +150,7 @@ class cell:
             else:   # abs(maxVal - kStatus) <= yThreshold:
                 self.state = 'Die'
             # DEBUG
-            print('split = ' + str(iStatus) + ', move = ' + str(jStatus) + '\ndie = ' + str(kStatus) + '. Max: '+ str(maxVal) + '\n')
+            #print('split = ' + str(iStatus) + ', move = ' + str(jStatus) + '\ndie = ' + str(kStatus) + '. Max: '+ str(maxVal) + '\n')
     # GenerateStatus
 
     def Quiet(self,grid):
@@ -157,43 +159,49 @@ class cell:
     # Quiet
 
     def Die(self, grid):
-        self.amidead = True
-        grid[self.xPos][self.yPos][0] = -1
+        self.deathCounter += 1
+        if self.deathCounter == self.deathTime:             # if cell set to die then do
+            self.amidead = True
+            print('cell died!')
+            grid[self.xPos][self.yPos][0] = 0
+        else:                                               # otherwise stay quiet
+            print('Death counter = ' + str(self.deathCounter))
+            grid[self.xPos][self.yPos][0] = 1
     # Die
 
-    def Move(self, grid):
-        # check a randomly generated neighbour if occupied
-        r = np.random.randint(4)
-        # check if spot is occupied
-        if r == 0:
-            # each case returns the value on grid according to the random number (neighbour)
-            newxPos = self.xPos - 1
-            newyPos = self.yPos
+    #def Move(self, grid):
+        ## check a randomly generated neighbour if occupied
+        #r = np.random.randint(4)
+        ## check if spot is occupied
+        #if r == 0:
+            ## each case returns the value on grid according to the random number (neighbour)
+            #newxPos = self.xPos - 1
+            #newyPos = self.yPos
 
-        elif r == 1:
-            newxPos = self.xPos
-            newyPos = self.yPos + 1
+        #elif r == 1:
+            #newxPos = self.xPos
+            #newyPos = self.yPos + 1
 
-        elif r == 2:
-            newxPos = self.xPos + 1
-            newyPos = self.yPos
+        #elif r == 2:
+            #newxPos = self.xPos + 1
+            #newyPos = self.yPos
 
-        else:
-            newxPos = self.xPos
-            newyPos = self.yPos - 1
+        #else:
+            #newxPos = self.xPos
+            #newyPos = self.yPos - 1
 
-        occupation = grid[newxPos][newyPos][0]
+        #occupation = grid[newxPos][newyPos][0]
 
-        # if position if free, move there
-        if occupation == 0:
-            print('cell moved\n')
-            grid[newxPos][newyPos][0] = 1
-            grid[self.xPos][self.yPos][0] = 0
-            self.xPos = newxPos
-            self.yPos = newyPos
-        else:
-            print('move failed\n')
-    # Move
+        ## if position if free, move there
+        #if occupation == 0:
+            #print('cell moved\n')
+            #grid[newxPos][newyPos][0] = 1
+            #grid[self.xPos][self.yPos][0] = 0
+            #self.xPos = newxPos
+            #self.yPos = newyPos
+        #else:
+            #print('move failed\n')
+    ## Move
 
     # OrientedMove, works with orientation ON and OFF
     def Move2(self, grid):
@@ -234,7 +242,7 @@ class cell:
 
         if len(movePos) > 0:
             grid[movePos[0]][movePos[1]][0] = 2                     # new position gets a 2 value to mark as moving cell
-            grid[self.xPos][self.yPos][0] = -1                      # old position gets a -1 value to indicate that there was a cell there before
+            grid[self.xPos][self.yPos][0] = 0                      # old position gets a -1 value to indicate that there was a cell there before
             self.xPos = movePos[0]                                  # update position
             self.yPos = movePos[1]
             print('cell moved!')
@@ -243,37 +251,37 @@ class cell:
             print('moving failed\n')
     # Move2
 
-    def Split(self, grid, cellList):
-        self.splitCounter += 1
-        if self.splitCounter == self.splitTime:
-            self.splitCounter = 0
-            # check a randomly generated neighbour if occupied
-            r = np.random.randint(4)
-            # check if spot is occupied
-            if r == 0:
-                # each case returns the value on grid according to the random number (neighbour)
-                newxPos = self.xPos - 1
-                newyPos = self.yPos
-            elif r == 1:
-                newxPos = self.xPos
-                newyPos = self.yPos + 1
-            elif r == 2:
-                newxPos = self.xPos + 1
-                newyPos = self.yPos
-            else:
-                newxPos = self.xPos
-                newyPos = self.yPos - 1
-            #occupation = grid[newxPos][newyPos][0]
-            # if the position is free then create a cell there
-            if grid[newxPos][newyPos][0] == 0:
-                # daughterCell = Cell(newxPos, newyPos)
-                # DEBUG
-                print('new cell created!\n')
-                cellList.append(cell(newxPos, newyPos))
-                grid[newxPos][newyPos][0] = 1
-            else:
-                print('split failed\n')
-    # Split
+    #def Split(self, grid, cellList):
+        #self.splitCounter += 1
+        #if self.splitCounter == self.splitTime:
+            #self.splitCounter = 0
+            ## check a randomly generated neighbour if occupied
+            #r = np.random.randint(4)
+            ## check if spot is occupied
+            #if r == 0:
+                ## each case returns the value on grid according to the random number (neighbour)
+                #newxPos = self.xPos - 1
+                #newyPos = self.yPos
+            #elif r == 1:
+                #newxPos = self.xPos
+                #newyPos = self.yPos + 1
+            #elif r == 2:
+                #newxPos = self.xPos + 1
+                #newyPos = self.yPos
+            #else:
+                #newxPos = self.xPos
+                #newyPos = self.yPos - 1
+            ##occupation = grid[newxPos][newyPos][0]
+            ## if the position is free then create a cell there
+            #if grid[newxPos][newyPos][0] == 0:
+                ## daughterCell = Cell(newxPos, newyPos)
+                ## DEBUG
+                #print('new cell created!\n')
+                #cellList.append(cell(newxPos, newyPos))
+                #grid[newxPos][newyPos][0] = 1
+            #else:
+                #print('split failed\n')
+    ## Split
 
     # works with polarisation ON and OFF
     # initial for and then if are the same as in Move2, might be useful to use a single function
@@ -325,6 +333,7 @@ class cell:
                 grid[self.xPos][self.yPos][0] = 1
                 print('split failed\n')
         else:
+            grid[self.xPos][self.yPos][0] = 1
             print('split counter + 1\n')
     # Split2
 # Cell

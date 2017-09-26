@@ -12,8 +12,8 @@ from plot import *
 #       PARAMETERS                 #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 # TODO: organize in different categories...
-nLattice = 25                              # TODO change name
-timeSteps = 100                              # Number of simulation time steps
+nLattice = 100                              # TODO change name
+timeSteps = 400                              # Number of simulation time steps
 cellGrid = np.zeros([nLattice,nLattice,3])  # Initialize empty grid
 SGF_read = 0.                                # in the future values will be read from the grid
 LGF_read = 0.
@@ -50,6 +50,7 @@ phi = 4*np.random.random(size=6)-2 #np.array([-0.75,0,-1.75,0.7,-0.9,-1])
 # create mother cell and update the grid with its initial location
 cellList.append(cell(ix,iy))#,WMatrix,wMatrix,phi,theta))
 cellGrid[ix][iy][0] = 1
+print('Initial grid:\n' + str(cellGrid[:,:,0]))
 #cellGrid[ix][iy][2] = 20.
 
 # Plot figure and subplots
@@ -60,7 +61,7 @@ print('Time running...')
 
 while itime < timeSteps:
     # DEBUG 
-    print('\ntime step #' + str(itime))
+    print('\n######### time step #' + str(itime))
     
     ## decay chemicals in spots where there is some but no cell
     
@@ -88,7 +89,7 @@ while itime < timeSteps:
         lambda_m[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos] = tmpCellList[rndCell].lgfAmount
 
         # DEBUG
-        print('cell number: ' + str(len(cellList)) + '\nCell status: ' + str(tmpCellList[rndCell].state))# + '\n')
+        print('\ncell number: ' + str(len(cellList)) + '\nCell status: ' + str(tmpCellList[rndCell].state))# + '\n')
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         #        Cell Action            #
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#        
@@ -106,10 +107,17 @@ while itime < timeSteps:
             del tmpCellList[rndCell]
          
         else: # Die
-            tmpCellList[rndCell].deathCounter += 1
-            if tmpCellList[rndCell].deathCounter == tmpCellList[rndCell].deathTime:
-                tmpCellList[rndCell].Die(cellGrid)                  # Off the grid, method also changes the "amidead" switch to True
-                del tmpCellList[rndCell]
+            tmpCellList[rndCell].Die(cellGrid)                  # Off the grid, method also changes the "amidead" switch to True
+            del tmpCellList[rndCell]
+
+            #tmpCellList[rndCell].deathCounter += 1
+            #if tmpCellList[rndCell].deathCounter == tmpCellList[rndCell].deathTime:
+                #tmpCellList[rndCell].Die(cellGrid)                  # Off the grid, method also changes the "amidead" switch to True
+                #del tmpCellList[rndCell]
+            #else:
+                #print('Death counter = ' + str(tmpCellList[rndCell].deathCounter))
+                #grid[self.xPos][self.yPos][0] = 0
+                #del tmpCellList[rndCell]                            # end of action, then off the tmpList
     # while
 
     # A list of cells that "died" is stored to later actually kill the cells...
@@ -117,7 +125,6 @@ while itime < timeSteps:
     for jCell in range(listLength,-1,-1):                     # checks every cell and if it was set to die then do, in reverse order
         #print('len(cellList): ' + str(len(cellList)) + '. Current element: ' + str(jCell))
         if cellList[jCell].amidead:
-            print('cell died!')
             del cellList[jCell]
     
     ### TEST! equivalent to: cellList[cell].'status'(param_x,param_y)
@@ -143,6 +150,7 @@ while itime < timeSteps:
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     #        Plot               #
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+    #print('updated grid:\n' + str(cellGrid[:,:,0]))
     Environment.AntGridPlot(cellGrid,
                 nLattice,
                 cellsFigure, 
@@ -154,7 +162,7 @@ while itime < timeSteps:
                 lgfPlot,
                 itime)
     
-    time.sleep(0.25)
+    #time.sleep(0.25)
     itime += 1
     
 # while    
