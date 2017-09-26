@@ -46,24 +46,35 @@
 	* 3: cell just gave birth
 #### To do:
 * Double check action functions: quiet, move, die, split, generateStatus, orientation system
-* Test decaying dynamics of SGF
-* Implement dynamics for LGF
-* Implement self-made NN
+* Test decaying dynamics of SGF.
+* Implement dynamics for LGF.
+* Implement self-made NN.
 
 ### 20170921
 #### To do:
-* Write more comments in the code, everything should be as clear as possible
-* Have to update the SGF and LGF via matrix operations
+* Write more comments in the code, everything should be as clear as possible.
+* Have to update the SGF and LGF via matrix operations.
 * Draw a flow diagram of the main code. (!)
 
 ### 20170925
 #### Done:
-* Cleaning of repo, code
+* Cleaning of repo, code.
 * Implemented matrix scheme of SGF and LGF dynamics. Needs testing!
-* Flow diagrams have sketch
+* Flow diagrams have sketch.
 
 #### To do:
 * Test every cell action and SGF/LGF dynamics.
 * Start implementation of NN.
-* Digital version of flow charts
-* Discuss order of updates in cell dynamics
+* Digital version of flow charts.
+* Discuss order of updates in cell dynamics.
+
+### 20170926
+#### Done:
+* NN implemented. 
+* Corrected some bugs in split, move and die actions.
+
+#### To do:
+* Test NN. Use a working example if possible, otherwise start implementaion of EA.
+* EA.
+* Fix order of coordinates x, y. Not a big issue but leads to some confusion.
+* Use a better color combination for cell states. Colorblind proof
