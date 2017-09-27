@@ -12,8 +12,8 @@ from plot import *
 #       PARAMETERS                 #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 # TODO: organize in different categories...
-nLattice = 100                              # TODO change name
-timeSteps = 400                              # Number of simulation time steps
+nLattice = 50                              # TODO change name
+timeSteps = 40                              # Number of simulation time steps
 cellGrid = np.zeros([nLattice,nLattice,3])  # Initialize empty grid
 SGF_read = 0.                                # in the future values will be read from the grid
 LGF_read = 0.
@@ -27,8 +27,8 @@ cellList = []                               # List for cell agents
 deltaT = 1.                                  # time step for discretisation [T]
 deltaR = 1.                                  # space step for discretisation [L]  
 deltaS = 0.5                                # decay rate for SGF
-deltaL = 0.1                                 # decay rate for LGF
-diffConst = 0.05                              # diffusion constant D [dimentionless]
+deltaL = 0.#0.1                                 # decay rate for LGF
+diffConst = 1.#0.05                              # diffusion constant D [dimentionless]
 t_matrix = GenerateTMatrix(nLattice)        # T matrix for LGF operations
 i_matrix = GenerateIMatrix(nLattice)        # I matrix for LGF operations
 
@@ -36,13 +36,25 @@ i_matrix = GenerateIMatrix(nLattice)        # I matrix for LGF operations
 # random matrix is generated, later via EA
 # nNodes x nInputs
 nNodes = 6
-wMatrix = np.random.randint(-2,3,size = (nNodes,2))
-#wMatrix = np.array([[-1,0],[0,-1],[1,0],[1,0],[0,0],[0,1]])
+#wMatrix = np.random.randint(-1,2,size = (nNodes,2))
+wMatrix = np.array([[1,     0],
+                    [0.5,   0],
+                    [-2,    -2],
+                    [0,     -2],
+                    [0,     0.5],
+                    [0,     0]])
 # nOutputs x nNodes
-WMatrix = np.random.randint(-2,3,size = (6,nNodes))
-#WMatrix = np.array([[-1,1,0,1,0,-1],[0,0,1,0,0,-1],[1,0,-1,0,0,1],[0,1,1,-1,0,-1],[0,-1,0,1,0,0],[0,-1,1,0,1,0]])
-theta = 4*np.random.random(size=6)-2 #np.array([0.25,0,-1,-0.15,-0.2,1])
-phi = 4*np.random.random(size=6)-2 #np.array([-0.75,0,-1.75,0.7,-0.9,-1])
+#WMatrix = np.random.randint(-1,2,size = (6,nNodes))
+WMatrix = np.array([[-0.5,      1,      1,      -0.5,   0, 0],
+                    [0,         0.55,   1,      -0.5,   0, 0],
+                    [0,         0,      0.55,   -0.5,   0, 0],
+                    [0,         0,      0,      2,     2, 0],
+                    [0,         0,      0,      0,      0, 0],
+                    [0,         0,      0,      0,      0, 0]])
+#theta = 2*np.random.random(size=6)-1 #
+theta = np.array([0.55,0,0.7,-0.25,0,0])
+#phi = 2*np.random.random(size=6)-1 #
+phi = np.array([0,0,0,0,0,0])
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #       INITIALIZATION             #
@@ -50,8 +62,8 @@ phi = 4*np.random.random(size=6)-2 #np.array([-0.75,0,-1.75,0.7,-0.9,-1])
 # create mother cell and update the grid with its initial location
 cellList.append(cell(ix,iy))#,WMatrix,wMatrix,phi,theta))
 cellGrid[ix][iy][0] = 1
-print('Initial grid:\n' + str(cellGrid[:,:,0]))
-#cellGrid[ix][iy][2] = 20.
+#print('Initial grid:\n' + str(cellGrid[:,:,0]))
+cellGrid[ix][iy][2] = 400.
 
 # Plot figure and subplots
 cellsFigure, cellsSubplot, sgfSubplot, lgfSubplot, cellPlot, sgfPlot, lgfPlot = Environment.CellsGridFigure(nLattice)
@@ -86,7 +98,7 @@ while itime < timeSteps:
         tmpCellList[rndCell].GenerateStatus(SGF_read, LGF_read)     # get status of this cell
         # production matrices get updated values
         sigma_m[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos] = tmpCellList[rndCell].sgfAmount
-        lambda_m[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos] = tmpCellList[rndCell].lgfAmount
+        #lambda_m[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos] = tmpCellList[rndCell].lgfAmount
 
         # DEBUG
         print('\ncell number: ' + str(len(cellList)) + '\nCell status: ' + str(tmpCellList[rndCell].state))# + '\n')
@@ -146,7 +158,7 @@ while itime < timeSteps:
             #if cellGrid[iPos,jPos,2] < 0.01:
                 #cellGrid[iPos,jPos,2] = 0
     #print('grid after update...\n' + str(cellGrid[:,:,2]))
-    #print('################################LGF total = ' + str(chemsum))
+    print('################################LGF total = ' + str(chemsum))
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     #        Plot               #
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -162,7 +174,7 @@ while itime < timeSteps:
                 lgfPlot,
                 itime)
     
-    #time.sleep(0.25)
+    time.sleep(0.5)
     itime += 1
     
 # while    

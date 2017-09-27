@@ -79,12 +79,12 @@ class cell:
         
         border = self.border
         # possible states: split, move, die
-        iStatus = np.random.random() #O[0]        # Proliferate:  Split
-        jStatus = np.random.random() #O[1]        # Move:         Move
-        kStatus = np.random.random() #O[2]        # Apoptosis:    Die
+        iStatus = np.random.random() #O[0]O[0] #np.random.random() #O[0]        # Proliferate:  Split
+        jStatus = np.random.random() #O[0]O[1] #np.random.random() #O[1]        # Move:         Move
+        kStatus = np.random.random() #O[0]O[2] #np.random.random() #O[2]        # Apoptosis:    Die
         # values for SGF and LGF
-        self.sgfAmount = np.random.randint(5) #O[4]
-        self.lgfAmount = np.random.randint(5) #O[5]
+        self.sgfAmount = np.random.random() #O[0]O[3] #np.random.randint(5) #O[4]
+        self.lgfAmount = np.random.random() #O[0]O[4] #np.random.randint(5) #O[5]
         
         # ORIENTATION:
         # randomly sets a preferred neighbour (polarisation)
@@ -96,7 +96,7 @@ class cell:
             sBoundary = 0.5
             eBoundary = 0.75
             #wBoundary = 1
-            arrow = np.random.random()
+            arrow = O[5]  #np.random.random()
             if arrow < nBoundary:
                 xCoord = self.xPos - 1
                 yCoord = self.yPos
