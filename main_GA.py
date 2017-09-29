@@ -21,7 +21,7 @@ population = InitializePopulation(popSize, numberOfGenes)   # call initializatio
 
 for iGen in range(nOfGenerations):
     maximumFitness = 0.0 # Assumes non-negative fitness values!
-    xBest = zeros(1,2) # [0 0]
+    xBest = np.zeros([1,2]) # [0 0]
     bestIndividualIndex = 0
 
     # chromosomes get decoded and evaluated
@@ -43,7 +43,7 @@ for iGen in range(nOfGenerations):
         tempPopulation[i,:] = chromosome1
         tempPopulation[i+1,:] = chromosome2
 
-        r = rand
+        r = np.random.random()
         if r < crossProb:
             newChromosomePair = Cross(chromosome1,chromosome2)
             tempPopulation[i,:] = newChromosomePair[1,:]
