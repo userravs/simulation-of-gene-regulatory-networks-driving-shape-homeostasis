@@ -3,17 +3,17 @@ import random
 import numpy as np
 
 # this doesn't have to be a function, its just one line...
-def InitializePopulation(populationSize, numberOfGenes):
-    population = np.random.randint(0,2,size=(populationSize, numberOfGenes))
-    #population = np.zeros([populationSize, numberOfGenes]);
-    #for ix in range(populationSize):
-        #for jx in range(numberOfGenes):
-            #s = np.random.random()
-            #if s < 0.5:
-                #population[ix,jx] = 0
-            #else:
-                #population[ix,jx] = 1
-    return population
+#def InitializePopulation(populationSize, numberOfGenes):
+    #population = np.random.randint(0,2,size=(populationSize, numberOfGenes))
+    ##population = np.zeros([populationSize, numberOfGenes]);
+    ##for ix in range(populationSize):
+        ##for jx in range(numberOfGenes):
+            ##s = np.random.random()
+            ##if s < 0.5:
+                ##population[ix,jx] = 0
+            ##else:
+                ##population[ix,jx] = 1
+    #return population
 # InitializePopulation
 
 # translate the chromosome into actual variables 
