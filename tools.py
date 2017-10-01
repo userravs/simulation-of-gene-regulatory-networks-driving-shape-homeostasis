@@ -140,3 +140,11 @@ def NeuralNetwork(inputs, WMatrix, wMatrix, phi, theta):
 def TransferFunction(x,beta):
     return 1./(1 + np.exp(-beta*x))
 # TransferFunction
+
+def RecurrentNeuralNetwork(inputs, wMatrix, V):
+    #nNodes = 10  # number of nodes
+    bj = wMatrix@V - inputs
+    for ix in range(len(bj)):
+        V[ix] = TransferFunction(bj[ix],2)
+    return V
+# NeuralNetwork

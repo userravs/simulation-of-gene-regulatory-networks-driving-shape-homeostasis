@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from cell_agent import *                    # it is allowed to call from this class because there's an __init__.py file in this directory
 from tools import *
 from plot import *
+import csv
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #       PARAMETERS                 #
@@ -35,35 +36,42 @@ i_matrix = GenerateIMatrix(nLattice)        # I matrix for LGF operations
 # Neural network stuff
 # random matrix is generated, later via EA
 # nNodes x nInputs
-nNodes = 6
+nNodes = 25
 #wMatrix = np.random.randint(-1,2,size = (nNodes,2))
-wMatrix = np.array([[1,     0],
-                    [0.5,   0],
-                    [-2,    -2],
-                    [0,     -2],
-                    [0,     0.5],
-                    [0,     0]])
+#wMatrix = np.array([[1,     0],
+                    #[0.5,   0],
+                    #[-2,    -2],
+                    #[0,     -2],
+                    #[0,     0.5],
+                    #[0,     0]])
 # nOutputs x nNodes
 #WMatrix = np.random.randint(-1,2,size = (6,nNodes))
-WMatrix = np.array([[-0.5,      1,      1,      -0.5,   0, 0],
-                    [0,         0.55,   1,      -0.5,   0, 0],
-                    [0,         0,      0.55,   -0.5,   0, 0],
-                    [0,         0,      0,      2,     2, 0],
-                    [0,         0,      0,      0,      0, 0],
-                    [0,         0,      0,      0,      0, 0]])
+##WMatrix = np.array([[-0.5,      1,      1,      -0.5,   0, 0],
+                    #[0,         0.55,   1,      -0.5,   0, 0],
+                    #[0,         0,      0.55,   -0.5,   0, 0],
+                    #[0,         0,      0,      2,     2, 0],
+                    #[0,         0,      0,      0,      0, 0],
+                    #[0,         0,      0,      0,      0, 0]])
 #theta = 2*np.random.random(size=6)-1 #
-theta = np.array([0.55,0,0.7,-0.25,0,0])
+#theta = np.array([0.55,0,0.7,-0.25,0,0])
 #phi = 2*np.random.random(size=6)-1 #
-phi = np.array([0,0,0,0,0,0])
+#phi = np.array([0,0,0,0,0,0])
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #       INITIALIZATION             #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 # create mother cell and update the grid with its initial location
-cellList.append(cell(ix,iy))#,WMatrix,wMatrix,phi,theta))
+cellList.append(cell(ix,iy))#,wMatrix))
 cellGrid[ix][iy][0] = 1
 #print('Initial grid:\n' + str(cellGrid[:,:,0]))
-cellGrid[ix][iy][2] = 400.
+#cellGrid[ix][iy][2] = 400.
+
+#wMatrix = np.random.randint(-1,2,size = (nNodes,nNodes))
+wMatrix = np.zeros([nNodes,nNodes])
+# Get rNN
+#with open('test_file.csv', 'r') as csvfile:
+    #reader = csv.reader(csvfile)
+    #wMatrix = [e for e in r] for r in reader]
 
 # Plot figure and subplots
 cellsFigure, cellsSubplot, sgfSubplot, lgfSubplot, cellPlot, sgfPlot, lgfPlot = Environment.CellsGridFigure(nLattice)
@@ -95,10 +103,10 @@ while itime < timeSteps:
         # 3rd step => update SGF and LGF amounts on the 'production' matrices sigma & lambda
         
         # 4th step => random cell should decide and action
-        tmpCellList[rndCell].GenerateStatus(SGF_read, LGF_read)     # get status of this cell
+        tmpCellList[rndCell].GenerateStatus(SGF_reading, LGF_reading)     # get status of this cell
         # production matrices get updated values
         sigma_m[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos] = tmpCellList[rndCell].sgfAmount
-        #lambda_m[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos] = tmpCellList[rndCell].lgfAmount
+        lambda_m[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos] = tmpCellList[rndCell].lgfAmount
 
         # DEBUG
         print('\ncell number: ' + str(len(cellList)) + '\nCell status: ' + str(tmpCellList[rndCell].state))# + '\n')
@@ -151,14 +159,14 @@ while itime < timeSteps:
     cellGrid[:,:,2] = lgfDiffEq(i_matrix, t_matrix, cellGrid[:,:,2], lambda_m, deltaL, deltaT, deltaR, diffConst)
  
 
-    chemsum = 0
-    for iPos in range(nLattice):
-        for jPos in range(nLattice):
-            chemsum += cellGrid[iPos,jPos,2]
+    #chemsum = 0
+    #for iPos in range(nLattice):
+        #for jPos in range(nLattice):
+            #chemsum += cellGrid[iPos,jPos,2]
             #if cellGrid[iPos,jPos,2] < 0.01:
                 #cellGrid[iPos,jPos,2] = 0
     #print('grid after update...\n' + str(cellGrid[:,:,2]))
-    print('################################LGF total = ' + str(chemsum))
+#    print('################################LGF total = ' + str(chemsum))
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     #        Plot               #
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~#
