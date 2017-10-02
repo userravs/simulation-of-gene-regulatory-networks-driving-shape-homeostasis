@@ -11,6 +11,7 @@ nGenes = nNodes**2                                          # Number of genes
 crossoverProb = 0.8                                         # Crossover probability
 mutationProb = 0.025                                        # Mutation probability
 tournamentSelParam = 0.75                                   # Tournament selection parameter
+tournamentSize = 4                                          # Tournament size                        
 eliteNum = 6                                                # number of elite solutions to carry to next generation
 nOfGenerations = 200
 #fitness = np.zeros([popSize,2])                            # fitness array
@@ -36,24 +37,35 @@ for iGen in range(nOfGenerations):
         wMatrix = -1 + 2*chromosome.reshape(nNodes,nNodes)  # decode chromosome, i.e., transform into matrix
         fitness[ix][0] = EvaluateIndividual(wMatrix)        # get chromosome fitness
         fitness[ix][1] = ix                                 # store position in population matrix
-        
+    # loop over chromosomes
+    
         #if fitness[ix] > maximumFitness:                   # get index of best chromosome
             #maximumFitness = fitness[ix]
             #bestIndividualIndex = ix
     fitness.sort(order = 'fitnessValue')                    # sort array according to fitness value. Less fit to most fit
     #wBest = np.array(population[bestIndividualIndex,:])     # store the best chromosome
     
-    tempPopulation = np.array(population)
+    tempPopulation = np.zeros(size = (popsize, nGenes))           #np.array(population)
 
-    iElit = 0
-
-    while iElit < elitNum:
-        index = fitness[popSize - iElit][1]
-        tempPopulation[iElit] = np.array(population[index,:])
-        del 
-        iElit += 1
+    iElit = 1                                                   # Elite counter: individuals with the best fitness are kept untouched 
+    while iElit <= elitNum:                                      
+        index = fitness[popSize - iElit][1]                     # get the index of the last members of the list, i.e., most fit
+        tempPopulation[iElit - 1] = np.array(population[index,:])   # store as part of the new generation of individuals   
+        del fitness[popSize - iElit]                            # delete last tuple on the list
+        iElit += 1                                  
+    # while   
         
-
+    while len(fitness) >= tournamentSize:
+        selectedInd = np.zeros([tournamentSize])
+        for ik in range(tournamentSize):
+            randomSelection = np.random.randint(len(fitness))
+            selectedInd[ik] = fitness[randomSelection][1]   # save pos in population matrix
+            del fitness[randomSelection]                    # delete entry
+        
+        #selectedInd = np.random.randint(len(fitness),size = 4) # random positions of
+        selectedInd.sort()
+                
+        
     #for iInd in range(len(fitness)-1,-1,-1):
         #if iPos < 6:
             #index = fitness[iInd][1]
