@@ -49,7 +49,7 @@ def DiracDelta(a, b):
 # DiracDelta
 
 # Tournament selection, tournament size 2
-def TournamentSelect(fitness,tournamentSelParam)
+def TournamentSelect(fitness,tournamentSelParam):
     populationSize = len(fitness)
     iTmp1 = 1 + int(np.random.random()*populationSize)
     iTmp2 = 1 + int(np.random.random()*populationSize)
@@ -68,28 +68,32 @@ def TournamentSelect(fitness,tournamentSelParam)
 # TournamentSelect
 
 # Crossover
-def Crossover(parent1, parent2, crossProb):
+def Crossover(parent1, parent2):
     #someOtherNumber,nGenes = parent1.shape                # Both chromosomes must have the same length!
-    crossoverPoint = 1 + int(np.random.random()*(nGenes-1))
-    newChromosomePair = np.zeros([2,nGenes])
-    for j in range(nGenes):
-        if j < crossoverPoint:
-            offspring1[0,j] = parent1[j]
-            offspring1[1,j] = parent2[j]
-        else:
-            offspring1[0,j] = parent2[j]
-            offspring1[1,j] = parent1[j]
-    return offspring1 offspring2
+    crossoverPoint = np.random.randint(1,len(parent1))      # set crossover point
+    print('crossover point = ' + str(crossoverPoint))   
+    offspring1 = np.array(parent1)                          # 
+    offspring2 = np.array(parent2)
+    
+    for iz in range(len(parent1)):
+        if iz < crossoverPoint:
+            val1 = offspring1[iz]
+            val2 = offspring2[iz]
+            offspring1[iz] = val2
+            offspring2[iz] = val1
+
+    return offspring1, offspring2
 # Crossover
 
 # Mutation
-def Mutate(parent1, parent2, mutProb):
+def Mutate(parent1, parent2):
     #someOtherNumber,nGenes = chromosome1.shape
-    pos1 = # np.random.uniform(0,len(parent1))                      # get random position to apply mutation
-    pos2 = #
+    pos1 = int(np.random.uniform(0,len(parent1)))                      # get random position to apply mutation
+    pos2 = int(np.random.uniform(0,len(parent2)))
     mutation1 = np.random.normal(loc = 0.0, scale = np.sqrt(0.7))   # get mutation value from normal dist: mu = 0, sigma squared = 0.7
     mutation2 = np.random.normal(loc = 0.0, scale = np.sqrt(0.7))
     
+    print('Mutations: ' + str(mutation1) + ', ' + str(mutation2))
     mutatedChromosome1 = np.array(parent1)                          # create offspring from parent
     mutatedChromosome1[pos1] += mutation1                           # apply mutation
     
@@ -98,11 +102,11 @@ def Mutate(parent1, parent2, mutProb):
     
     return mutatedChromosome1, mutatedChromosome2
     
-    for j in range(nGenes):
-        r = np.random.random()
-        if r < mutProb:
-            mutatedChromosome[j] = 1-chromosome[j]
-    return mutatedChromosome
+    #for j in range(nGenes):
+        #r = np.random.random()
+        #if r < mutProb:
+            #mutatedChromosome[j] = 1-chromosome[j]
+    #return mutatedChromosome
 # Mutation
 
 def DifferentIndex(x1, y1):
