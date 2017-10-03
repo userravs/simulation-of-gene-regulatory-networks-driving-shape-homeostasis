@@ -68,27 +68,45 @@ def TournamentSelect(fitness,tournamentSelParam)
 # TournamentSelect
 
 # Crossover
-def Cross(chromosome1,chromosome2):
-    someOtherNumber,nGenes = chromosome1.shape                # Both chromosomes must have the same length!
+def Crossover(parent1, parent2, crossProb):
+    #someOtherNumber,nGenes = parent1.shape                # Both chromosomes must have the same length!
     crossoverPoint = 1 + int(np.random.random()*(nGenes-1))
     newChromosomePair = np.zeros([2,nGenes])
     for j in range(nGenes):
         if j < crossoverPoint:
-            newChromosomePair[0,j] = chromosome1[j]
-            newChromosomePair[1,j] = chromosome2[j]
+            offspring1[0,j] = parent1[j]
+            offspring1[1,j] = parent2[j]
         else:
-            newChromosomePair[0,j] = chromosome2[j]
-            newChromosomePair[1,j] = chromosome1[j]
-    return newChromosomePair
-# Cross
+            offspring1[0,j] = parent2[j]
+            offspring1[1,j] = parent1[j]
+    return offspring1 offspring2
+# Crossover
 
 # Mutation
-def Mutate(chromosome,mutProb):
-    someOtherNumber,nGenes = chromosome1.shape
-    mutatedChromosome = np.array(chromosome)
+def Mutate(parent1, parent2, mutProb):
+    #someOtherNumber,nGenes = chromosome1.shape
+    pos1 = # np.random.uniform(0,len(parent1))                      # get random position to apply mutation
+    pos2 = #
+    mutation1 = np.random.normal(loc = 0.0, scale = np.sqrt(0.7))   # get mutation value from normal dist: mu = 0, sigma squared = 0.7
+    mutation2 = np.random.normal(loc = 0.0, scale = np.sqrt(0.7))
+    
+    mutatedChromosome1 = np.array(parent1)                          # create offspring from parent
+    mutatedChromosome1[pos1] += mutation1                           # apply mutation
+    
+    mutatedChromosome2 = np.array(parent2)
+    mutatedChromosome2[pos2] += mutation2
+    
+    return mutatedChromosome1, mutatedChromosome2
+    
     for j in range(nGenes):
         r = np.random.random()
         if r < mutProb:
             mutatedChromosome[j] = 1-chromosome[j]
     return mutatedChromosome
-# Mutate
+# Mutation
+
+def DifferentIndex(x1, y1):
+    if x1 == y1:
+        return False
+    else:
+        return True
