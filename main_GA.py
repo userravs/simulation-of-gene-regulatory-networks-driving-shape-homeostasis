@@ -1,6 +1,7 @@
 import time
 import random 
 import numpy as np
+from tools_GA import *
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #       PARAMETERS                 #
@@ -10,8 +11,9 @@ nNodes = 25
 nGenes = nNodes**2                                          # Number of genes
 crossoverProb = 0.8                                         # Crossover probability
 mutationProb = 0.025                                        # Mutation probability
+crossMutProb = 0.5                                          # probability of doing mutation or crossover
 tournamentSelParam = 0.75                                   # Tournament selection parameter
-tournamentSize = 4                                          # Tournament size                        
+tournamentSize = 4                                          # Tournament size. EVEN                        
 eliteNum = 6                                                # number of elite solutions to carry to next generation
 nOfGenerations = 200
 #fitness = np.zeros([popSize,2])                            # fitness array
@@ -23,7 +25,7 @@ dtype = [('fitnessValue',float),('position',int)]           # format for fitness
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #population = InitializePopulation(popSize, numberOfGenes)  # call initialization function, a random set of chromosomes is generated
 population = np.random.random(size = (popSize, nGenes))
-
+#contestants = np.zeros([tournamentSize, nGenes])
 
 for iGen in range(nOfGenerations):
     #maxFitness = 0. # Assumes non-negative fitness values!
@@ -51,21 +53,53 @@ for iGen in range(nOfGenerations):
     while iElit <= elitNum:                                      
         index = fitness[popSize - iElit][1]                     # get the index of the last members of the list, i.e., most fit
         tempPopulation[iElit - 1] = np.array(population[index,:])   # store as part of the new generation of individuals   
-        del fitness[popSize - iElit]                            # delete last tuple on the list
+        #del fitness[popSize - iElit]                            # delete last tuple on the list
+        np.delete(fitness,popSize - iElit)
         iElit += 1                                  
     # while   
-        
-    while len(fitness) >= tournamentSize:
-        selectedInd = np.zeros([tournamentSize])
+
+    while len(fitness) >= tournamentSize:                       # iterate through all individuals 
+        selectedInd = np.random.choice(range(len(fitness)), tournamentSize, replace = False)
+        selectedInd.sort()                                      # select random contestants and sort them by index (i.e. by fitness))
+
         for ik in range(tournamentSize):
-            randomSelection = np.random.randint(len(fitness))
-            selectedInd[ik] = fitness[randomSelection][1]   # save pos in population matrix
-            del fitness[randomSelection]                    # delete entry
+            winIndex1 = fitness[selectedInd[tournamentSize - 1]][1]   # the fittest individuals are retrieved from the sorted fitness array
+            winIndex2 = fitness[selectedInd[tournamentSize - 2]][1]
+
+            winInd1 = np.array(population[winIndex1,:])
+            winInd2 = np.array(population[winIndex2,:])
+
+        contestants[0,:] = winInd1      # WARNING might be unncesessary to copy this arrays everywhere
+        contestants[1,:] = winInd2
+        #contestants[2,:],contestants[3,:] = GetOffspring(winInd1, winInd2, crossoverProb, mutationProb)
         
-        #selectedInd = np.random.randint(len(fitness),size = 4) # random positions of
-        selectedInd.sort()
-                
+        r = np.random.random()
+        if r >= crossMutProb: 
+            contestants[2,:],contestants[3,:] = Crossover(winInd1, winInd2, crossoverProb)
+        else:
+            contestants[2,:],contestants[3,:] = Mutation(winInd1, winInd2, mutationProb)
+
+        for ix in selectedInd:
+            np.delete(fitness,ix)
+
+
+    # WARNING initial implementation, not really working...
+    #while len(fitness) >= tournamentSize:
+        #selectedInd = np.zeros([tournamentSize])                # array to store selected indexes
+        #for ik in range(tournamentSize):
+            #randomSelection = np.random.randint(len(fitness))   # generate random index
+            #selectedInd[ik] = fitness[randomSelection][1]       # save pos in population matrix
+            #np.delete(fitness,randomSelection)                  # delete entry
         
+        ##selectedInd = np.random.randint(len(fitness),size = 4) # random positions of
+        #selectedInd.sort()                                      # sort indexes, from 
+        #for ik in range(tournamentSize):
+            #index = eliteNum + ik                               # generate index where the winning individual will be stored in the newpop array
+            #if ik < int(tournamentSize/2):                      # check first two individuals
+                #winningInd = selectedInd[tournamentSize - 1 - ik]   # last two indexes in the sorted array
+                #tempPopulation[index] = np.array(population[winningInd,:])
+        
+    # WARNING Code from SOA
     #for iInd in range(len(fitness)-1,-1,-1):
         #if iPos < 6:
             #index = fitness[iInd][1]
