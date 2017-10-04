@@ -1,5 +1,7 @@
 import numpy as np
 from scipy import linalg
+import csv
+
 #from scipy.sparse import diags
 
 #class Tools:
@@ -148,3 +150,18 @@ def RecurrentNeuralNetwork(inputs, wMatrix, V):
         V[ix] = TransferFunction(bj[ix],2)
     return V
 # NeuralNetwork
+
+def GetStructure(cell_array, nLattice):
+    structure = np.zeros([nLattice,nLattice])
+    for ik in range(nLattice):
+        for jk in range(nLattice):
+            if cell_array[ik,jk] != 0:
+                structure[ik,jk] = 1
+    return structure
+# GetStructure
+
+def GetrNN():
+    with open('test_file.csv', 'r') as csvfile:
+        #reader = csv.reader(csvfile)
+        wMatrix = np.loadtxt(csvfile,delimiter=',')
+    return wMatrix
