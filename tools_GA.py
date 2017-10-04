@@ -1,6 +1,7 @@
 import time
 import random 
 import numpy as np
+from main import *
 
 # this doesn't have to be a function, its just one line...
 #def InitializePopulation(populationSize, numberOfGenes):
@@ -31,12 +32,21 @@ import numpy as np
 # DecodeChromosome
 
 # Evaluate variable using the fitness function
-def EvaluateIndividual(x):
-    totSum = 0
-    for ix in range(border):
-        for jx in range(border):
-            totSum += DiracDelta(ix,jx)
-    fitness = 1. - (1./(lSize**2))*totSum
+def EvaluateIndividual(wMatrix, timeSteps, iGen, nNodes, individual, nLattice):
+    totSum = 0.
+    deltaM = sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice)
+    deltaMatrix = np.array(deltaM)
+    #m, n = deltaMatrix.shape() 
+    #m = 50
+    for ix in range(nLattice):
+        for jx in range(nLattice):
+            totSum += deltaMatrix[ix,jx]
+    # DEBUG
+    #print('total sum on delta matrix: ' + str(totSum))
+    if totSum <= int((nLattice**2)*0.1) or totSum >= int((nLattice**2)*0.9):
+        fitness = 0.
+    else:
+        fitness = 1. - (1./(nLattice**2))*totSum
     return fitness
 # EvaluateIndividual
 
@@ -49,22 +59,22 @@ def DiracDelta(a, b):
 # DiracDelta
 
 # Tournament selection, tournament size 2
-def TournamentSelect(fitness,tournamentSelParam):
-    populationSize = len(fitness)
-    iTmp1 = 1 + int(np.random.random()*populationSize)
-    iTmp2 = 1 + int(np.random.random()*populationSize)
-    r = np.random.random()
-    if r < tournamentSelParam:
-        if fitness[iTmp1] > fitness[iTmp2]:
-            iSelected = iTmp1
-        else:
-            iSelected = iTmp2
-    else:
-        if fitness[iTmp1] > fitness[iTmp2]:
-            iSelected = iTmp2
-        else:
-            iSelected = iTmp1
-    return iSelected
+#def TournamentSelect(fitness,tournamentSelParam):
+    #populationSize = len(fitness)
+    #iTmp1 = 1 + int(np.random.random()*populationSize)
+    #iTmp2 = 1 + int(np.random.random()*populationSize)
+    #r = np.random.random()
+    #if r < tournamentSelParam:
+        #if fitness[iTmp1] > fitness[iTmp2]:
+            #iSelected = iTmp1
+        #else:
+            #iSelected = iTmp2
+    #else:
+        #if fitness[iTmp1] > fitness[iTmp2]:
+            #iSelected = iTmp2
+        #else:
+            #iSelected = iTmp1
+    #return iSelected
 # TournamentSelect
 
 # Crossover: length preserving
@@ -72,7 +82,8 @@ def TournamentSelect(fitness,tournamentSelParam):
 def Crossover(parent1, parent2):
     #someOtherNumber,nGenes = parent1.shape                # Both chromosomes must have the same length!
     crossoverPoint = np.random.randint(1,len(parent1))      # set crossover point
-    print('crossover point = ' + str(crossoverPoint))   
+    # DEBUG
+    #print('crossover point = ' + str(crossoverPoint))   
     offspring1 = np.array(parent1)                          # copy parents
     offspring2 = np.array(parent2)
     
@@ -94,7 +105,8 @@ def Mutate(parent1, parent2):
     mutation1 = np.random.normal(loc = 0.0, scale = np.sqrt(0.7))   # get mutation value from normal dist: mu = 0, sigma squared = 0.7
     mutation2 = np.random.normal(loc = 0.0, scale = np.sqrt(0.7))
     
-    print('Mutations: ' + str(mutation1) + ', ' + str(mutation2))
+    # DEBUG
+    #print('Mutations: ' + str(mutation1) + ', ' + str(mutation2))
     mutatedChromosome1 = np.array(parent1)                          # create offspring from parent
     mutatedChromosome1[pos1] += mutation1                           # apply mutation
     
