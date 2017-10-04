@@ -78,3 +78,18 @@
 * EA.
 * Fix order of coordinates x, y. Not a big issue but leads to some confusion.
 * Use a better color combination for cell states. Colorblind proof
+
+### 20171004
+#### Done:
+* Implemented correct dynamics for Recurrent Neural Network.
+* In principle, done with GA.
+* main.py as function called by main_GA.py
+* GA functions: fitness, crossover, mutate, elitism, tournament selection.
+* Read/write code to store rNN and to read it later.
+
+#### To do:
+* TEST the WHOLE thing...
+* decide where to hardcode stuff and where to leave it general.
+* Improve performance.
+* write a script (bash?) to run for all different parameter combinations.
+* Implement a True/False switch for the different plotting actions: store some snapshots or plot every time step
