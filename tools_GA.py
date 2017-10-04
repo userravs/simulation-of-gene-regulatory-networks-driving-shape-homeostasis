@@ -1,5 +1,5 @@
 import time
-import random 
+import random
 import numpy as np
 from main import *
 
@@ -17,7 +17,7 @@ from main import *
     #return population
 # InitializePopulation
 
-# translate the chromosome into actual variables 
+# translate the chromosome into actual variables
 #def DecodeChromosome(chromosome,varRange):
     #nGenes = len(chromosome)
     #nHalf = int(nGenes/2.)      # WARNING: assumes number of genes is even
@@ -32,11 +32,11 @@ from main import *
 # DecodeChromosome
 
 # Evaluate variable using the fitness function
-def EvaluateIndividual(wMatrix, timeSteps, iGen, nNodes, individual, nLattice):
+def EvaluateIndividual(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
     totSum = 0.
-    deltaM = sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice)
+    deltaM = sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode)
     deltaMatrix = np.array(deltaM)
-    #m, n = deltaMatrix.shape() 
+    #m, n = deltaMatrix.shape()
     #m = 50
     for ix in range(nLattice):
         for jx in range(nLattice):
@@ -54,7 +54,7 @@ def EvaluateIndividual(wMatrix, timeSteps, iGen, nNodes, individual, nLattice):
 def DiracDelta(a, b):
     if a == b:
         return 0
-    else: 
+    else:
         return 1
 # DiracDelta
 
@@ -83,10 +83,10 @@ def Crossover(parent1, parent2):
     #someOtherNumber,nGenes = parent1.shape                # Both chromosomes must have the same length!
     crossoverPoint = np.random.randint(1,len(parent1))      # set crossover point
     # DEBUG
-    #print('crossover point = ' + str(crossoverPoint))   
+    #print('crossover point = ' + str(crossoverPoint))
     offspring1 = np.array(parent1)                          # copy parents
     offspring2 = np.array(parent2)
-    
+
     for iz in range(len(parent1)):
         if iz < crossoverPoint:                             # exchange elements until crossoverPoint
             val1 = offspring1[iz]
@@ -104,17 +104,17 @@ def Mutate(parent1, parent2):
     pos2 = int(np.random.uniform(0,len(parent2)))
     mutation1 = np.random.normal(loc = 0.0, scale = np.sqrt(0.7))   # get mutation value from normal dist: mu = 0, sigma squared = 0.7
     mutation2 = np.random.normal(loc = 0.0, scale = np.sqrt(0.7))
-    
+
     # DEBUG
     #print('Mutations: ' + str(mutation1) + ', ' + str(mutation2))
     mutatedChromosome1 = np.array(parent1)                          # create offspring from parent
     mutatedChromosome1[pos1] += mutation1                           # apply mutation
-    
+
     mutatedChromosome2 = np.array(parent2)
     mutatedChromosome2[pos2] += mutation2
-    
+
     return mutatedChromosome1, mutatedChromosome2
-    
+
     #for j in range(nGenes):
         #r = np.random.random()
         #if r < mutProb:
