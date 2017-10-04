@@ -44,7 +44,7 @@ for iGen in range(nOfGenerations):
     
     fitness.sort(order = 'fitnessValue')                    # sort array according to fitness value. Less fit to most fit
     
-    tempPopulation = np.zeros(size = (popsize, nGenes))           #np.array(population)
+    tempPopulation = np.zeros(size = (popSize, nGenes))           #np.array(population)
 
     iElit = 1                                                   # Elite counter: individuals with the best fitness are kept untouched 
     while iElit <= eliteNum:                                      

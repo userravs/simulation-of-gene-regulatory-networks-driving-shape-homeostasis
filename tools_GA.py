@@ -17,17 +17,17 @@ import numpy as np
 # InitializePopulation
 
 # translate the chromosome into actual variables 
-def DecodeChromosome(chromosome,varRange):
-    nGenes = len(chromosome)
-    nHalf = int(nGenes/2.)      # WARNING: assumes number of genes is even
-    x1 = 0.0
-    for jx in range(nHalf):
-        x1 = x1 + chromosome[j]*2^(-j)
-    x1 = -varRange + 2*varRange*x1/(1. - 2.**(-nHalf))
-    x2 = 0.0
-    for jx in range(nHalf):
-        x2 = x2 + chromosome[j+nHalf]*2^(-j)
-    x2 = -varRange + 2*varRange*x2/(1. - 2.**(-nHalf))
+#def DecodeChromosome(chromosome,varRange):
+    #nGenes = len(chromosome)
+    #nHalf = int(nGenes/2.)      # WARNING: assumes number of genes is even
+    #x1 = 0.0
+    #for jx in range(nHalf):
+        #x1 = x1 + chromosome[j]*2^(-j)
+    #x1 = -varRange + 2*varRange*x1/(1. - 2.**(-nHalf))
+    #x2 = 0.0
+    #for jx in range(nHalf):
+        #x2 = x2 + chromosome[j+nHalf]*2^(-j)
+    #x2 = -varRange + 2*varRange*x2/(1. - 2.**(-nHalf))
 # DecodeChromosome
 
 # Evaluate variable using the fitness function
@@ -67,16 +67,17 @@ def TournamentSelect(fitness,tournamentSelParam):
     return iSelected
 # TournamentSelect
 
-# Crossover
+# Crossover: length preserving
+#TODO implement length change
 def Crossover(parent1, parent2):
     #someOtherNumber,nGenes = parent1.shape                # Both chromosomes must have the same length!
     crossoverPoint = np.random.randint(1,len(parent1))      # set crossover point
     print('crossover point = ' + str(crossoverPoint))   
-    offspring1 = np.array(parent1)                          # 
+    offspring1 = np.array(parent1)                          # copy parents
     offspring2 = np.array(parent2)
     
     for iz in range(len(parent1)):
-        if iz < crossoverPoint:
+        if iz < crossoverPoint:                             # exchange elements until crossoverPoint
             val1 = offspring1[iz]
             val2 = offspring2[iz]
             offspring1[iz] = val2
