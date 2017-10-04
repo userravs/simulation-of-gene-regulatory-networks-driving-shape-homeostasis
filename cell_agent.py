@@ -4,7 +4,7 @@ from tools import *
 
 class cell:
     # defines whats needed when a new agent (Cell) of this class is created
-    def __init__(self, xPos, yPos):#, w):
+    def __init__(self, xPos, yPos, w):
         self.state = 'Quiet'                        # State of the cell. DEFAULT: quiet
         self.xPos = xPos                            # Initial position on x axis
         self.yPos = yPos                            # Initial position on y axis
@@ -20,12 +20,13 @@ class cell:
         self.sgfAmount = 0                          # Amount of "pheromone" to deposit in the grid
         self.lgfAmount = 0
         # Neural network stuff
-        self.wMatrix = w
+        self.wMatrix = np.array(w)
         #self.WMatrix = W
         #self.phi = phi
         #self.theta = theta
-        self.n, self.m = self.wMatrix.shape()
-        self.V = np.zeros([self.n])
+        self.nNodes = 10
+#        self.nInputs = 2
+        self.V = np.zeros([self.nNodes])
     # self
     
     #   Values stored in grid according to state:
@@ -78,19 +79,19 @@ class cell:
         #O = np.zeros([self.m])
         #O = NeuralNetwork(inputs, self.WMatrix, self.wMatrix, self.phi, self.theta)
         
-        inputs = np.zeros([self.m])
+        inputs = np.zeros([self.nNodes])
         inputs[0] = SGF_lecture
         inputs[1] = LGF_lecture
         self.V = RecurrentNeuralNetwork(inputs, self.wMatrix, self.V)
 
         border = self.border
         # possible states: split, move, die
-        iStatus = V[2] #np.random.random() #O[0]        # Proliferate:  Split
-        jStatus = V[3] #np.random.random() #O[1]        # Move:         Move
-        kStatus = V[4] #np.random.random() #O[2]        # Apoptosis:    Die
+        iStatus = self.V[2] #np.random.random() #O[0]        # Proliferate:  Split
+        jStatus = self.V[3] #np.random.random() #O[1]        # Move:         Move
+        kStatus = self.V[4] #np.random.random() #O[2]        # Apoptosis:    Die
         # values for SGF and LGF
-        self.sgfAmount = V[5] #np.random.randint(5) #O[4]
-        self.lgfAmount = V[6] #np.random.randint(5) #O[5]
+        self.sgfAmount = self.V[5] #np.random.randint(5) #O[4]
+        self.lgfAmount = self.V[6] #np.random.randint(5) #O[5]
         
         # ORIENTATION:
         # randomly sets a preferred neighbour (polarisation)
@@ -168,10 +169,12 @@ class cell:
         self.deathCounter += 1
         if self.deathCounter == self.deathTime:             # if cell set to die then do
             self.amidead = True
-            print('cell died!')
+            # DEBUG
+            #print('cell died!')
             grid[self.xPos][self.yPos][0] = 0
         else:                                               # otherwise stay quiet
-            print('Death counter = ' + str(self.deathCounter))
+            # DEBUG
+            #print('Death counter = ' + str(self.deathCounter))
             grid[self.xPos][self.yPos][0] = 1
     # Die
 
@@ -223,7 +226,8 @@ class cell:
             # TODO its more likely to have neighbours than to be out of bounds... need to swap next two ifs
             if CheckInBorders(neighbr[0], neighbr[1], border):      # if neighbour is inbunds:
                 if CheckifOccupied(neighbr[0], neighbr[1], grid):   # if its occupied
-                    print(str(neighbr) + ': neighbour occupied')
+                    # DEBUG
+                    #print(str(neighbr) + ': neighbour occupied')
                     continue
                 else:
                     xOri = self.orientation[0] 
@@ -232,13 +236,16 @@ class cell:
                         movePos.append(neighbr[0])                  # if available, the return it as available
                         movePos.append(neighbr[1])
                         needOtherNeighbours = False                 # if available there's no need to find more spots
-                        print(str(neighbr) + ': preferred position available')
+                        # DEBUG
+                        #print(str(neighbr) + ': preferred position available')
                         break                                       # and stop looking for available spots
                     else:
-                        print(str(neighbr) + ': available neighbour')
+                        # DEBUG
+                        #print(str(neighbr) + ': available neighbour')
                         tmpList.append(neighbr)                     # list with other available neighbours
             else:
-                print(str(neighbr) + ': neighbour not in bounds')
+                # DEBUG
+                #print(str(neighbr) + ': neighbour not in bounds')
                 continue
         # if needed and if there's more than one spot available, the move to that spot 
         if needOtherNeighbours and len(tmpList) > 0:
@@ -251,10 +258,12 @@ class cell:
             grid[self.xPos][self.yPos][0] = 0                      # old position gets a -1 value to indicate that there was a cell there before
             self.xPos = movePos[0]                                  # update position
             self.yPos = movePos[1]
-            print('cell moved!')
+            # DEBUG
+            #print('cell moved!')
         else:
             grid[self.xPos][self.yPos][0] = 1                       # if moving fails then cell is marked as quiet
-            print('moving failed\n')
+            # DEBUG
+            #print('moving failed\n')
     # Move2
 
     #def Split(self, grid, cellList):
@@ -307,7 +316,8 @@ class cell:
             for neighbr in neighbourList:                                           # for each possible neighbour:
                 if CheckInBorders(neighbr[0], neighbr[1], border):                  # if neighbour is inbunds:
                     if CheckifOccupied(neighbr[0], neighbr[1], grid):               # if its occupied
-                        print(str(neighbr) + ': neighbour occupied')
+                        # DEBUG
+                        #print(str(neighbr) + ': neighbour occupied')
                         continue
                     else:
                         xOri = self.orientation[0] 
@@ -316,13 +326,16 @@ class cell:
                             movePos.append(neighbr[0])                              # if available, the return it as available
                             movePos.append(neighbr[1])
                             needOtherNeighbours = False                             # if available the no need to find more spots
-                            print(str(neighbr) + ': preferred position available')
+                            # DEBUG
+                            #print(str(neighbr) + ': preferred position available')
                             break                                                   # and stop looking for available spots
                         else:
-                            print(str(neighbr) + ': available neighbour')
+                            # DEBUG
+                            #print(str(neighbr) + ': available neighbour')
                             tmpList.append(neighbr)                                 # list with other available neighbours
                 else:
-                    print(str(neighbr) + ': neighbour not in bounds')
+                    # DEBUG
+                    #print(str(neighbr) + ': neighbour not in bounds')
                     continue
             # if needed and if there's more than one spot available, then move to that spot 
             if needOtherNeighbours and len(tmpList) > 0:
@@ -332,14 +345,17 @@ class cell:
                 #finalList.append(tmpList[r])
             if len(movePos) > 0:
                 grid[self.xPos][self.yPos][0] = 3
-                cellList.append(cell(movePos[0], movePos[1]))#,self.wMatrix))
+                cellList.append(cell(movePos[0], movePos[1],self.wMatrix))
                 grid[movePos[0]][movePos[1]][0] = 1
-                print('new cell created!')
+                # DEBUG
+                #print('new cell created!')
             else:
                 grid[self.xPos][self.yPos][0] = 1
-                print('split failed\n')
+                # DEBUG
+                #print('split failed\n')
         else:
             grid[self.xPos][self.yPos][0] = 1
-            print('split counter + 1\n')
+            # DEBUG
+            #print('split counter + 1\n')
     # Split2
 # Cell
