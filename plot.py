@@ -9,7 +9,7 @@ class Environment:
         plt.close()
         
         #discrete color scheme
-        cMap = ListedColormap(['w', 'g', 'b', 'k'])
+        cMap = ListedColormap(['w', 'g', 'b', 'r'])
 
         cellsFigure, (cellsSubplot,sgfSubplot,lgfSubplot) = plt.subplots(1, 3, figsize = (15,5))
 
@@ -22,7 +22,6 @@ class Environment:
         cellGrid = np.zeros([fieldSize, fieldSize])             # may need a new name, same as in main...
         sgfGrid = np.zeros([fieldSize, fieldSize])
         lgfGrid = np.zeros([fieldSize, fieldSize])
-
 
         cellsSubplot.set_title('Cells')
 
@@ -54,13 +53,13 @@ class Environment:
         sgfPlot = sgfSubplot.imshow(sgfGrid, origin = 'lower', cmap = 'Reds', interpolation = 'none', vmin = 0, vmax = 8)
         cbar2 = cellsFigure.colorbar(sgfPlot, ax = sgfSubplot, orientation = 'horizontal')
 
-        lgfPlot = lgfSubplot.imshow(lgfGrid, origin = 'lower', cmap = 'Blues', interpolation = 'none', vmin = 0, vmax = 20)
+        lgfPlot = lgfSubplot.imshow(lgfGrid, origin = 'lower', cmap = 'Blues', interpolation = 'none', vmin = 0, vmax = 10)
         cbar3 = cellsFigure.colorbar(lgfPlot, ax = lgfSubplot, orientation = 'horizontal')
 
         plt.show(block = False)
         
         plt.ion()
-        plt.pause(0.001)
+        #plt.pause(0.001)
         cellsFigure.canvas.draw()
         plt.ioff()
 
@@ -77,7 +76,9 @@ class Environment:
                     cellPlot, 
                     sgfPlot, 
                     lgfPlot,
-                    tStep):
+                    tStep,
+                    iGen,
+                    individual):
 
         cell_data = cellGrid[:,:,0]         # slice the grid to get the layer with the cell positions
         sgf_data = cellGrid[:,:,1]          # slice the grid to get the layer with the SGF profile
@@ -93,7 +94,9 @@ class Environment:
                                 cell_data,
                                 sgf_data,
                                 lgf_data,
-                                tStep)
+                                tStep,
+                                iGen,
+                                individual)
 
     def UpdatePlot( cellsFigure, 
                     cellsSubplot, 
@@ -105,7 +108,9 @@ class Environment:
                     cell_data, 
                     sgf_data,
                     lgf_data,
-                    tStep):
+                    tStep,
+                    iGen,
+                    individual):
         #
         cellPlot.set_data(cell_data)
         sgfPlot.set_data(sgf_data)
@@ -118,6 +123,8 @@ class Environment:
         #
         cellsFigure.canvas.update()
         cellsFigure.canvas.flush_events()
-        #plt.savefig('cell_system-' + '{:03d}'.format(tStep) + '.png', bbox_inches='tight')
+        
+        
+        #plt.savefig('CA_gen' + '{:02d}'.format(iGen) + '_ind' + '{:02d}'.format(individual) +'_tstep' + '{:03d}'.format(tStep) + '.png', bbox_inches='tight')
     # UpdatePlot
 # Environment
