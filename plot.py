@@ -5,9 +5,11 @@ from matplotlib.colors import ListedColormap
 
 class Environment:
 
-    def CellsGridFigure(fieldSize):
+    def CellsGridFigure(fieldSize, mode):
+        # mode = True: cell_system as fitness function
+        # mode = False: cell_system as display system
         plt.close()
-        
+
         #discrete color scheme
         cMap = ListedColormap(['w', 'g', 'b', 'r'])
 
@@ -32,7 +34,7 @@ class Environment:
 
         lgfSubplot.set_title('LGF')
  #       lgfSubplot.axis('off')
-        
+
         cellPlot = cellsSubplot.imshow(cellGrid, origin = 'lower', cmap = cMap, interpolation = 'none', vmin = 0, vmax = 3)
         cbar1 = cellsFigure.colorbar(cellPlot, ax = cellsSubplot, ticks = [], orientation='horizontal')#, shrink=0.75)
         #cbar1.ax.set_yticklabels(['dead', 'quiet', 'moving', 'splitting'])
@@ -49,15 +51,16 @@ class Environment:
             cbar1.ax.text((2 * j + 1) / 8.0, .5, lab, ha = 'center', va = 'center')#, rotation=270)
         cbar1.ax.get_yaxis().labelpad = 15
         cbar1.ax.set_ylabel('states', rotation = 270)
-        
+
         sgfPlot = sgfSubplot.imshow(sgfGrid, origin = 'lower', cmap = 'Reds', interpolation = 'none', vmin = 0, vmax = 8)
         cbar2 = cellsFigure.colorbar(sgfPlot, ax = sgfSubplot, orientation = 'horizontal')
 
         lgfPlot = lgfSubplot.imshow(lgfGrid, origin = 'lower', cmap = 'Blues', interpolation = 'none', vmin = 0, vmax = 10)
         cbar3 = cellsFigure.colorbar(lgfPlot, ax = lgfSubplot, orientation = 'horizontal')
 
-        plt.show(block = False)
-        
+        if mode == False:
+            plt.show(block = False)
+
         plt.ion()
         #plt.pause(0.001)
         cellsFigure.canvas.draw()
@@ -69,16 +72,17 @@ class Environment:
 
     def AntGridPlot(cellGrid,
                     nLattice,
-                    cellsFigure, 
-                    cellsSubplot, 
-                    sgfSubplot, 
-                    lgfSubplot, 
-                    cellPlot, 
-                    sgfPlot, 
+                    cellsFigure,
+                    cellsSubplot,
+                    sgfSubplot,
+                    lgfSubplot,
+                    cellPlot,
+                    sgfPlot,
                     lgfPlot,
                     tStep,
                     iGen,
-                    individual):
+                    individual,
+                    mode):
 
         cell_data = cellGrid[:,:,0]         # slice the grid to get the layer with the cell positions
         sgf_data = cellGrid[:,:,1]          # slice the grid to get the layer with the SGF profile
@@ -96,21 +100,23 @@ class Environment:
                                 lgf_data,
                                 tStep,
                                 iGen,
-                                individual)
+                                individual,
+                                mode)
 
-    def UpdatePlot( cellsFigure, 
-                    cellsSubplot, 
-                    sgfSubplot, 
-                    lgfSubplot, 
-                    cellPlot, 
-                    sgfPlot, 
+    def UpdatePlot( cellsFigure,
+                    cellsSubplot,
+                    sgfSubplot,
+                    lgfSubplot,
+                    cellPlot,
+                    sgfPlot,
                     lgfPlot,
-                    cell_data, 
+                    cell_data,
                     sgf_data,
                     lgf_data,
                     tStep,
                     iGen,
-                    individual):
+                    individual,
+                    mode):
         #
         cellPlot.set_data(cell_data)
         sgfPlot.set_data(sgf_data)
@@ -123,8 +129,8 @@ class Environment:
         #
         cellsFigure.canvas.update()
         cellsFigure.canvas.flush_events()
-        
-        
-        #plt.savefig('CA_gen' + '{:02d}'.format(iGen) + '_ind' + '{:02d}'.format(individual) +'_tstep' + '{:03d}'.format(tStep) + '.png', bbox_inches='tight')
+
+        if mode == True:
+            plt.savefig('CA_gen' + '{:02d}'.format(iGen) + '_ind' + '{:02d}'.format(individual) +'_tstep' + '{:03d}'.format(tStep) + '.png', bbox_inches='tight')
     # UpdatePlot
 # Environment
