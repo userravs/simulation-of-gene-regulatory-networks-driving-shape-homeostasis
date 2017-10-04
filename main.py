@@ -1,6 +1,6 @@
 #from PyQt4 import QtGui, QtCore
 import time
-import random 
+import random
 import numpy as np
 import matplotlib.pyplot as plt
 # self made classes
@@ -9,7 +9,7 @@ from tools import *
 from plot import *
 import csv
 
-def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice):
+def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     #       PARAMETERS                 #
@@ -28,7 +28,7 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice):
 
     # SGF/LGF dynamics parameters
     deltaT = 1.                                  # time step for discretisation [T]
-    deltaR = 1.                                  # space step for discretisation [L]  
+    deltaR = 1.                                  # space step for discretisation [L]
     deltaS = 0.5                                # decay rate for SGF
     deltaL = 0.1                                 # decay rate for LGF
     diffConst = 1.#0.05                              # diffusion constant D [dimentionless]
@@ -38,9 +38,9 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice):
     # Neural network stuff
     # random matrix is generated, later via EA
     # nNodes x nInputs
-    
+
     #nNodes = 25
-    
+
     #wMatrix = np.random.randint(-1,2,size = (nNodes,2))
     #wMatrix = np.array([[1,     0],
                         #[0.5,   0],
@@ -71,39 +71,39 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice):
     #cellGrid[ix][iy][2] = 400.
 
     #wMatrix = np.random.randint(-1,2,size = (nNodes,nNodes))
-    
+
     #wMatrix = np.zeros([nNodes,nNodes])
 
     # Plot figure and subplots
-    cellsFigure, cellsSubplot, sgfSubplot, lgfSubplot, cellPlot, sgfPlot, lgfPlot = Environment.CellsGridFigure(nLattice)
+    cellsFigure, cellsSubplot, sgfSubplot, lgfSubplot, cellPlot, sgfPlot, lgfPlot = Environment.CellsGridFigure(nLattice, mode)
 
     # DEBUG
     #print('Time running...')
 
     while iTime < timeSteps:
-        # DEBUG 
+        # DEBUG
         #print('\n######### time step #' + str(iTime))
-        
+
         ## decay chemicals in spots where there is some but no cell
-        
+
         # this matrixes must be updated everytime so that if there's no production in one spot that spot contains a zero
         # but must not lose contained information, i.e. must use it before setting it to zero
         sigma_m = np.zeros([nLattice,nLattice])     # matrix representation of SGF production
         lambda_m = np.zeros([nLattice,nLattice])    # matrix representation of LGF production
-        
+
         tmpCellList = list(cellList)                                    # a copy of the list of current cells is used to iterate over all the cells
         while len(tmpCellList) > 0:                                     # while  the tmp list of cells is longer than 1
             # 1st step => choose a random cell from the list of existing cells
-            rndCell = np.random.randint(len(tmpCellList))               
+            rndCell = np.random.randint(len(tmpCellList))
             # store lattice size
-            tmpCellList[rndCell].border = nLattice                      # TODO rethink this                
+            tmpCellList[rndCell].border = nLattice                      # TODO rethink this
             tmpCellList[rndCell].nNodes = nNodes
-            
+
             # 2nd step => read chemicals
             SGF_reading, LGF_reading = tmpCellList[rndCell].Sense(cellGrid)
-            
+
             # 3rd step => update SGF and LGF amounts on the 'production' matrices sigma & lambda
-            
+
             # 4th step => random cell should decide and action
             tmpCellList[rndCell].GenerateStatus(SGF_reading, LGF_reading)     # get status of this cell
             # production matrices get updated values
@@ -114,12 +114,12 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice):
             #print('\ncell number: ' + str(len(cellList)) + '\nCell status: ' + str(tmpCellList[rndCell].state))# + '\n')
             #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
             #        Cell Action            #
-            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#        
+            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
             # according to cell status perform action: split or stay quiet
             if tmpCellList[rndCell].state == 'Quiet':                   # Check the state
                 tmpCellList[rndCell].Quiet(cellGrid)                    # call method that performs selected action
                 del tmpCellList[rndCell]                                # delete cell from temporal list
-            
+
             elif tmpCellList[rndCell].state == 'Split':
                 tmpCellList[rndCell].Split2(cellGrid,cellList)
                 del tmpCellList[rndCell]
@@ -127,7 +127,7 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice):
             elif tmpCellList[rndCell].state == 'Move':
                 tmpCellList[rndCell].Move2(cellGrid)
                 del tmpCellList[rndCell]
-            
+
             else: # Die
                 tmpCellList[rndCell].Die(cellGrid)                  # Off the grid, method also changes the "amidead" switch to True
                 del tmpCellList[rndCell]
@@ -148,7 +148,7 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice):
             #print('len(cellList): ' + str(len(cellList)) + '. Current element: ' + str(jCell))
             if cellList[jCell].amidead:
                 del cellList[jCell]
-        
+
         ### TEST! equivalent to: cellList[cell].'status'(param_x,param_y)
         #    state = getattr(tmpCellList[rndCell], status)
         #    action = getattr(tmpCellList[rndCell], state)
@@ -159,7 +159,6 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice):
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         cellGrid[:,:,1] = sgfDiffEq2(cellGrid[:,:,1], sigma_m, deltaS, deltaT)
         cellGrid[:,:,2] = lgfDiffEq(i_matrix, t_matrix, cellGrid[:,:,2], lambda_m, deltaL, deltaT, deltaR, diffConst)
-    
 
         #chemsum = 0
         #for iPos in range(nLattice):
@@ -173,58 +172,76 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice):
         #         Plot               #
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         #print('updated grid:\n' + str(cellGrid[:,:,0]))
-        if iTime == int(timeSteps/2) - 1:
-            halfwayStruct = np.array(cellGrid[:,:,0])
-            Environment.AntGridPlot(cellGrid,
-                        nLattice,
-                        cellsFigure, 
-                        cellsSubplot, 
-                        sgfSubplot, 
-                        lgfSubplot, 
-                        cellPlot, 
-                        sgfPlot, 
-                        lgfPlot,
-                        iTime,
-                        iGen,
-                        individual)
-            
-        elif iTime == timeSteps - 1:
-            finalStruct = np.array(cellGrid[:,:,0])
-            Environment.AntGridPlot(cellGrid,
-                        nLattice,
-                        cellsFigure, 
-                        cellsSubplot, 
-                        sgfSubplot, 
-                        lgfSubplot, 
-                        cellPlot, 
-                        sgfPlot, 
-                        lgfPlot,
-                        iTime,
-                        iGen,
-                        individual)
+
+        if mode == True:
+            if iTime == int(timeSteps/2) - 1:
+                halfwayStruct = np.array(cellGrid[:,:,0])
+                Environment.AntGridPlot(cellGrid,
+                            nLattice,
+                            cellsFigure,
+                            cellsSubplot,
+                            sgfSubplot,
+                            lgfSubplot,
+                            cellPlot,
+                            sgfPlot,
+                            lgfPlot,
+                            iTime,
+                            iGen,
+                            individual,
+                            mode)
+
+            elif iTime == timeSteps - 1:
+                finalStruct = np.array(cellGrid[:,:,0])
+                Environment.AntGridPlot(cellGrid,
+                                        nLattice,
+                                        cellsFigure,
+                                        cellsSubplot,
+                                        sgfSubplot,
+                                        lgfSubplot,
+                                        cellPlot,
+                                        sgfPlot,
+                                        lgfPlot,
+                                        iTime,
+                                        iGen,
+                                        individual,
+                                        mode)
+        else:
+            Environment.AntGridPlot(    cellGrid,
+                                        nLattice,
+                                        cellsFigure,
+                                        cellsSubplot,
+                                        sgfSubplot,
+                                        lgfSubplot,
+                                        cellPlot,
+                                        sgfPlot,
+                                        lgfPlot,
+                                        iTime,
+                                        iGen,
+                                        individual,
+                                        mode)
         time.sleep(0.5)
         iTime += 1
-    # while    
+    # while
 
     # DEBUG
     # print(str(timeSteps)+' time steps complete')
-    
+
     halfwayStruct = GetStructure(halfwayStruct, nLattice)
     finalStruct = GetStructure(finalStruct, nLattice)
-    
+
     deltaMatrix = np.zeros([nLattice,nLattice])
     for ik in range(nLattice):
         for jk in range(nLattice):
             if halfwayStruct[ik,jk] != finalStruct[ik,jk]:
                 deltaMatrix[ik,jk] = 1
-    
+
     # DEBUG
     #print('half way structure:\n' + str(halfwayStruct))
     #print('final structure:\n' + str(finalStruct))
     #print('delta matrix:\n' + str(deltaMatrix))
-    
+
     return deltaMatrix
- 
+
 # TODO look this up
 #if __name__ == '__main__':
 #    main()
