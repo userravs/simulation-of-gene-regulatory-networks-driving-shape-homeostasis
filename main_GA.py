@@ -10,13 +10,13 @@ popSize = 30                                                # Population size
 nNodes = 10
 nGenes = nNodes**2                                          # Number of genes
 crossoverProb = 0.8                                         # Crossover probability
-mutationProb = 0.025                                        # Mutation probability
+mutationProb = 0.5                                        # Mutation probability
 crossMutProb = 0.5                                          # probability of doing mutation or crossover
 tournamentSelParam = 0.75                                   # Tournament selection parameter
 tournamentSize = 4                                          # Tournament size. EVEN
 eliteNum = 2                                                # number of elite solutions to carry to next generation
 nOfGenerations = 20
-timeSteps = 200
+timeSteps = 150
 nLattice = 50
 mode = True
 #fitness = np.zeros([popSize,2])                            # fitness array
@@ -42,11 +42,11 @@ for iGen in range(nOfGenerations):
     for ix in range(popSize):
         chromosome = np.array(population[ix,:])             # loop through all chromosomes
         # DEBUG
-        #print('=> running system... ' + str(ix) + ' time')
+        print('=> running system... ' + str(ix) + ' time')
         wMatrix = -1 + 2*chromosome.reshape(nNodes,nNodes)  # decode chromosome, i.e., transform into matrix
         fitness[ix][0] = EvaluateIndividual(wMatrix, timeSteps, iGen, nNodes, ix, nLattice, mode)        # get chromosome fitness
         # DEBUG
-        #print('fitness: ' + str(fitness[ix][0]))
+        print('fitness: ' + str(fitness[ix][0]))
         fitness[ix][1] = ix                                 # store position in population matrix
         #[(0.06,0),(0.45,1),(0.21,2)]
     # loop over chromosomes
@@ -92,9 +92,9 @@ for iGen in range(nOfGenerations):
 
         r = np.random.random()
         if r >= crossMutProb:
-            contestants[2,:],contestants[3,:] = Crossover(contestants[0,:], contestants[1,:])
+            contestants[2,:],contestants[3,:] = Crossover(contestants[0,:], contestants[1,:], crossoverProb)
         else:
-            contestants[2,:],contestants[3,:] = Mutate(np.array(contestants[0,:]), np.array(contestants[1,:]))
+            contestants[2,:],contestants[3,:] = Mutate(np.array(contestants[0,:]), np.array(contestants[1,:]), mutationProb)
 
         iCounter = 0
         for ix in selectedInd:
