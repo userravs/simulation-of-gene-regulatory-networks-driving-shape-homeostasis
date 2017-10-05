@@ -4,6 +4,7 @@ __pycache*
 .pydev*
 *.png
 *.avi
+*.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
