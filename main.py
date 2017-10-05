@@ -10,6 +10,9 @@ from plot import *
 import csv
 
 def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
+    """
+    Parameters: sim(wMatrix, numberOfTimeSteps, NumberOfGeneration, nNodes, individual, nLattice, mode)
+    """
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     #       PARAMETERS                 #
@@ -92,6 +95,7 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
         lambda_m = np.zeros([nLattice,nLattice])    # matrix representation of LGF production
 
         tmpCellList = list(cellList)                                    # a copy of the list of current cells is used to iterate over all the cells
+
         while len(tmpCellList) > 0:                                     # while  the tmp list of cells is longer than 1
             # 1st step => choose a random cell from the list of existing cells
             rndCell = np.random.randint(len(tmpCellList))
@@ -219,8 +223,14 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
                                         iGen,
                                         individual,
                                         mode)
-        time.sleep(0.5)
+            time.sleep(0.1)
         iTime += 1
+
+        if len(cellList) == 0:
+            halfwayStruct = np.zeros([nLattice,nLattice])
+            finalStruct = np.zeros([nLattice,nLattice])
+            break
+
     # while
 
     # DEBUG

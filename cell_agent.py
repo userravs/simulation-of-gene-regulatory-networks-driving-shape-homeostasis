@@ -8,7 +8,7 @@ class cell:
         self.state = 'Quiet'                        # State of the cell. DEFAULT: quiet
         self.xPos = xPos                            # Initial position on x axis
         self.yPos = yPos                            # Initial position on y axis
-        self.compass = False                         # Polarisation: ON/OFF => True/False
+        self.compass = True                         # Polarisation: ON/OFF => True/False
         self.orientation = [self.xPos,self.yPos]    # Preferred direction. DEFAULT: own position
         self.splitCounter = 0                       # Counter for splitting
         self.splitTime = 2                          # Time scale for splitting
@@ -28,7 +28,7 @@ class cell:
 #        self.nInputs = 2
         self.V = np.zeros([self.nNodes])
     # self
-    
+
     #   Values stored in grid according to state:
     #       0   =>  spot has been always empty i.e. available
     #       1   =>  quiet cell, or move/split failed/didn't reach the activation value
@@ -43,7 +43,7 @@ class cell:
         #if self.xPos - 1 >= 0: # if coordinate is in-bounds
             #if grid[self.xPos - 1, self.yPos][0] == 0 and self.orientation[0] != self.xPos - 1 and self.orientation[1] != self.yPos:
                 ## if is not occupied and not the preferred neighbour
-                #neighbourList.append([self.xPos - 1, self.yPos]) 
+                #neighbourList.append([self.xPos - 1, self.yPos])
         #if self.xPos + 1 <= border:
             #if grid[self.xPos + 1, self.yPos][0] == 0 and self.orientation[0] != self.xPos + 1 and self.orientation[1] != self.yPos:
                 #neighbourList.append([self.xPos + 1, self.yPos])
@@ -58,11 +58,11 @@ class cell:
 
     def Sense(self, grid):
         # sense chemicals from the grid
-        SGF_reading = grid[self.xPos, self.yPos][1] # grid contains three values on each coordinate: 
+        SGF_reading = grid[self.xPos, self.yPos][1] # grid contains three values on each coordinate:
         LGF_reading = grid[self.xPos, self.yPos][2] # occupation (boolean), SGF level, LGF level
         #reads = [SGF_read, LGF_read]
         return SGF_reading, LGF_reading
-    # Sense   
+    # Sense
 
     #def sgfProduce(self, grid):
         #grid[self.xPos, self.yPos][1] += self.sgfAmount
@@ -78,7 +78,7 @@ class cell:
         # Neural network first implementation
         #O = np.zeros([self.m])
         #O = NeuralNetwork(inputs, self.WMatrix, self.wMatrix, self.phi, self.theta)
-        
+
         inputs = np.zeros([self.nNodes])
         inputs[0] = SGF_lecture
         inputs[1] = LGF_lecture
@@ -92,10 +92,10 @@ class cell:
         # values for SGF and LGF
         self.sgfAmount = self.V[5] #np.random.randint(5) #O[4]
         self.lgfAmount = self.V[6] #np.random.randint(5) #O[5]
-        
+
         # ORIENTATION:
         # randomly sets a preferred neighbour (polarisation)
-        # if the direction is out of bounds then no preferred direction is stored 
+        # if the direction is out of bounds then no preferred direction is stored
         # WARNING This code need to be revisited depending on the implementation of the NN later on
         if self.compass:
             # boundaries for orientation
@@ -103,7 +103,7 @@ class cell:
             sBoundary = 0.5
             eBoundary = 0.75
             #wBoundary = 1
-            arrow = O[5]  #np.random.random()
+            arrow = self.V[5]  #np.random.random()
             if arrow < nBoundary:
                 xCoord = self.xPos - 1
                 yCoord = self.yPos
@@ -140,7 +140,7 @@ class cell:
         #tmpVal = 0
         xThreshold = 0.5
         yThreshold = 0.01
-        
+
         # TODO is the order of this operations the ideal?
         if iStatus < xThreshold and jStatus < xThreshold and kStatus < xThreshold:
             self.state = 'Quiet'
@@ -230,7 +230,7 @@ class cell:
                     #print(str(neighbr) + ': neighbour occupied')
                     continue
                 else:
-                    xOri = self.orientation[0] 
+                    xOri = self.orientation[0]
                     yOri = self.orientation[1]
                     if CheckifPreferred(xOri, yOri, neighbr[0], neighbr[1]):    # if is preferred
                         movePos.append(neighbr[0])                  # if available, the return it as available
@@ -247,7 +247,7 @@ class cell:
                 # DEBUG
                 #print(str(neighbr) + ': neighbour not in bounds')
                 continue
-        # if needed and if there's more than one spot available, the move to that spot 
+        # if needed and if there's more than one spot available, the move to that spot
         if needOtherNeighbours and len(tmpList) > 0:
             r = np.random.randint(len(tmpList))
             movePos.append(tmpList[r][0])
@@ -320,7 +320,7 @@ class cell:
                         #print(str(neighbr) + ': neighbour occupied')
                         continue
                     else:
-                        xOri = self.orientation[0] 
+                        xOri = self.orientation[0]
                         yOri = self.orientation[1]
                         if CheckifPreferred(xOri, yOri, neighbr[0], neighbr[1]):    # if is preferred
                             movePos.append(neighbr[0])                              # if available, the return it as available
@@ -337,7 +337,7 @@ class cell:
                     # DEBUG
                     #print(str(neighbr) + ': neighbour not in bounds')
                     continue
-            # if needed and if there's more than one spot available, then move to that spot 
+            # if needed and if there's more than one spot available, then move to that spot
             if needOtherNeighbours and len(tmpList) > 0:
                 r = np.random.randint(len(tmpList))
                 movePos.append(tmpList[r][0])
