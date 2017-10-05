@@ -9,10 +9,10 @@ from tools_GA import *
 popSize = 30                                                # Population size
 nNodes = 10
 nGenes = nNodes**2                                          # Number of genes
-crossoverProb = 0.8                                         # Crossover probability
-mutationProb = 0.5                                        # Mutation probability
+crossoverProb = 1. #0.8                                         # Crossover probability
+mutationProb = 1. #0.5                                        # Mutation probability
 crossMutProb = 0.5                                          # probability of doing mutation or crossover
-tournamentSelParam = 0.75                                   # Tournament selection parameter
+#tournamentSelParam = 0.75                                   # Tournament selection parameter
 tournamentSize = 4                                          # Tournament size. EVEN
 eliteNum = 2                                                # number of elite solutions to carry to next generation
 nOfGenerations = 20
@@ -21,7 +21,7 @@ nLattice = 50
 mode = True
 #fitness = np.zeros([popSize,2])                            # fitness array
 eliteIndividuals = []
-dtype = [('fitnessValue',float),('position',int)]           # format for fitness array, for an easier sort
+dtype = [('fitnessValue',float),('position',int)]           # format for fitness array, for an easier sort. Fitness is an structured array
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #       INITIALISATION             #
@@ -38,6 +38,7 @@ for iGen in range(nOfGenerations):
     #wBest = np.zeros(nGenes) # [0 0]
     #bestIndividualIndex = 0
 
+    # 1st step: Fitness function => Rank idividuals by their fitness
     # chromosomes get decoded and evaluated
     for ix in range(popSize):
         chromosome = np.array(population[ix,:])             # loop through all chromosomes
@@ -48,32 +49,33 @@ for iGen in range(nOfGenerations):
         # DEBUG
         print('fitness: ' + str(fitness[ix][0]))
         fitness[ix][1] = ix                                 # store position in population matrix
-        #[(0.06,0),(0.45,1),(0.21,2)]
     # loop over chromosomes
 
     fitness.sort(order = 'fitnessValue')                    # sort array according to fitness value. Less fit to most fit
 
-    tempPopulation = np.zeros([popSize, nGenes])           #np.array(population)
+    tempPopulation = np.zeros([popSize, nGenes])            #np.array(population)
 
     # DEBUG
     #print('sorted fitness array, before deleting:\n' + str(fitness))
 
-    iElit = 1                                                   # Elite counter: individuals with the best fitness are kept untouched
+    # 2nd step: Elitism => Save the best individuals for next generation
+    iElit = 1                                               # Elite counter: individuals with the best fitness are kept untouched
     while iElit <= eliteNum:
-        index = fitness[popSize - iElit][1]                     # get the index of the last members of the list, i.e., most fit
+        index = fitness[popSize - iElit][1]                 # get the index of the last members of the list, i.e., most fit
         # DEBUG
         #print('=> best fitness: ' + str(fitness[popSize - iElit][0]))
         tempPopulation[iElit - 1,:] = np.array(population[index,:])   # store as part of the new generation of individuals
-        #del fitness[popSize - iElit]                            # delete last tuple on the list
+        #del fitness[popSize - iElit]                       # delete last tuple on the list
         np.delete(fitness,popSize - iElit)
         iElit += 1
     # while
 
+    # 3rd step: Tousnament selection => Loop over the rest of the population to engage them into a tournament
     loopCounter = 0
-    while len(fitness) >= tournamentSize:                       # iterate through all individuals
+    while len(fitness) >= tournamentSize:                   # iterate through all individuals
         #print('fitness array length: ' + str(len(fitness)))
         selectedInd = np.random.choice(range(len(fitness)), tournamentSize, replace = False)
-        selectedInd.sort()                                      # select random contestants and sort them by index (i.e. by fitness))
+        selectedInd.sort()                                  # select random contestants and sort them by index (i.e. by fitness))
         # DEBUG
         #print('selected contestants for tournament:\n' + str(selectedInd))
 
@@ -83,26 +85,31 @@ for iGen in range(nOfGenerations):
             #winIndex[ik] = fitness[selectedInd[tournamentSize - 1 - ik]][1]   # the fittest ind are retrieved from the sorted fitness array
             #contestants[ik,:] = np.array(population[winIndex[ik],:])
 
-
         # hardcoded for performance gain
-        winIndex1 = fitness[selectedInd[tournamentSize - 1]][1]   # the fittest ind are retrieved from the sorted fitness array
+        winIndex1 = fitness[selectedInd[tournamentSize - 1]][1] # the fittest ind is retrieved from the sorted fitness array
         contestants[0,:] = np.array(population[winIndex1,:])
-        winIndex2 = fitness[selectedInd[tournamentSize - 2]][1]   # the fittest ind are retrieved from the sorted fitness array
+        winIndex2 = fitness[selectedInd[tournamentSize - 2]][1] # the second fittest ind is retrieved from the sorted fitness array
         contestants[1,:] = np.array(population[winIndex2,:])
 
+        # 3.1 step => Generate new offsprig by Crossover or mutation
         r = np.random.random()
         if r >= crossMutProb:
             contestants[2,:],contestants[3,:] = Crossover(contestants[0,:], contestants[1,:], crossoverProb)
         else:
             contestants[2,:],contestants[3,:] = Mutate(np.array(contestants[0,:]), np.array(contestants[1,:]), mutationProb)
 
+        # 3.2 => Delete contestants from fitness array
         iCounter = 0
         for ix in selectedInd:
-            fitness = np.delete(fitness,ix - iCounter)
+            index = ix - iCounter
+            # DEBUG
+            #print('deleting ' + str(index) + ' entry:' + str(fitness[index]))
+            fitness = np.delete(fitness, index)      # WARNING does this really work?
             iCounter += 1
         # DEBUG
         #print('sorted fitness array, after deleting:\n' + str(fitness))
 
+        # 3.3 => Save best individuals and offspring for new generation
         for jk in range(tournamentSize):
             index = eliteNum + (loopCounter*tournamentSize) + jk
             #print('=> elitNum: ' + str(eliteNum) + ', loopCounter: ' + str(loopCounter) + ', jk: ' + str(jk))
@@ -116,7 +123,7 @@ for iGen in range(nOfGenerations):
 
 
 # write solution
-bestIndEver = np.array(population[0,:].reshape(nNodes,nNodes))
+#bestIndEver = np.array(population[0,:].reshape(nNodes,nNodes))
 with open('test_file.csv', 'w') as csvfile:
     writer = csv.writer(csvfile)
     [writer.writerow(r) for r in population]

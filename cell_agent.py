@@ -8,7 +8,7 @@ class cell:
         self.state = 'Quiet'                        # State of the cell. DEFAULT: quiet
         self.xPos = xPos                            # Initial position on x axis
         self.yPos = yPos                            # Initial position on y axis
-        self.compass = True                         # Polarisation: ON/OFF => True/False
+        self.compass = True                         # Polarisation: WARNING ON/OFF => True/False
         self.orientation = [self.xPos,self.yPos]    # Preferred direction. DEFAULT: own position
         self.splitCounter = 0                       # Counter for splitting
         self.splitTime = 2                          # Time scale for splitting
@@ -24,7 +24,7 @@ class cell:
         #self.WMatrix = W
         #self.phi = phi
         #self.theta = theta
-        self.nNodes = 10
+        self.nNodes = 10                            # WARNING hardcoded!
 #        self.nInputs = 2
         self.V = np.zeros([self.nNodes])
     # self
@@ -63,14 +63,6 @@ class cell:
         #reads = [SGF_read, LGF_read]
         return SGF_reading, LGF_reading
     # Sense
-
-    #def sgfProduce(self, grid):
-        #grid[self.xPos, self.yPos][1] += self.sgfAmount
-    ## sgfProduce
-
-    #def lgfProduce(self, grid):
-        #grid[self.xPos, self.yPos][2] += self.lgfAmount
-    ## lgfProduce
 
     def GenerateStatus(self, SGF_lecture, LGF_lecture):
         # neural network generates a status based on the reads

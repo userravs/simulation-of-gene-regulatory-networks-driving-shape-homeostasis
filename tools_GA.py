@@ -3,34 +3,6 @@ import random
 import numpy as np
 from main import *
 
-# this doesn't have to be a function, its just one line...
-#def InitializePopulation(populationSize, numberOfGenes):
-    #population = np.random.randint(0,2,size=(populationSize, numberOfGenes))
-    ##population = np.zeros([populationSize, numberOfGenes]);
-    ##for ix in range(populationSize):
-        ##for jx in range(numberOfGenes):
-            ##s = np.random.random()
-            ##if s < 0.5:
-                ##population[ix,jx] = 0
-            ##else:
-                ##population[ix,jx] = 1
-    #return population
-# InitializePopulation
-
-# translate the chromosome into actual variables
-#def DecodeChromosome(chromosome,varRange):
-    #nGenes = len(chromosome)
-    #nHalf = int(nGenes/2.)      # WARNING: assumes number of genes is even
-    #x1 = 0.0
-    #for jx in range(nHalf):
-        #x1 = x1 + chromosome[j]*2^(-j)
-    #x1 = -varRange + 2*varRange*x1/(1. - 2.**(-nHalf))
-    #x2 = 0.0
-    #for jx in range(nHalf):
-        #x2 = x2 + chromosome[j+nHalf]*2^(-j)
-    #x2 = -varRange + 2*varRange*x2/(1. - 2.**(-nHalf))
-# DecodeChromosome
-
 # Evaluate variable using the fitness function
 def EvaluateIndividual(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
     totSum = 0.
@@ -57,25 +29,6 @@ def DiracDelta(a, b):
     else:
         return 1
 # DiracDelta
-
-# Tournament selection, tournament size 2
-#def TournamentSelect(fitness,tournamentSelParam):
-    #populationSize = len(fitness)
-    #iTmp1 = 1 + int(np.random.random()*populationSize)
-    #iTmp2 = 1 + int(np.random.random()*populationSize)
-    #r = np.random.random()
-    #if r < tournamentSelParam:
-        #if fitness[iTmp1] > fitness[iTmp2]:
-            #iSelected = iTmp1
-        #else:
-            #iSelected = iTmp2
-    #else:
-        #if fitness[iTmp1] > fitness[iTmp2]:
-            #iSelected = iTmp2
-        #else:
-            #iSelected = iTmp1
-    #return iSelected
-# TournamentSelect
 
 # Crossover: length preserving
 #TODO implement length change
@@ -122,12 +75,6 @@ def Mutate(parent1, parent2, mutationProb):
         return mutatedChromosome1, mutatedChromosome2
     else:
         return parent1, parent2
-
-    #for j in range(nGenes):
-        #r = np.random.random()
-        #if r < mutProb:
-            #mutatedChromosome[j] = 1-chromosome[j]
-    #return mutatedChromosome
 # Mutation
 
 def DifferentIndex(x1, y1):
