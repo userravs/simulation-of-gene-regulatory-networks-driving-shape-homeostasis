@@ -93,3 +93,17 @@
 * Improve performance.
 * write a script (bash?) to run for all different parameter combinations.
 * Implement a True/False switch for the different plotting actions: store some snapshots or plot every time step
+
+### 20171005
+#### Done:
+* After some test runs the following has been concluded:
+	* The offspring generation scheme may not be the best. Crossover is too efficient and the solutions go to a local minimum very quickly.
+	* The GA could be easily paralelized distributing the individuals to all processors and letting each run the simulation by itself and then sending the fitness value to the master.
+	* Inside the simulation might be useful to implement some CUDA code since it's all matrix operations. But on the other hand, numpy might be good enough.
+	* The fitness function is the simulation itself sort of. It compares the structure of the system halfway and at the end of the simulation. This is a bit forced, there has to be a smarter way to do this.
+* Code cleaning
+* Implement the double functionality of main.py, as module or as a main code.
+
+#### To do:
+* Think about the ideas mentioned above for the GA algorithm and try to improve it.
+* Do some profiling tests to the simulation code
