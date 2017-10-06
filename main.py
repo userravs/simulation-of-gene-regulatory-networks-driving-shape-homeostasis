@@ -56,6 +56,10 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
     cellsFigure, cellsSubplot, sgfSubplot, lgfSubplot, cellPlot, sgfPlot, lgfPlot = Environment.CellsGridFigure(nLattice, mode)
     end_time_figurecall = time.time()
     secs = end_time_figurecall - start_time_figurecall
+    
+    # TODO
+    # example of a more convenient way of printing
+    #print('{0} doubled to {1} by process id: {2}'.format(number, result, proc))
     #print('time to call figures, subplots, plots:' + str(secs))
 
     # DEBUG
