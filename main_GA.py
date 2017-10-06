@@ -7,7 +7,7 @@ from tools_GA import *
 #       PARAMETERS                 #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 popSize = 30                                                # Population size
-nNodes = 10
+nNodes = 25
 nGenes = nNodes**2                                          # Number of genes
 crossoverProb = 1. #0.8                                         # Crossover probability
 mutationProb = 1. #0.5                                        # Mutation probability
@@ -15,7 +15,7 @@ crossMutProb = 0.5                                          # probability of doi
 #tournamentSelParam = 0.75                                   # Tournament selection parameter
 tournamentSize = 4                                          # Tournament size. EVEN
 eliteNum = 2                                                # number of elite solutions to carry to next generation
-nOfGenerations = 20
+nOfGenerations = 10
 timeSteps = 150
 nLattice = 50
 mode = True
@@ -45,7 +45,14 @@ for iGen in range(nOfGenerations):
         # DEBUG
         print('=> running system... ' + str(ix) + ' time')
         wMatrix = -1 + 2*chromosome.reshape(nNodes,nNodes)  # decode chromosome, i.e., transform into matrix
+        # Timing!
+        start_time_fitness = time.time()
         fitness[ix][0] = EvaluateIndividual(wMatrix, timeSteps, iGen, nNodes, ix, nLattice, mode)        # get chromosome fitness
+        # Timing!
+        end_time_fitness = time.time()
+        secs = end_time_fitness - start_time_fitness
+        #print('time taken to update chemicals:' + str(secs))
+
         # DEBUG
         print('fitness: ' + str(fitness[ix][0]))
         fitness[ix][1] = ix                                 # store position in population matrix
