@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from tools import *
+#from numba import jit
 
 class cell:
     # defines whats needed when a new agent (Cell) of this class is created
@@ -11,9 +12,9 @@ class cell:
         self.compass = True                         # Polarisation: WARNING ON/OFF => True/False
         self.orientation = [self.xPos,self.yPos]    # Preferred direction. DEFAULT: own position
         self.splitCounter = 0                       # Counter for splitting
-        self.splitTime = 2                          # Time scale for splitting
+        self.splitTime = 10                          # Time scale for splitting
         self.deathCounter = 0                       # Countdown to extinction
-        self.deathTime = 3                          # Time scale for dying
+        self.deathTime = 1                          # Time scale for dying
         self.amidead = False                        # Cell dead or alive
         self.quietCounter = 0                       # Quiet counter
         self.border = 0                             # size of the lattice
@@ -24,7 +25,7 @@ class cell:
         #self.WMatrix = W
         #self.phi = phi
         #self.theta = theta
-        self.nNodes = 10                            # WARNING hardcoded!
+        self.nNodes = 25                            # WARNING hardcoded!
 #        self.nInputs = 2
         self.V = np.zeros([self.nNodes])
     # self
@@ -55,7 +56,7 @@ class cell:
                 #neighbourList.append([self.xPos, self.yPos + 1])
         ## returns a list of possible neighbours which are not the prefered
         #return neighbourList
-
+    #@jit
     def Sense(self, grid):
         # sense chemicals from the grid
         SGF_reading = grid[self.xPos, self.yPos][1] # grid contains three values on each coordinate:
@@ -64,6 +65,7 @@ class cell:
         return SGF_reading, LGF_reading
     # Sense
 
+    #@jit
     def GenerateStatus(self, SGF_lecture, LGF_lecture):
         # neural network generates a status based on the reads
         #inputs = np.array([SGF_lecture, LGF_lecture])
@@ -152,11 +154,13 @@ class cell:
             #print('split = ' + str(iStatus) + ', move = ' + str(jStatus) + '\ndie = ' + str(kStatus) + '. Max: '+ str(maxVal) + '\n')
     # GenerateStatus
 
+    #@jit
     def Quiet(self,grid):
         grid[self.xPos][self.yPos][0] = 1
         self.quietCounter += 1
     # Quiet
 
+    #@jit
     def Die(self, grid):
         self.deathCounter += 1
         if self.deathCounter == self.deathTime:             # if cell set to die then do
@@ -205,6 +209,7 @@ class cell:
     ## Move
 
     # OrientedMove, works with orientation ON and OFF
+    #@jit
     def Move2(self, grid):
         # create a list with the four Von Neumann neighbours
         neighbourList = [[self.xPos - 1, self.yPos],[self.xPos + 1, self.yPos],[self.xPos, self.yPos - 1],[self.xPos, self.yPos + 1]]
@@ -292,6 +297,7 @@ class cell:
 
     # works with polarisation ON and OFF
     # initial for and then if are the same as in Move2, might be useful to use a single function
+    #@jit
     def Split2(self, grid, cellList):
         self.splitCounter += 1
         if self.splitCounter == self.splitTime:
