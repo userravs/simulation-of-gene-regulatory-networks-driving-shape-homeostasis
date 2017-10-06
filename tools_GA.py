@@ -2,8 +2,11 @@ import time
 import random
 import numpy as np
 from main import *
+from numba import jit
 
 # Evaluate variable using the fitness function
+
+@jit
 def EvaluateIndividual(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
     totSum = 0.
     deltaM = sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode)
@@ -32,6 +35,7 @@ def DiracDelta(a, b):
 
 # Crossover: length preserving
 #TODO implement length change
+@jit
 def Crossover(parent1, parent2, crossoverProb):
     r = np.random.random()
     if  r < crossoverProb:
@@ -55,6 +59,7 @@ def Crossover(parent1, parent2, crossoverProb):
 # Crossover
 
 # Mutation
+@jit
 def Mutate(parent1, parent2, mutationProb):
     r = np.random.random()
     if  r < mutationProb:

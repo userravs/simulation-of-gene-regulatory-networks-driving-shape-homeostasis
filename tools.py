@@ -1,8 +1,10 @@
 import numpy as np
 from scipy import linalg
 import csv
+from numba import jit
 
 # Tools
+@jit
 def CheckInBorders(xCoord, yCoord, border):
     if xCoord < 0 or xCoord > border:     # Check if the neighbour is inbounds on x axis
         return False
@@ -11,7 +13,8 @@ def CheckInBorders(xCoord, yCoord, border):
     else:
         return True
 # CheckInBorders
-    
+
+@jit
 def CheckifOccupied(xCoord, yCoord, grid):
     if grid[xCoord, yCoord][0] > 0:         # if value on grid is 1 (quiet), 2 (moved) or 3 (splitted) then spot is occupied
         return True
@@ -19,6 +22,7 @@ def CheckifOccupied(xCoord, yCoord, grid):
         return False
 # CheckifOccupied
 
+@jit
 def CheckifPreferred(xOri, yOri, xCoord, yCoord):
     if xCoord == xOri and yCoord == yOri:
         return True
@@ -26,20 +30,23 @@ def CheckifPreferred(xOri, yOri, xCoord, yCoord):
         return False
 # CheckifPreferred
 
-# SGF dynamics, single value update approach 
+# SGF dynamics, single value update approach
+@jit
 def sgfDiffEq(s, sigma, deltaS, deltaT):
     updatedVal = s + deltaT*(sigma - deltaS*s)
     return updatedVal
 # sgfDiffEq
 
 # SGF dynamics with matrix approach
+@jit
 def sgfDiffEq2(s_matrix, sigma_matrix, deltaS, deltaT):
     updated_matrix = s_matrix + deltaT*(sigma_matrix - deltaS*s_matrix)
     return updated_matrix
 # sgfDiffEq
 
-# TODO use linalg solve to make it fastes and more numerically stable
+# TODO use linalg solve to make it faster and numerically more stable
 # LGF dynamics with matrix approach
+@jit
 def lgfDiffEq(i_matrix, t_matrix, l_matrix, lambda_matrix, deltaL, deltaT, deltaR, D):
     alpha = D*deltaT/(deltaR**2)                            # constant
     f = (deltaT/2.)*(lambda_matrix - deltaL*l_matrix)       # term that takes into account LFG production for half time step
@@ -64,6 +71,7 @@ def lgfDiffEq2(i_matrix, t_matrix, l_matrix, lambda_matrix, deltaL, deltaT, delt
 # sgfDiffEq
 
 # T matrix, used in LGF dynamics
+@jit
 def GenerateTMatrix(size):
     t_matrix = np.zeros([size,size])
     for ix in range(size - 1):
@@ -72,10 +80,11 @@ def GenerateTMatrix(size):
         t_matrix[ix + 1,ix] = 1.
     t_matrix[0,0] = -1.
     t_matrix[size - 1, size - 1] = -1.
-    return t_matrix        
+    return t_matrix
 # GenerateTMatrix
 
 # Identity matrix
+@jit
 def GenerateIMatrix(size):
     I_matrix = np.zeros([size,size])
     for ix in range(size):
@@ -90,17 +99,19 @@ def NeuralNetwork(inputs, WMatrix, wMatrix, phi, theta):
     bj = wMatrix@inputs - theta
     for ix in range(len(bj)):
         V[ix] = TransferFunction(bj[ix],2)
-    
+
     bi = WMatrix@V - phi
     for ix in range(len(bi)):
         O[ix] = TransferFunction(bi[ix],2)
     return O
 # NeuralNetwork
 
+@jit
 def TransferFunction(x,beta):
     return 1./(1 + np.exp(-beta*x))
 # TransferFunction
 
+@jit
 def RecurrentNeuralNetwork(inputs, wMatrix, V):
     #nNodes = 10  # number of nodes
     bj = wMatrix@V - inputs
@@ -109,6 +120,7 @@ def RecurrentNeuralNetwork(inputs, wMatrix, V):
     return V
 # NeuralNetwork
 
+@jit
 def GetStructure(cell_array, nLattice):
     structure = np.zeros([nLattice,nLattice])
     for ik in range(nLattice):
@@ -119,8 +131,8 @@ def GetStructure(cell_array, nLattice):
 # GetStructure
 
 def GetrNN(ind,nNodes):
-    with open('successful_test.csv', 'r') as csvfile:
-    #with open('test_file.csv', 'r') as csvfile:
+    #with open('successful_test.csv', 'r') as csvfile:
+    with open('test_file.csv', 'r') as csvfile:
         #reader = csv.reader(csvfile)
         population = np.loadtxt(csvfile,delimiter=',')
     wMatrix = np.array(population[ind,:].reshape(nNodes,nNodes))
