@@ -1,3 +1,4 @@
+import os
 import time
 import random
 import numpy as np
@@ -7,8 +8,11 @@ from numba import jit
 # Evaluate variable using the fitness function
 
 @jit
-def EvaluateIndividual(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
+def EvaluateIndividual(individual, timeSteps, iGen, nNodes, nLattice, mode):
     totSum = 0.
+    print('generating wMatrix...')
+    wMatrix = population[individual,:].reshape(nNodes,nNodes)
+    print('process: {} has recovered xMatrix!'.format(os.getpid()))
     deltaM = sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode)
     deltaMatrix = np.array(deltaM)
     #m, n = deltaMatrix.shape()
@@ -19,10 +23,18 @@ def EvaluateIndividual(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, m
     # DEBUG
     print('total sum on delta matrix: ' + str(totSum))
     if totSum <= int((nLattice**2)*0.1) or totSum == int(nLattice**2):
-        fitness = 0.
+        fitness[individual] = 0.
     else:
-        fitness = 1. - (1./(nLattice**2))*totSum
-    return fitness
+        fitness[individual] = 1. - (1./(nLattice**2))*totSum
+    #return fitness
+# EvaluateIndividual
+
+@jit
+def EvaluateIndividual2(individual, timeSteps, iGen, nNodes, nLattice, mode):
+    print('process: {} here!! individual: {}'.format(os.getpid(), individual))
+    fitness[individual] = 
+    #print('process: {} here!! array:\n {}'.format(os.getpid(), population[individual,:]))
+    #fitness[individual] = 0.
 # EvaluateIndividual
 
 # Dirac's delta function

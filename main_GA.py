@@ -1,15 +1,19 @@
+import os
 import time
 import random
 import numpy as np
 from tools_GA import *
-from multiprocessing import Pool
+import multiprocessing as mp
+from collections import Counter
+import ctypes
 
 if __name__ == '__main__':
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     #       PARAMETERS                 #
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-    #nProcs = 4                                                 # multiprocessing will use as many cores as it can see
-    popSize = 30                                                # Population size
+    nProcs = 4                                                 # multiprocessing will use as many cores as it can see
+    DEFAULT_VALUE = -1                                          # WARNING
+    popSize = 50                                                # Population size
     nNodes = 25
     nGenes = nNodes**2                                          # Number of genes
     crossoverProb = 1. #0.8                                     # Crossover probability
@@ -19,57 +23,89 @@ if __name__ == '__main__':
     tournamentSize = 4                                          # Tournament size. EVEN
     eliteNum = 2                                                # number of elite solutions to carry to next generation
     nOfGenerations = 10
-    timeSteps = 150
+    timeSteps = 100
     nLattice = 50
     mode = True
     #fitness = np.zeros([popSize,2])                            # fitness array
     eliteIndividuals = []
-    dtype = [('fitnessValue',float),('position',int)]           # format for fitness array, for an easier sort. Fitness is an structured array
+    #dtype = [('fitnessValue',float),('position',int)]           # format for fitness array, for an easier sort. Fitness is an structured array
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     #       INITIALISATION             #
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     #population = InitializePopulation(popSize, numberOfGenes)  # call initialization function, a random set of chromosomes is generated
-    population = np.random.random(size = (popSize, nGenes))
+    #population = np.random.random(size = (popSize, nGenes))
     contestants = np.zeros([tournamentSize, nGenes])
 
+    # WARNING!
+    # multiprocessing implementation
+    population_base = mp.Array(ctypes.c_float, popSize*nGenes, lock = False) # create mp shared array
+    print('population_base length: {}'.format(len(population_base)))
+    population = np.frombuffer(population_base, dtype = ctypes.c_float)      # convert mp array to np.array
+    print('population length: {}'.format(len(population)))
+    for ix in range(popSize*nGenes):
+        population[ix] = -1. + 2.*np.random.random()                                     # Generate population
+    population = population.reshape(popSize, nGenes)
+    print('population shared array created successfully!')
+    
+    
+    fitness_base = mp.Array(ctypes.c_float, popSize, lock = False) # create mp shared array
+    fitness = np.frombuffer(fitness_base, dtype = ctypes.c_float)      # convert mp array to np.array
+    print('fitness shared array created successfully!')
+    
     for iGen in range(nOfGenerations):
         # DEBUG
         print('\nGeneration #' + str(iGen + 1))
         #maxFitness = 0. # Assumes non-negative fitness values!
-        fitness = np.zeros(popSize, dtype = dtype)              # structured array which will contain a fitness value for each individual
+        #fitness = np.zeros(popSize, dtype = dtype)              # structured array which will contain a fitness value for each individual
         #wBest = np.zeros(nGenes) # [0 0]
         #bestIndividualIndex = 0
 
         # 1st step: Fitness function => Rank idividuals by their fitness
         # chromosomes get decoded and evaluated
-        for ix in range(popSize):
-            chromosome = np.array(population[ix,:])             # loop through all chromosomes
-            # DEBUG
-            print('=> running system... ' + str(ix) + ' time')
-            wMatrix = -1 + 2*chromosome.reshape(nNodes,nNodes)  # decode chromosome, i.e., transform into matrix
-            # Timing!
-            start_time_fitness = time.time()
-            fitness[ix][0] = EvaluateIndividual(wMatrix, timeSteps, iGen, nNodes, ix, nLattice, mode)        # get chromosome fitness
-            # Timing!
-            end_time_fitness = time.time()
-            secs = end_time_fitness - start_time_fitness
-            #print('time taken to update chemicals:' + str(secs))
+        #for ix in range(popSize):
+            #chromosome = np.array(population[ix,:])             # loop through all chromosomes
+            ## DEBUG
+            #print('=> running system... ' + str(ix) + ' time')
+            #wMatrix = -1 + 2*chromosome.reshape(nNodes,nNodes)  # decode chromosome, i.e., transform into matrix
+            ## Timing!
+            #start_time_fitness = time.time()
+            ##fitness[ix][0] = EvaluateIndividual(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode)        # get chromosome fitness
+            #fitness = EvaluateIndividual(ix, timeSteps, iGen, nNodes, nLattice, mode)
+            ## Timing!
+            #end_time_fitness = time.time()
+            #secs = end_time_fitness - start_time_fitness
+            ##print('time taken to update chemicals:' + str(secs))
 
-            # DEBUG
-            print('fitness: ' + str(fitness[ix][0]))
-            fitness[ix][1] = ix                                 # store position in population matrix
-        # loop over chromosomes
-        
+            ## DEBUG
+            #print('fitness: ' + str(fitness[ix][0]))
+            ##fitness[ix][1] = ix                                 # store position in population matrix
+        ## loop over chromosomes
+
+        ####
         # WARNING
         # multiprocess implementation!
-        indList = list(-1 + 2*np.array(population[ix,:]).reshape(nNodes,nNodes) for ix in range(popSize))   # list ofindividuals to pass to fitness function
-        pool = Pool(processes = nProcs)
-        print(pool.map(EvaluateIndividual, indList, timeSteps, iGen, nNodes, ix, nLattice, mode))
+        
+        fitness.fill(DEFAULT_VALUE)
+        timeSteps_list = [timeSteps for x in range(popSize)]
+        iGen_list = [iGen for x in range(popSize)]
+        nNodes_list = [nNodes for x in range(popSize)]
+        nLattice_list = [nLattice for x in range(popSize)]
+        mode_list = [mode for x in range(popSize)]
+        index_list = [x for x in range(popSize)]
+        args = zip(index_list, timeSteps_list, iGen_list, nNodes_list, nLattice_list, mode_list)
+        #pool = multiprocessing.Pool(processes=NBR_OF_PROCESSES)
+        print('creating pool...')
+        pool = mp.Pool(processes = nProcs)
+        print('evaluating pool...')
+        pool.starmap(EvaluateIndividual2, args)
+        #print(pool.map(EvaluateIndividual, indList, timeSteps, iGen, nNodes, ix, nLattice, mode))
+        ####
+
 
         # 1.1: sort fitness array
-        fitness.sort(order = 'fitnessValue')                    # sort array according to fitness value. Less fit to most fit
-
+        #fitness.sort(order = 'fitnessValue')                    # sort array according to fitness value. Less fit to most fit
+        sorted_fitness = np.argsort(fitness)
         tempPopulation = np.zeros([popSize, nGenes])            #np.array(population)
 
         # DEBUG
@@ -78,20 +114,21 @@ if __name__ == '__main__':
         # 2nd step: Elitism => Save the best individuals for next generation
         iElit = 1                                               # Elite counter: individuals with the best fitness are kept untouched
         while iElit <= eliteNum:
-            index = fitness[popSize - iElit][1]                 # get the index of the last members of the list, i.e., most fit
+            #index = fitness[popSize - iElit][1]                 # get the index of the last members of the list, i.e., most fit
+            index = sorted_fitness[popSize - iElit]
             # DEBUG
             #print('=> best fitness: ' + str(fitness[popSize - iElit][0]))
             tempPopulation[iElit - 1,:] = np.array(population[index,:])   # store as part of the new generation of individuals
             #del fitness[popSize - iElit]                       # delete last tuple on the list
-            np.delete(fitness,popSize - iElit)
+            np.delete(sorted_fitness,popSize - iElit)
             iElit += 1
         # while
 
         # 3rd step: Tousnament selection => Loop over the rest of the population to engage them into a tournament
         loopCounter = 0
-        while len(fitness) >= tournamentSize:                   # iterate through all individuals
+        while len(sorted_fitness) >= tournamentSize:                   # iterate through all individuals
             #print('fitness array length: ' + str(len(fitness)))
-            selectedInd = np.random.choice(range(len(fitness)), tournamentSize, replace = False)
+            selectedInd = np.random.choice(range(len(sorted_fitness)), tournamentSize, replace = False)
             selectedInd.sort()                                  # select random contestants and sort them by index (i.e. by fitness))
             # DEBUG
             #print('selected contestants for tournament:\n' + str(selectedInd))
@@ -103,9 +140,9 @@ if __name__ == '__main__':
                 #contestants[ik,:] = np.array(population[winIndex[ik],:])
 
             # hardcoded for performance gain
-            winIndex1 = fitness[selectedInd[tournamentSize - 1]][1] # the fittest ind is retrieved from the sorted fitness array
+            winIndex1 = sorted_fitness[selectedInd[tournamentSize - 1]] # the fittest ind is retrieved from the sorted fitness array
             contestants[0,:] = np.array(population[winIndex1,:])
-            winIndex2 = fitness[selectedInd[tournamentSize - 2]][1] # the second fittest ind is retrieved from the sorted fitness array
+            winIndex2 = sorted_fitness[selectedInd[tournamentSize - 2]] # the second fittest ind is retrieved from the sorted fitness array
             contestants[1,:] = np.array(population[winIndex2,:])
 
             # 3.1 step => Generate new offsprig by Crossover or mutation
@@ -121,7 +158,7 @@ if __name__ == '__main__':
                 index = ix - iCounter
                 # DEBUG
                 #print('deleting ' + str(index) + ' entry:' + str(fitness[index]))
-                fitness = np.delete(fitness, index)      # WARNING does this really work?
+                sorted_fitness = np.delete(sorted_fitness, index)      # WARNING does this really work?
                 iCounter += 1
             # DEBUG
             #print('sorted fitness array, after deleting:\n' + str(fitness))
