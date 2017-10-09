@@ -14,6 +14,7 @@ import multiprocessing as mp
 import ctypes
 from numba import jit
 
+#@jit
 def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
     """
     Parameters: sim(wMatrix, numberOfTimeSteps, NumberOfGeneration, nNodes, individual, nLattice, mode)
@@ -146,8 +147,8 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         # Timing!
         start_time_chemicalsUpdate = time.time()
-        cellGrid[:,:,1] = sgfDiffEq2(cellGrid[:,:,1], sigma_m, deltaS, deltaT)
-        cellGrid[:,:,2] = lgfDiffEq(i_matrix, t_matrix, cellGrid[:,:,2], lambda_m, deltaL, deltaT, deltaR, diffConst)
+        cellGrid[:,:,1] = SGFDiffEq(cellGrid[:,:,1], sigma_m, deltaS, deltaT)
+        cellGrid[:,:,2] = LGFDiffEq(i_matrix, t_matrix, cellGrid[:,:,2], lambda_m, deltaL, deltaT, deltaR, diffConst)
         # Timing!
         end_time_chemicalsUpdate = time.time()
         secs = end_time_chemicalsUpdate - start_time_chemicalsUpdate

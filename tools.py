@@ -31,23 +31,24 @@ def CheckifPreferred(xOri, yOri, xCoord, yCoord):
 # CheckifPreferred
 
 # SGF dynamics, single value update approach
-@jit
-def sgfDiffEq(s, sigma, deltaS, deltaT):
-    updatedVal = s + deltaT*(sigma - deltaS*s)
-    return updatedVal
-# sgfDiffEq
+#@jit
+#def sgfDiffEq(s, sigma, deltaS, deltaT):
+    #updatedVal = s + deltaT*(sigma - deltaS*s)
+    #return updatedVal
+## sgfDiffEq
 
 # SGF dynamics with matrix approach
 @jit
-def sgfDiffEq2(s_matrix, sigma_matrix, deltaS, deltaT):
+def SGFDiffEq(s_matrix, sigma_matrix, deltaS, deltaT):
     updated_matrix = s_matrix + deltaT*(sigma_matrix - deltaS*s_matrix)
     return updated_matrix
 # sgfDiffEq
 
 # TODO use linalg solve to make it faster and numerically more stable
 # LGF dynamics with matrix approach
+
 @jit
-def lgfDiffEq(i_matrix, t_matrix, l_matrix, lambda_matrix, deltaL, deltaT, deltaR, D):
+def LGFDiffEq(i_matrix, t_matrix, l_matrix, lambda_matrix, deltaL, deltaT, deltaR, D):
     alpha = D*deltaT/(deltaR**2)                            # constant
     f = (deltaT/2.)*(lambda_matrix - deltaL*l_matrix)       # term that takes into account LFG production for half time step
     g = linalg.inv(i_matrix - (alpha/2.)*t_matrix)          # inverse of some intermediate matrix
@@ -59,15 +60,15 @@ def lgfDiffEq(i_matrix, t_matrix, l_matrix, lambda_matrix, deltaL, deltaT, delta
     return l_tStep
 # sgfDiffEq
 
-def lgfDiffEq2(i_matrix, t_matrix, l_matrix, lambda_matrix, deltaL, deltaT, deltaR, D):
-    alpha = D*deltaT/(deltaR**2)                            # constant
-    f = (deltaT/2.)*(lambda_matrix - deltaL*l_matrix)       # term that takes into account LFG production for half time step
-    g = linalg.inv(i_matrix - (alpha/2.)*t_matrix)          # inverse of some intermediate matrix
-    h = i_matrix + (alpha/2.)*t_matrix                      # some intermediate matrix
-    l_halftStep = (l_matrix@h + f)@g                        # half time step calculation for LGF values
-    f = (deltaT/2.)*(lambda_matrix - deltaL*l_halftStep)    # updated term...
-    l_tStep = g@(h@l_halftStep + f)                         # final computation
-    return l_tStep
+#def LGFDiffEq2(i_matrix, t_matrix, l_matrix, lambda_matrix, deltaL, deltaT, deltaR, D):
+    #alpha = D*deltaT/(deltaR**2)                            # constant
+    #f = (deltaT/2.)*(lambda_matrix - deltaL*l_matrix)       # term that takes into account LFG production for half time step
+    #g = linalg.inv(i_matrix - (alpha/2.)*t_matrix)          # inverse of some intermediate matrix
+    #h = i_matrix + (alpha/2.)*t_matrix                      # some intermediate matrix
+    #l_halftStep = (l_matrix@h + f)@g                        # half time step calculation for LGF values
+    #f = (deltaT/2.)*(lambda_matrix - deltaL*l_halftStep)    # updated term...
+    #l_tStep = g@(h@l_halftStep + f)                         # final computation
+    #return l_tStep
 # sgfDiffEq
 
 # T matrix, used in LGF dynamics
@@ -75,7 +76,7 @@ def lgfDiffEq2(i_matrix, t_matrix, l_matrix, lambda_matrix, deltaL, deltaT, delt
 def GenerateTMatrix(size):
     t_matrix = np.zeros([size,size])
     for ix in range(size - 1):
-        t_matrix[ix,ix] = -2.
+        t_matrix[ix,ix] = -2.                               # Notice that in the paper this is set to 2 which is wrong
         t_matrix[ix,ix + 1] = 1.
         t_matrix[ix + 1,ix] = 1.
     t_matrix[0,0] = -1.
@@ -92,8 +93,7 @@ def GenerateIMatrix(size):
     return I_matrix
 # GenerateIMatrix
 
-def NeuralNetwork(inputs, WMatrix, wMatrix, phi, theta):
-    #nNodes = 10  # number of nodes
+def NeuralNetwork(inputs, WMatrix, wMatrix, phi, theta):    # Feed-Forward Neural Network dynamics
     V = np.zeros([6])
     O = np.zeros([6])
     bj = wMatrix@inputs - theta
@@ -112,8 +112,7 @@ def TransferFunction(x,beta):
 # TransferFunction
 
 @jit
-def RecurrentNeuralNetwork(inputs, wMatrix, V):
-    #nNodes = 10  # number of nodes
+def RecurrentNeuralNetwork(inputs, wMatrix, V):             # Recurrent Neural Network dynamics
     bj = wMatrix@V - inputs
     for ix in range(len(bj)):
         V[ix] = TransferFunction(bj[ix],2)
@@ -132,8 +131,8 @@ def GetStructure(cell_array, nLattice):
 
 def GetrNN(ind,nNodes):
     #with open('successful_test.csv', 'r') as csvfile:
-    with open('test_file.csv', 'r') as csvfile:
+    with open('20171008_20Gen_25Nodes_102ind.csv', 'r') as csvfile:
         #reader = csv.reader(csvfile)
-        population = np.loadtxt(csvfile,delimiter=',')
+        population = np.loadtxt(csvfile, delimiter = ',')
     wMatrix = np.array(population[ind,:].reshape(nNodes,nNodes))
     return wMatrix
