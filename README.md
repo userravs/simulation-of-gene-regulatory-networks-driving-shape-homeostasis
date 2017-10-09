@@ -107,3 +107,16 @@
 #### To do:
 * Think about the ideas mentioned above for the GA algorithm and try to improve it.
 * Do some profiling tests to the simulation code
+
+### 20171009
+#### Done:
+* multiprocessing library implemented successfully. 
+* modified the code so that it runs on ozzy.
+* Sorting of fitness array now returns the indexes not the sorted array, making life easier.
+* New branch: ozzy-branch. This branch will host the version that runs on ozzy. Must be parallel and without any plotting.
+
+#### To do:
+* Fix code structure. The shared arrays force the code for the CA and the GA to be on the same file, then a restructure is needed.
+* Test all different configurations: serial/parallel, optimised/not optimised.
+* Separate the ploting code completely from the GA/CA.
+* Ozzy version must write more information as csv files with good and descriptive names.
