@@ -57,7 +57,7 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
     end_time_figurecall = time.time()
     secs = end_time_figurecall - start_time_figurecall
 
-    print('time to call figures, subplots, plots:' + str(secs))
+    print('time taken to call figures, subplots, plots: {:.5f} s'.format(secs))
 
     # DEBUG
     print('Time running...')
@@ -65,7 +65,7 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
     start_time_mainLoop = time.time()
     while iTime < timeSteps:
         # DEBUG
-        #print('\n######### time step #' + str(iTime))
+        print('\n######### time step #{}'.format(iTime))
 
         ## decay chemicals in spots where there is some but no cell
 
@@ -122,7 +122,7 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
         # Timing!
         end_time_tmpListLoop = time.time()
         secs = end_time_tmpListLoop - start_time_tmpListLoop
-        print('time taken to loop through all living cells:' + str(secs) + ' number of cells: ' + str(tmpCellListLength))
+        print('time taken to loop through all living cells: {:.5f}, number of cells: {}'.format(secs, tmpCellListLength))
 
         # A list of cells that "died" is stored to later actually kill the cells...
         listLength = len(cellList) - 1
@@ -146,7 +146,7 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
         # Timing!
         end_time_chemicalsUpdate = time.time()
         secs = end_time_chemicalsUpdate - start_time_chemicalsUpdate
-        print('time taken to update chemicals:' + str(secs))
+        print('time taken to update chemicals: {:5.f}'.format(secs))
 
         #chemsum = 0
         #for iPos in range(nLattice):
@@ -212,7 +212,7 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
             # Timing!
             end_time_plotUpdate = time.time()
             secs = end_time_plotUpdate - start_time_plotUpdate
-            print('time taken to update plots:' + str(secs))
+            print('time taken to update plots: {:.5f}'.format(secs))
             #time.sleep(0.1)
         iTime += 1
 
@@ -224,7 +224,7 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
     # Timing!
     end_time_mainLoop = time.time()
     secs = end_time_mainLoop - start_time_mainLoop
-    print('\ntime taken in main loop:' + str(secs))
+    print('\ntime taken in main loop: {:.5f}'.format(secs))
 
     # DEBUG
     # print(str(timeSteps)+' time steps complete')
