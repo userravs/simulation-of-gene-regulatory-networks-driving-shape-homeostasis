@@ -12,7 +12,7 @@ import csv
 ############
 import multiprocessing as mp
 import ctypes
-from numba import jit
+#from numba import jit
 
 #@jit
 def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
@@ -45,6 +45,10 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
     t_matrix = GenerateTMatrix(nLattice)        # T matrix for LGF operations
     i_matrix = GenerateIMatrix(nLattice)        # I matrix for LGF operations
 
+    # timing variables!
+    tmpListLoopAvg = 0
+    chemicalsUpdateAvg = 0
+
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     #       INITIALIZATION             #
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -55,15 +59,12 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
     #cellGrid[ix][iy][2] = 400.
 
     # Timing!
-    start_time_figurecall = time.time()
+    #start_time_figurecall = time.time()
     # Plot figure and subplots
     #cellsFigure, cellsSubplot, sgfSubplot, lgfSubplot, cellPlot, sgfPlot, lgfPlot = Environment.CellsGridFigure(nLattice, mode)
-    end_time_figurecall = time.time()
-    secs = end_time_figurecall - start_time_figurecall
+    #end_time_figurecall = time.time()
+    #secs = end_time_figurecall - start_time_figurecall
 
-    # TODO
-    # example of a more convenient way of printing
-    #print('{0} doubled to {1} by process id: {2}'.format(number, result, proc))
     #print('time to call figures, subplots, plots:' + str(secs))
     # DEBUG
     #print('Time running...')
@@ -153,6 +154,7 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
         end_time_chemicalsUpdate = time.time()
         secs = end_time_chemicalsUpdate - start_time_chemicalsUpdate
         #print('time taken to update chemicals:' + str(secs))
+        chemicalsUpdateAvg += secs
 
         #chemsum = 0
         #for iPos in range(nLattice):
@@ -233,6 +235,10 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
     secs = end_time_mainLoop - start_time_mainLoop
     #print('\ntime taken in main loop:' + str(secs))
 
+    #print('\ntime taken in timeSteps: {:.5f} s'.format(secs))
+    #print('Avg time updating chemicals: {:.5f} ms'.format(chemicalsUpdateAvg*1000/timeSteps))
+    #print('Avg time taken looping through all living cells: {:.5f} ms'.format(tmpListLoopAvg*1000/timeSteps))
+
     # DEBUG
     # print(str(timeSteps)+' time steps complete')
 
@@ -265,7 +271,7 @@ def EvaluateIndividual(individual, timeSteps, iGen, nNodes, nLattice, mode):
     totSum = 0.
     #print('generating wMatrix...')
     wMatrix = population[individual,:].reshape(nNodes,nNodes)
-    print('process: {} is running sim  with individual: {}!'.format(os.getpid(), individual))
+    #print('process: {} is running sim  with individual: {}!'.format(os.getpid(), individual))
     deltaM = sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode)
     #print('process: {} done with individual: {}!'.format(os.getpid(), individual))
     deltaMatrix = np.array(deltaM)
@@ -287,10 +293,10 @@ if __name__ == '__main__':
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     #       PARAMETERS                 #
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-    nProcs = 4                                                 # multiprocessing will use as many cores as it can see
+    nProcs = 2                                                 # multiprocessing will use as many cores as it can see
     DEFAULT_VALUE = -1                                          # WARNING
-    popSize = 50                                                # Population size
-    nNodes = 10
+    popSize = 102                                                # Population size
+    nNodes = 25
     nGenes = nNodes**2                                          # Number of genes
     crossoverProb = 1. #0.8                                     # Crossover probability
     mutationProb = 1. #0.5                                      # Mutation probability
@@ -298,13 +304,16 @@ if __name__ == '__main__':
     #tournamentSelParam = 0.75                                  # Tournament selection parameter
     tournamentSize = 4                                          # Tournament size. EVEN
     eliteNum = 2                                                # number of elite solutions to carry to next generation
-    nOfGenerations = 10
-    timeSteps = 100
+    nOfGenerations = 5
+    timeSteps = 200
     nLattice = 50
     mode = True
     #fitness = np.zeros([popSize,2])                            # fitness array
     eliteIndividuals = []
     #dtype = [('fitnessValue',float),('position',int)]           # format for fitness array, for an easier sort. Fitness is an structured array
+    
+    # timing variables!
+    generationAvg = 0
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     #       INITIALISATION             #
@@ -330,12 +339,10 @@ if __name__ == '__main__':
     #print('fitness shared array created successfully!')
 
     for iGen in range(nOfGenerations):
+        # Timing!
+        start_time_generation = time.time()
         # DEBUG
         print('\nGeneration #' + str(iGen + 1))
-        #maxFitness = 0. # Assumes non-negative fitness values!
-        #fitness = np.zeros(popSize, dtype = dtype)              # structured array which will contain a fitness value for each individual
-        #wBest = np.zeros(nGenes) # [0 0]
-        #bestIndividualIndex = 0
 
         # 1st step: Fitness function => Rank idividuals by their fitness
         # chromosomes get decoded and evaluated
@@ -344,14 +351,9 @@ if __name__ == '__main__':
             ## DEBUG
             #print('=> running system... ' + str(ix) + ' time')
             #wMatrix = -1 + 2*chromosome.reshape(nNodes,nNodes)  # decode chromosome, i.e., transform into matrix
-            ## Timing!
-            #start_time_fitness = time.time()
+
             ##fitness[ix][0] = EvaluateIndividual(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode)        # get chromosome fitness
             #fitness = EvaluateIndividual(ix, timeSteps, iGen, nNodes, nLattice, mode)
-            ## Timing!
-            #end_time_fitness = time.time()
-            #secs = end_time_fitness - start_time_fitness
-            ##print('time taken to update chemicals:' + str(secs))
 
             ## DEBUG
             #print('fitness: ' + str(fitness[ix][0]))
@@ -374,8 +376,12 @@ if __name__ == '__main__':
         #print('creating pool...')
         pool = mp.Pool(processes = nProcs)
         #print('evaluating pool...')
+        # Timing!
+        start_time_fitness = time.time()
         pool.starmap(EvaluateIndividual, args)
-        #print(pool.map(EvaluateIndividual, indList, timeSteps, iGen, nNodes, ix, nLattice, mode))
+        # Timing!
+        end_time_fitness = time.time()
+        secs = end_time_fitness - start_time_fitness
         ####
 
 
@@ -449,11 +455,17 @@ if __name__ == '__main__':
 
         population = np.array(tempPopulation)
 
+        # Timing!
+        end_time_generation = time.time()
+        secs = end_time_generation - start_time_generation
+        generationAvg += secs
+        print('time to complete generation: {:.3f} s'.format(secs))
     # Loop over generations
 
+    print('avg time for generation: {} s'.format(generationAvg/nOfGenerations))
 
     # write solution
     #bestIndEver = np.array(population[0,:].reshape(nNodes,nNodes))
-    with open('test_file.csv', 'w') as csvfile:
+    with open('benchmark_test_20171010b.csv', 'w') as csvfile:
         writer = csv.writer(csvfile)
         [writer.writerow(r) for r in population]
