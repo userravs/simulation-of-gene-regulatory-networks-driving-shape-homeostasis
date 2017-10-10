@@ -59,7 +59,7 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
     ##### Timing!
     #start_time_figurecall = time.time()
     ## Plot figure and subplots
-    #cellsFigure, cellsSubplot, sgfSubplot, lgfSubplot, cellPlot, sgfPlot, lgfPlot = Environment.CellsGridFigure(nLattice, mode)
+    cellsFigure, cellsSubplot, sgfSubplot, lgfSubplot, cellPlot, sgfPlot, lgfPlot = Environment.CellsGridFigure(nLattice, mode)
     #end_time_figurecall = time.time()
     #secs = end_time_figurecall - start_time_figurecall
 
@@ -201,23 +201,23 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
                                         iGen,
                                         individual,
                                         mode)
-        #else:
-            ## Timing!
-            #start_time_plotUpdate = time.time()
-            #Environment.AntGridPlot(    cellGrid,
-                                        #nLattice,
-                                        #cellsFigure,
-                                        #cellsSubplot,
-                                        #sgfSubplot,
-                                        #lgfSubplot,
-                                        #cellPlot,
-                                        #sgfPlot,
-                                        #lgfPlot,
-                                        #iTime,
-                                        #iGen,
-                                        #individual,
-                                        #mode)
-            ##### Timing!
+        else:
+            # Timing!
+            start_time_plotUpdate = time.time()
+            Environment.AntGridPlot(    cellGrid,
+                                        nLattice,
+                                        cellsFigure,
+                                        cellsSubplot,
+                                        sgfSubplot,
+                                        lgfSubplot,
+                                        cellPlot,
+                                        sgfPlot,
+                                        lgfPlot,
+                                        iTime,
+                                        iGen,
+                                        individual,
+                                        mode)
+            #### Timing!
             #end_time_plotUpdate = time.time()
             #secs = end_time_plotUpdate - start_time_plotUpdate
             ##print('time taken to update plots: {:.5f}'.format(secs))
@@ -266,16 +266,16 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
 if __name__ == '__main__':
     # if executed as main module!
     print('Test run')
-    individual = 0
+    individual = 51
     nNodes = 25
-    timeSteps = 200
+    timeSteps = 500
     iGen = 0
     nLattice = 50
     mode = False
     
-    wMatrix = GetrNN('benchmark_test_20171010.csv',individual,nNodes)
+    wMatrix = GetrNN('benchmark_test_20171010d.csv',individual,nNodes)
     wMatrix = wMatrix.reshape(nNodes,nNodes)
-    cProfile.run('sim(wMatrix,    timeSteps,  iGen, nNodes, individual, nLattice, mode)')
+    #cProfile.run('sim(wMatrix,    timeSteps,  iGen, nNodes, individual, nLattice, mode)')
     # parameters
     sim(wMatrix,    timeSteps,  iGen, nNodes, individual, nLattice, mode)
 #else:

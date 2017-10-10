@@ -14,6 +14,11 @@ import multiprocessing as mp
 import ctypes
 #from numba import jit
 
+#============================================================#
+#                                                            #
+#                   CELLULAR AUTOMATA                        #
+#                                                            #
+#============================================================#
 #@jit
 def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
     """
@@ -21,9 +26,9 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
     # mode = True: cell_system as fitness function
     # mode = False: cell_system as display system
     """
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-    #       PARAMETERS                 #
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+    #           PARAMETERS              #
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     # TODO: organize in different categories...
     #nLattice = 5                              # TODO change name
     #timeSteps = 40                              # Number of simulation time steps
@@ -289,22 +294,27 @@ def EvaluateIndividual(individual, timeSteps, iGen, nNodes, nLattice, mode):
     #return fitness
 # EvaluateIndividual
 
+#============================================================#
+#                                                            #
+#                   GENETIC ALGORITHM                        #
+#                                                            #
+#============================================================#
 if __name__ == '__main__':
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     #       PARAMETERS                 #
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     nProcs = 2                                                 # multiprocessing will use as many cores as it can see
     DEFAULT_VALUE = -1                                          # WARNING
-    popSize = 102                                                # Population size
+    popSize = 122                                                # Population size
     nNodes = 25
     nGenes = nNodes**2                                          # Number of genes
-    crossoverProb = 1. #0.8                                     # Crossover probability
-    mutationProb = 1. #0.5                                      # Mutation probability
+    crossoverProb = 0.7 #0.8                                     # Crossover probability
+    mutationProb = 0.5 #0.5                                      # Mutation probability
     crossMutProb = 0.5                                          # probability of doing mutation or crossover
     #tournamentSelParam = 0.75                                  # Tournament selection parameter
     tournamentSize = 4                                          # Tournament size. EVEN
     eliteNum = 2                                                # number of elite solutions to carry to next generation
-    nOfGenerations = 5
+    nOfGenerations = 15
     timeSteps = 200
     nLattice = 50
     mode = True
@@ -466,6 +476,6 @@ if __name__ == '__main__':
 
     # write solution
     #bestIndEver = np.array(population[0,:].reshape(nNodes,nNodes))
-    with open('benchmark_test_20171010b.csv', 'w') as csvfile:
+    with open('benchmark_test_20171010d.csv', 'w') as csvfile:
         writer = csv.writer(csvfile)
         [writer.writerow(r) for r in population]
