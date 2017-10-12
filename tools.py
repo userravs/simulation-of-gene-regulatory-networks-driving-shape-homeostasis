@@ -114,7 +114,7 @@ def NeuralNetwork(inputs, WMatrix, wMatrix, phi, theta):    # Feed-Forward Neura
 #    return 1./(1 + np.exp(-beta*x))
 # TransferFunction
 
-@jit
+#@jit
 def RecurrentNeuralNetwork(inputs, wMatrix, V):             # Recurrent Neural Network dynamics
     #beta = 2
     bj = wMatrix@V - inputs

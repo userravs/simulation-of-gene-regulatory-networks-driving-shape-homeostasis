@@ -175,7 +175,15 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
         #print('updated grid:\n' + str(cellGrid[:,:,0]))
 
         if mode == True:
-            if iTime == int(timeSteps/2) - 1:
+            if len(cellList) == 0:                                      # If there are no cells 
+                halfwayStruct = np.zeros([nLattice,nLattice])           # return two completely different structure matrices to get 0 fitness
+                finalStruct = np.ones([nLattice,nLattice])
+                break
+            elif len(cellList) == nLattice**2:                          # If cells fill space 
+                halfwayStruct = np.zeros([nLattice,nLattice])           # return two completely different structure matrices to get 0 fitness
+                finalStruct = np.ones([nLattice,nLattice])
+                break
+            elif iTime == int(timeSteps/2) - 1:
                 halfwayStruct = np.array(cellGrid[:,:,0])
         #         Environment.AntGridPlot(cellGrid,
         #                                 nLattice,
@@ -228,11 +236,6 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
         #     #print('time taken to update plots:' + str(secs))
         #     time.sleep(0.1)
         iTime += 1
-
-        if len(cellList) == 0:
-            halfwayStruct = np.zeros([nLattice,nLattice])
-            finalStruct = np.zeros([nLattice,nLattice])
-            break
 
     # while
     # Timing!
@@ -287,11 +290,12 @@ def EvaluateIndividual(individual, timeSteps, iGen, nNodes, nLattice, mode):
             totSum += deltaMatrix[ix,jx]
     # DEBUG
     #print('total sum on delta matrix: ' + str(totSum))
-    if totSum <= int((nLattice**2)*0.1) or totSum == int(nLattice**2):
-        fitness[individual] = 0.
-    else:
-        fitness[individual] = 1. - (1./(nLattice**2))*totSum
-    #return fitness
+    #if totSum <= int((nLattice**2)*0.1) or totSum == int(nLattice**2):
+        #fitness[individual] = 0.
+    #else:
+        #fitness[individual] = 1. - (1./(nLattice**2))*totSum
+    fitness[individual] = 1. - (1./(nLattice**2))*totSum
+    return fitness
 # EvaluateIndividual
 
 #============================================================#
@@ -303,13 +307,15 @@ if __name__ == '__main__':
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     #       PARAMETERS                 #
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-    nProcs = 2                                                 # multiprocessing will use as many cores as it can see
+    # nProcs*cycles = 4*int + 2
+    # popSize = nProcs*cycles
+    nProcs = 13                                                 # multiprocessing will use as many cores as it can see
     DEFAULT_VALUE = -1                                          # WARNING
-    popSize = 122                                                # Population size
+    popSize = 494                                                # Population size
     nNodes = 25
     nGenes = nNodes**2                                          # Number of genes
-    crossoverProb = 0.7 #0.8                                     # Crossover probability
-    mutationProb = 0.5 #0.5                                      # Mutation probability
+    crossoverProb = 0.5 #0.8                                     # Crossover probability
+    mutationProb = 1 #0.5                                      # Mutation probability
     crossMutProb = 0.5                                          # probability of doing mutation or crossover
     #tournamentSelParam = 0.75                                  # Tournament selection parameter
     tournamentSize = 4                                          # Tournament size. EVEN
@@ -318,9 +324,7 @@ if __name__ == '__main__':
     timeSteps = 200
     nLattice = 50
     mode = True
-    #fitness = np.zeros([popSize,2])                            # fitness array
-    eliteIndividuals = []
-    #dtype = [('fitnessValue',float),('position',int)]           # format for fitness array, for an easier sort. Fitness is an structured array
+    fileName = 'benchmark_test_ozzy_20171012c'
     
     # timing variables!
     generationAvg = 0
@@ -332,6 +336,10 @@ if __name__ == '__main__':
     #population = np.random.random(size = (popSize, nGenes))
     contestants = np.zeros([tournamentSize, nGenes])
 
+    print('Paramameters: \nnProcs = {}, Population size = {}, nNodes = {}, nLattice = {}, nGen = {}\
+            \nCrossover Prob = {}, Mutation prob = {}\
+            \nFile name: {}'.format(nProcs, popSize, nNodes, nLattice, nOfGenerations, crossoverProb, mutationProb, fileName))
+
     # WARNING!
     # multiprocessing implementation
     population_base = mp.Array(ctypes.c_float, popSize*nGenes, lock = False) # create mp shared array
@@ -342,7 +350,6 @@ if __name__ == '__main__':
         population[ix] = -1. + 2.*np.random.random()                                     # Generate population
     population = population.reshape(popSize, nGenes)
     #print('population shared array created successfully!')
-
 
     fitness_base = mp.Array(ctypes.c_float, popSize, lock = False) # create mp shared array
     fitness = np.frombuffer(fitness_base, dtype = ctypes.c_float)      # convert mp array to np.array
@@ -393,7 +400,6 @@ if __name__ == '__main__':
         end_time_fitness = time.time()
         secs = end_time_fitness - start_time_fitness
         ####
-
 
         # 1.1: sort fitness array
         #fitness.sort(order = 'fitnessValue')                    # sort array according to fitness value. Less fit to most fit
@@ -472,10 +478,10 @@ if __name__ == '__main__':
         print('time to complete generation: {:.3f} s'.format(secs))
     # Loop over generations
 
-    print('avg time for generation: {} s'.format(generationAvg/nOfGenerations))
+    print('avg time for generation: {:.3f} s'.format(generationAvg/nOfGenerations))
 
     # write solution
-    #bestIndEver = np.array(population[0,:].reshape(nNodes,nNodes))
-    with open('benchmark_test_20171010d.csv', 'w') as csvfile:
+    with open(fileName + '.csv', 'w') as csvfile:
         writer = csv.writer(csvfile)
         [writer.writerow(r) for r in population]
+    #with open(fileName + '_metadata' + '.csv', 'w') as csvfile:
