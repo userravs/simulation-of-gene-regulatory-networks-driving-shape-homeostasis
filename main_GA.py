@@ -175,16 +175,17 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
         #print('updated grid:\n' + str(cellGrid[:,:,0]))
 
         if mode == True:
-            if len(cellList) == 0:                                      # If there are no cells 
-                halfwayStruct = np.zeros([nLattice,nLattice])           # return two completely different structure matrices to get 0 fitness
-                finalStruct = np.ones([nLattice,nLattice])
-                break
-            elif len(cellList) == nLattice**2:                          # If cells fill space 
-                halfwayStruct = np.zeros([nLattice,nLattice])           # return two completely different structure matrices to get 0 fitness
-                finalStruct = np.ones([nLattice,nLattice])
-                break
-            elif iTime == int(timeSteps/2) - 1:
-                halfwayStruct = np.array(cellGrid[:,:,0])
+            if iTime == int(timeSteps/2) - 1:                             # special cases get tested halfway through the simulation
+                    if len(cellList) <= int((nLattice**2)*0.01):                                  # If there are no cells 
+                        halfwayStruct = np.zeros([nLattice,nLattice])       # return two completely different structure matrices to get 0 fitness
+                        finalStruct = np.ones([nLattice,nLattice])
+                        break
+                    elif len(cellList) == nLattice**2:                      # If cells fill space 
+                        halfwayStruct = np.zeros([nLattice,nLattice])       # return two completely different structure matrices to get 0 fitness
+                        finalStruct = np.ones([nLattice,nLattice])
+                        break
+                    else:
+                        halfwayStruct = np.array(cellGrid[:,:,0])
         #         Environment.AntGridPlot(cellGrid,
         #                                 nLattice,
         #                                 cellsFigure,
@@ -309,12 +310,12 @@ if __name__ == '__main__':
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     # nProcs*cycles = 4*int + 2
     # popSize = nProcs*cycles
-    nProcs = 13                                                 # multiprocessing will use as many cores as it can see
+    nProcs = 11                                                 # multiprocessing will use as many cores as it can see
     DEFAULT_VALUE = -1                                          # WARNING
-    popSize = 494                                                # Population size
+    popSize = 110                                                # Population size
     nNodes = 25
     nGenes = nNodes**2                                          # Number of genes
-    crossoverProb = 0.5 #0.8                                     # Crossover probability
+    crossoverProb = 1 #0.8                                     # Crossover probability
     mutationProb = 1 #0.5                                      # Mutation probability
     crossMutProb = 0.5                                          # probability of doing mutation or crossover
     #tournamentSelParam = 0.75                                  # Tournament selection parameter
@@ -324,7 +325,7 @@ if __name__ == '__main__':
     timeSteps = 200
     nLattice = 50
     mode = True
-    fileName = 'benchmark_test_ozzy_20171012c'
+    fileName = 'benchmark_test_ozzy_20171012_crossP1'
     
     # timing variables!
     generationAvg = 0
@@ -337,7 +338,7 @@ if __name__ == '__main__':
     contestants = np.zeros([tournamentSize, nGenes])
 
     print('Paramameters: \nnProcs = {}, Population size = {}, nNodes = {}, nLattice = {}, nGen = {}\
-            \nCrossover Prob = {}, Mutation prob = {}\
+            Crossover Prob = {}, Mutation prob = {}\
             \nFile name: {}'.format(nProcs, popSize, nNodes, nLattice, nOfGenerations, crossoverProb, mutationProb, fileName))
 
     # WARNING!
@@ -475,10 +476,12 @@ if __name__ == '__main__':
         end_time_generation = time.time()
         secs = end_time_generation - start_time_generation
         generationAvg += secs
-        print('time to complete generation: {:.3f} s'.format(secs))
+        #print('time: {} m, {:.3f} s'.format(int(secs/60), 60*((secs/60)-int(secs/60))))
+        print('time to complete generation: {} m {:.3f} s'.format(int(secs/60), 60*((secs/60)-int(secs/60))))
     # Loop over generations
 
-    print('avg time for generation: {:.3f} s'.format(generationAvg/nOfGenerations))
+    print('avg time for generation: {} m {:.3f} s'.format(int(generationAvg/nOfGenerations/60), 60*((generationAvg/nOfGenerations/60)-int(generationAvg/nOfGenerations/60))))
+    #print('avg time for generation: {:.3f} s'.format(generationAvg/nOfGenerations))
 
     # write solution
     with open(fileName + '.csv', 'w') as csvfile:

@@ -1,12 +1,12 @@
 import time
-import random
+#import random
 import numpy as np
 #import matplotlib.pyplot as plt
 # self made classes
 from cell_agent import *                    # it is allowed to call from this class because there's an __init__.py file in this directory
 from tools import *
-from plot import *
-import csv
+#from plot import *
+#import csv
 import cProfile
 # from numba import jit
 
@@ -59,7 +59,7 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
     ##### Timing!
     #start_time_figurecall = time.time()
     ## Plot figure and subplots
-    cellsFigure, cellsSubplot, sgfSubplot, lgfSubplot, cellPlot, sgfPlot, lgfPlot = Environment.CellsGridFigure(nLattice, mode)
+    #cellsFigure, cellsSubplot, sgfSubplot, lgfSubplot, cellPlot, sgfPlot, lgfPlot = Environment.CellsGridFigure(nLattice, mode)
     #end_time_figurecall = time.time()
     #secs = end_time_figurecall - start_time_figurecall
 
@@ -169,55 +169,57 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         #print('updated grid:\n' + str(cellGrid[:,:,0]))
 
-        if mode == True:
-            if iTime == int(timeSteps/2) - 1:
-                halfwayStruct = np.array(cellGrid[:,:,0])
-                Environment.AntGridPlot(cellGrid,
-                                        nLattice,
-                                        cellsFigure,
-                                        cellsSubplot,
-                                        sgfSubplot,
-                                        lgfSubplot,
-                                        cellPlot,
-                                        sgfPlot,
-                                        lgfPlot,
-                                        iTime,
-                                        iGen,
-                                        individual,
-                                        mode)
+        #if mode == True:
+            #if iTime == int(timeSteps/2) - 1:
+                #halfwayStruct = np.array(cellGrid[:,:,0])
+                #print('\nHalfway structure:\n {}'.format(halfwayStruct))
+                #Environment.AntGridPlot(cellGrid,
+                                        #nLattice,
+                                        #cellsFigure,
+                                        #cellsSubplot,
+                                        #sgfSubplot,
+                                        #lgfSubplot,
+                                        #cellPlot,
+                                        #sgfPlot,
+                                        #lgfPlot,
+                                        #iTime,
+                                        #iGen,
+                                        #individual,
+                                        #mode)
 
-            elif iTime == timeSteps - 1:
-                finalStruct = np.array(cellGrid[:,:,0])
-                Environment.AntGridPlot(cellGrid,
-                                        nLattice,
-                                        cellsFigure,
-                                        cellsSubplot,
-                                        sgfSubplot,
-                                        lgfSubplot,
-                                        cellPlot,
-                                        sgfPlot,
-                                        lgfPlot,
-                                        iTime,
-                                        iGen,
-                                        individual,
-                                        mode)
-        else:
-            # Timing!
-            start_time_plotUpdate = time.time()
-            Environment.AntGridPlot(    cellGrid,
-                                        nLattice,
-                                        cellsFigure,
-                                        cellsSubplot,
-                                        sgfSubplot,
-                                        lgfSubplot,
-                                        cellPlot,
-                                        sgfPlot,
-                                        lgfPlot,
-                                        iTime,
-                                        iGen,
-                                        individual,
-                                        mode)
-            #### Timing!
+            #elif iTime == timeSteps - 1:
+                #finalStruct = np.array(cellGrid[:,:,0])
+                #print('\nFinal structure:\n {}'.format(finalStruct))
+                #Environment.AntGridPlot(cellGrid,
+                                        #nLattice,
+                                        #cellsFigure,
+                                        #cellsSubplot,
+                                        #sgfSubplot,
+                                        #lgfSubplot,
+                                        #cellPlot,
+                                        #sgfPlot,
+                                        #lgfPlot,
+                                        #iTime,
+                                        #iGen,
+                                        #individual,
+                                        #mode)
+        #else:
+            ## Timing!
+            #start_time_plotUpdate = time.time()
+            #Environment.AntGridPlot(    cellGrid,
+                                        #nLattice,
+                                        #cellsFigure,
+                                        #cellsSubplot,
+                                        #sgfSubplot,
+                                        #lgfSubplot,
+                                        #cellPlot,
+                                        #sgfPlot,
+                                        #lgfPlot,
+                                        #iTime,
+                                        #iGen,
+                                        #individual,
+                                        #mode)
+            ##### Timing!
             #end_time_plotUpdate = time.time()
             #secs = end_time_plotUpdate - start_time_plotUpdate
             ##print('time taken to update plots: {:.5f}'.format(secs))
@@ -226,8 +228,8 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
         iTime += 1
 
         if len(cellList) == 0:
-            halfwayStruct = np.zeros([nLattice,nLattice])
-            finalStruct = np.zeros([nLattice,nLattice])
+            #halfwayStruct = np.zeros([nLattice,nLattice])
+            #finalStruct = np.zeros([nLattice,nLattice])
             break
     # while
     # Timing!
@@ -262,19 +264,20 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
     #print('delta matrix:\n' + str(deltaMatrix))
 
     #return deltaMatrix
+    #return
 
 if __name__ == '__main__':
     # if executed as main module!
     print('Test run')
-    individual = 51
+    individual = 1
     nNodes = 25
-    timeSteps = 500
+    timeSteps = 200
     iGen = 0
     nLattice = 50
     mode = False
     
-    wMatrix = GetrNN('benchmark_test_20171010d.csv',individual,nNodes)
-    wMatrix = wMatrix.reshape(nNodes,nNodes)
+    wMatrix = GetrNN('benchmark_test_ozzy_20171010c.csv',individual,nNodes)
+    #wMatrix = wMatrix.reshape(nNodes,nNodes)
     #cProfile.run('sim(wMatrix,    timeSteps,  iGen, nNodes, individual, nLattice, mode)')
     # parameters
     sim(wMatrix,    timeSteps,  iGen, nNodes, individual, nLattice, mode)
