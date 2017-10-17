@@ -1,7 +1,8 @@
-import os
-import time
-import random
-import numpy as np
+import sys                                  # to get command line args
+import os                                   # to handle paths
+import time                                 # to get system time
+#import random                   
+import numpy as np  
 from tools_GA import *
 ############
 # self made classes
@@ -30,10 +31,10 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
     #           PARAMETERS              #
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     # TODO: organize in different categories...
-    #nLattice = 5                              # TODO change name
-    #timeSteps = 40                              # Number of simulation time steps
+    #nLattice = 5                               # TODO change name
+    #timeSteps = 40                             # Number of simulation time steps
     cellGrid = np.zeros([nLattice,nLattice,3])  # Initialize empty grid
-    SGF_read = 0.                                # in the future values will be read from the grid
+    SGF_read = 0.                               # in the future values will be read from the grid
     LGF_read = 0.
     ix = int(nLattice/2)                        # Initial position for the mother cell
     iy = int(nLattice/2)                        # Initial position for the mother cell
@@ -42,11 +43,11 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
     cellList = []                               # List for cell agents
 
     # SGF/LGF dynamics parameters
-    deltaT = 1.                                  # time step for discretisation [T]
-    deltaR = 1.                                  # space step for discretisation [L]
+    deltaT = 1.                                 # time step for discretisation [T]
+    deltaR = 1.                                 # space step for discretisation [L]
     deltaS = 0.5                                # decay rate for SGF
-    deltaL = 0.1                                 # decay rate for LGF
-    diffConst = 1.#0.05                              # diffusion constant D [dimentionless]
+    deltaL = 0.1                                # decay rate for LGF
+    diffConst = 1.#0.05                         # diffusion constant D [dimentionless]
     t_matrix = GenerateTMatrix(nLattice)        # T matrix for LGF operations
     i_matrix = GenerateIMatrix(nLattice)        # I matrix for LGF operations
 
@@ -310,13 +311,13 @@ if __name__ == '__main__':
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     # nProcs*cycles = 4*int + 2
     # popSize = nProcs*cycles
-    nProcs = 11                                                 # multiprocessing will use as many cores as it can see
+    nProcs = int(sys.argv[1])   #11                             # multiprocessing will use as many cores as it can see
     DEFAULT_VALUE = -1                                          # WARNING
-    popSize = 110                                                # Population size
+    popSize = int(sys.argv[2])   #110                           # Population size
     nNodes = 25
     nGenes = nNodes**2                                          # Number of genes
-    crossoverProb = 1 #0.8                                     # Crossover probability
-    mutationProb = 1 #0.5                                      # Mutation probability
+    crossoverProb = 1. #0.8                                     # Crossover probability
+    mutationProb = 1. #0.5                                      # Mutation probability
     crossMutProb = 0.5                                          # probability of doing mutation or crossover
     #tournamentSelParam = 0.75                                  # Tournament selection parameter
     tournamentSize = 4                                          # Tournament size. EVEN
@@ -325,7 +326,8 @@ if __name__ == '__main__':
     timeSteps = 200
     nLattice = 50
     mode = True
-    fileName = 'benchmark_test_ozzy_20171012_crossP1'
+    fileName = sys.argv[3] #'benchmark_test_ozzy_20171015_crossP1a'
+    chunkSize = 10                                              # TEST 
     
     # timing variables!
     generationAvg = 0
@@ -337,23 +339,20 @@ if __name__ == '__main__':
     #population = np.random.random(size = (popSize, nGenes))
     contestants = np.zeros([tournamentSize, nGenes])
 
-    print('Paramameters: \nnProcs = {}, Population size = {}, nNodes = {}, nLattice = {}, nGen = {}\
-            Crossover Prob = {}, Mutation prob = {}\
-            \nFile name: {}'.format(nProcs, popSize, nNodes, nLattice, nOfGenerations, crossoverProb, mutationProb, fileName))
+    print('Parameters: \nFile name: {}\nnProcs = {}, Population size = {}, nNodes = {}, nLattice = {}, nGen = {}, Crossover Prob = {}, Mutation prob = {}'.format(fileName, nProcs, popSize, nNodes, nLattice, nOfGenerations, crossoverProb, mutationProb))
 
-    # WARNING!
     # multiprocessing implementation
-    population_base = mp.Array(ctypes.c_float, popSize*nGenes, lock = False) # create mp shared array
+    population_base = mp.Array(ctypes.c_float, popSize*nGenes, lock = False)    # create mp shared array
     #print('population_base length: {}'.format(len(population_base)))
-    population = np.frombuffer(population_base, dtype = ctypes.c_float)      # convert mp array to np.array
+    population = np.frombuffer(population_base, dtype = ctypes.c_float)         # convert mp array to np.array
     #print('population length: {}'.format(len(population)))
     for ix in range(popSize*nGenes):
-        population[ix] = -1. + 2.*np.random.random()                                     # Generate population
+        population[ix] = -1. + 2.*np.random.random()                            # Generate population
     population = population.reshape(popSize, nGenes)
     #print('population shared array created successfully!')
 
-    fitness_base = mp.Array(ctypes.c_float, popSize, lock = False) # create mp shared array
-    fitness = np.frombuffer(fitness_base, dtype = ctypes.c_float)      # convert mp array to np.array
+    fitness_base = mp.Array(ctypes.c_float, popSize, lock = False)              # create mp shared array
+    fitness = np.frombuffer(fitness_base, dtype = ctypes.c_float)               # convert mp array to np.array
     #print('fitness shared array created successfully!')
 
     for iGen in range(nOfGenerations):
@@ -378,8 +377,6 @@ if __name__ == '__main__':
             ##fitness[ix][1] = ix                                 # store position in population matrix
         ## loop over chromosomes
 
-        ####
-        # WARNING
         # multiprocess implementation!
 
         fitness.fill(DEFAULT_VALUE)
@@ -396,7 +393,7 @@ if __name__ == '__main__':
         #print('evaluating pool...')
         # Timing!
         start_time_fitness = time.time()
-        pool.starmap(EvaluateIndividual, args)
+        pool.starmap(EvaluateIndividual, args, chunkSize)
         # Timing!
         end_time_fitness = time.time()
         secs = end_time_fitness - start_time_fitness
@@ -477,14 +474,14 @@ if __name__ == '__main__':
         secs = end_time_generation - start_time_generation
         generationAvg += secs
         #print('time: {} m, {:.3f} s'.format(int(secs/60), 60*((secs/60)-int(secs/60))))
-        print('time to complete generation: {} m {:.3f} s'.format(int(secs/60), 60*((secs/60)-int(secs/60))))
+        print('Time to complete generation: {} m {:.3f} s'.format(int(secs/60), 60*((secs/60)-int(secs/60))))
     # Loop over generations
 
-    print('avg time for generation: {} m {:.3f} s'.format(int(generationAvg/nOfGenerations/60), 60*((generationAvg/nOfGenerations/60)-int(generationAvg/nOfGenerations/60))))
+    print('avg time per generation: {} m {:.3f} s'.format(int(generationAvg/nOfGenerations/60), 60*((generationAvg/nOfGenerations/60)-int(generationAvg/nOfGenerations/60))))
     #print('avg time for generation: {:.3f} s'.format(generationAvg/nOfGenerations))
 
     # write solution
-    with open(fileName + '.csv', 'w') as csvfile:
+    with open('populations/' + fileName + '.csv', 'w') as csvfile:
         writer = csv.writer(csvfile)
         [writer.writerow(r) for r in population]
     #with open(fileName + '_metadata' + '.csv', 'w') as csvfile:
