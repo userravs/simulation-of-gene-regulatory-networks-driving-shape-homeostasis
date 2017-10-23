@@ -1,11 +1,12 @@
-import time
+import sys
+#import time
 #import random
 import numpy as np
 #import matplotlib.pyplot as plt
 # self made classes
 from cell_agent import *                    # it is allowed to call from this class because there's an __init__.py file in this directory
 from tools import *
-#from plot import *
+from plot import *
 #import csv
 import cProfile
 # from numba import jit
@@ -51,7 +52,7 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
     #       INITIALIZATION             #
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     # create mother cell and update the grid with its initial location
-    cellList.append(cell(ix,iy,wMatrix))
+    cellList.append(cell(ix,iy,wMatrix, nNodes))
     cellGrid[ix][iy][0] = 1
     #print('Initial grid:\n' + str(cellGrid[:,:,0]))
     #cellGrid[ix][iy][2] = 400.
@@ -59,7 +60,7 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
     ##### Timing!
     #start_time_figurecall = time.time()
     ## Plot figure and subplots
-    #cellsFigure, cellsSubplot, sgfSubplot, lgfSubplot, cellPlot, sgfPlot, lgfPlot = Environment.CellsGridFigure(nLattice, mode)
+    cellsFigure, cellsSubplot, sgfSubplot, lgfSubplot, cellPlot, sgfPlot, lgfPlot = Environment.CellsGridFigure(nLattice, mode)
     #end_time_figurecall = time.time()
     #secs = end_time_figurecall - start_time_figurecall
 
@@ -68,7 +69,7 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
     # DEBUG
     #print('Time running...')
     #### Timing!
-    start_time_mainLoop = time.time()
+    #start_time_mainLoop = time.time()
     while iTime < timeSteps:
         # DEBUG
         #print('\n######### time step #{}'.format(iTime))
@@ -83,8 +84,8 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
         tmpCellList = list(cellList)                                # a copy of the list of current cells is used to iterate over all the cells
 
         # Timing!
-        start_time_tmpListLoop = time.time()
-        tmpCellListLength = len(tmpCellList)
+        #start_time_tmpListLoop = time.time()
+        #tmpCellListLength = len(tmpCellList)
         while len(tmpCellList) > 0:                                 # while  the tmp list of cells is longer than 1
             # 1st step => choose a random cell from the list of existing cells
             rndCell = np.random.randint(len(tmpCellList))
@@ -126,10 +127,10 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
                 del tmpCellList[rndCell]
         # while
         #### Timing!
-        end_time_tmpListLoop = time.time()
-        secs = end_time_tmpListLoop - start_time_tmpListLoop
+        #end_time_tmpListLoop = time.time()
+        #secs = end_time_tmpListLoop - start_time_tmpListLoop
         #print('time taken to loop through all living cells: {:.5f}, number of cells: {}'.format(secs, tmpCellListLength))
-        tmpListLoopAvg += secs
+        #tmpListLoopAvg += secs
 
         # A list of cells that "died" is stored to later actually kill the cells...
         listLength = len(cellList) - 1
@@ -147,14 +148,14 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
         #    SGF/LGF diffusion and/or decay     #
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         #### Timing!
-        start_time_chemicalsUpdate = time.time()
+        #start_time_chemicalsUpdate = time.time()
         cellGrid[:,:,1] = SGFDiffEq(cellGrid[:,:,1], sigma_m, deltaS, deltaT)
         cellGrid[:,:,2] = LGFDiffEq(i_matrix, t_matrix, cellGrid[:,:,2], lambda_m, deltaL, deltaT, deltaR, diffConst)
         #### Timing!
-        end_time_chemicalsUpdate = time.time()
-        secs = end_time_chemicalsUpdate - start_time_chemicalsUpdate
+        #end_time_chemicalsUpdate = time.time()
+        #secs = end_time_chemicalsUpdate - start_time_chemicalsUpdate
         #print('time taken to update chemicals: {:.5f}'.format(secs))
-        chemicalsUpdateAvg += secs
+        #chemicalsUpdateAvg += secs
 
         #chemsum = 0
         #for iPos in range(nLattice):
@@ -206,19 +207,19 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
         #else:
             ## Timing!
             #start_time_plotUpdate = time.time()
-            #Environment.AntGridPlot(    cellGrid,
-                                        #nLattice,
-                                        #cellsFigure,
-                                        #cellsSubplot,
-                                        #sgfSubplot,
-                                        #lgfSubplot,
-                                        #cellPlot,
-                                        #sgfPlot,
-                                        #lgfPlot,
-                                        #iTime,
-                                        #iGen,
-                                        #individual,
-                                        #mode)
+        Environment.AntGridPlot(    cellGrid,
+                                    nLattice,
+                                    cellsFigure,
+                                    cellsSubplot,
+                                    sgfSubplot,
+                                    lgfSubplot,
+                                    cellPlot,
+                                    sgfPlot,
+                                    lgfPlot,
+                                    iTime,
+                                    iGen,
+                                    individual,
+                                    mode)
             ##### Timing!
             #end_time_plotUpdate = time.time()
             #secs = end_time_plotUpdate - start_time_plotUpdate
@@ -233,12 +234,12 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
             break
     # while
     # Timing!
-    end_time_mainLoop = time.time()
-    secs = end_time_mainLoop - start_time_mainLoop
-    print('\ntime taken in main loop: {:.5f}'.format(secs))
-    print('Avg time updating chemicals: {:.5f}'.format(chemicalsUpdateAvg/timeSteps))
-    print('Avg time taken looping through all living cells: {:.5f}'.format(tmpListLoopAvg/timeSteps))
-    print('Avg time taken to update plots: {:.5f}'.format(plotUpdateAvg/timeSteps))
+    #end_time_mainLoop = time.time()
+    #secs = end_time_mainLoop - start_time_mainLoop
+    #print('\ntime taken in main loop: {:.5f}'.format(secs))
+    #print('Avg time updating chemicals: {:.5f}'.format(chemicalsUpdateAvg/timeSteps))
+    #print('Avg time taken looping through all living cells: {:.5f}'.format(tmpListLoopAvg/timeSteps))
+    #print('Avg time taken to update plots: {:.5f}'.format(plotUpdateAvg/timeSteps))
     # DEBUG
     # print(str(timeSteps)+' time steps complete')
 
@@ -268,15 +269,16 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
 
 if __name__ == '__main__':
     # if executed as main module!
-    print('Test run')
-    individual = 1
-    nNodes = 25
-    timeSteps = 200
+    print('System visualization')
+    individual = int(sys.argv[1]) #1
+    nNodes = int(sys.argv[2]) #25
+    timeSteps = 400
     iGen = 0
     nLattice = 50
     mode = False
+    fileName = sys.argv[3]
     
-    wMatrix = GetrNN('benchmark_test_ozzy_20171010c.csv',individual,nNodes)
+    wMatrix = GetrNN(fileName,individual,nNodes)
     #wMatrix = wMatrix.reshape(nNodes,nNodes)
     #cProfile.run('sim(wMatrix,    timeSteps,  iGen, nNodes, individual, nLattice, mode)')
     # parameters

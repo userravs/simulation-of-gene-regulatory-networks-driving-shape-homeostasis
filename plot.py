@@ -130,7 +130,7 @@ class Environment:
         cellsFigure.canvas.update()
         cellsFigure.canvas.flush_events()
 
-        if mode == True:
-            plt.savefig('CA_gen' + '{:02d}'.format(iGen) + '_ind' + '{:02d}'.format(individual) +'_tstep' + '{:03d}'.format(tStep) + '.png', bbox_inches='tight')
+        #if mode == True:
+        #    plt.savefig('CA_gen' + '{:02d}'.format(iGen) + '_ind' + '{:02d}'.format(individual) +'_tstep' + '{:03d}'.format(tStep) + '.png', bbox_inches='tight')
     # UpdatePlot
 # Environment
