@@ -59,7 +59,7 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
     #       INITIALIZATION             #
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     # create mother cell and update the grid with its initial location
-    cellList.append(cell(ix,iy,wMatrix))
+    cellList.append(cell(ix,iy,wMatrix,nNodes))
     cellGrid[ix][iy][0] = 1
     #print('Initial grid:\n' + str(cellGrid[:,:,0]))
     #cellGrid[ix][iy][2] = 400.
@@ -176,17 +176,17 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
         #print('updated grid:\n' + str(cellGrid[:,:,0]))
 
         if mode == True:
-            if iTime == int(timeSteps/2) - 1:                             # special cases get tested halfway through the simulation
-                    if len(cellList) <= int((nLattice**2)*0.01):                                  # If there are no cells 
-                        halfwayStruct = np.zeros([nLattice,nLattice])       # return two completely different structure matrices to get 0 fitness
-                        finalStruct = np.ones([nLattice,nLattice])
-                        break
-                    elif len(cellList) == nLattice**2:                      # If cells fill space 
-                        halfwayStruct = np.zeros([nLattice,nLattice])       # return two completely different structure matrices to get 0 fitness
-                        finalStruct = np.ones([nLattice,nLattice])
-                        break
-                    else:
-                        halfwayStruct = np.array(cellGrid[:,:,0])
+            if len(cellList) == 0:                                      # if cells die during the simulation resturn two different structs
+                halfwayStruct = np.zeros([nLattice,nLattice])
+                finalStruct = np.ones([nLattice,nLattice])
+                break
+            elif iTime == int(timeSteps/2) - 1:                             # special cases get tested halfway through the simulation
+                if len(cellList) <= int((nLattice**2)*0.01):                                  # If there are no cells 
+                    halfwayStruct = np.zeros([nLattice,nLattice])       # return two completely different structure matrices to get 0 fitness
+                    finalStruct = np.ones([nLattice,nLattice])
+                    break
+                else:
+                    halfwayStruct = np.array(cellGrid[:,:,0])
         #         Environment.AntGridPlot(cellGrid,
         #                                 nLattice,
         #                                 cellsFigure,
@@ -202,7 +202,12 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
         #                                 mode)
         #
             elif iTime == timeSteps - 1:
-                finalStruct = np.array(cellGrid[:,:,0])
+                if len(cellList) == nLattice**2:                      # If cells fill space 
+                    halfwayStruct = np.zeros([nLattice,nLattice])       # return two completely different structure matrices to get 0 fitness
+                    finalStruct = np.ones([nLattice,nLattice])
+                    # break
+                else:
+                    finalStruct = np.array(cellGrid[:,:,0])
         #         Environment.AntGridPlot(cellGrid,
         #                                 nLattice,
         #                                 cellsFigure,
@@ -290,6 +295,7 @@ def EvaluateIndividual(individual, timeSteps, iGen, nNodes, nLattice, mode):
     for ix in range(nLattice):
         for jx in range(nLattice):
             totSum += deltaMatrix[ix,jx]
+    print('max score: {}, totsum = {}'.format(nLattice**2, totSum))
     # DEBUG
     #print('total sum on delta matrix: ' + str(totSum))
     #if totSum <= int((nLattice**2)*0.1) or totSum == int(nLattice**2):
@@ -297,6 +303,7 @@ def EvaluateIndividual(individual, timeSteps, iGen, nNodes, nLattice, mode):
     #else:
         #fitness[individual] = 1. - (1./(nLattice**2))*totSum
     fitness[individual] = 1. - (1./(nLattice**2))*totSum
+    print('fitness = {:.3f}'.format(fitness[individual]))
     return fitness
 # EvaluateIndividual
 
@@ -311,12 +318,12 @@ if __name__ == '__main__':
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     # nProcs*cycles = 4*int + 2
     # popSize = nProcs*cycles
-    nProcs = int(sys.argv[1])   #11                             # multiprocessing will use as many cores as it can see
+    nProcs = 2   #11                             # multiprocessing will use as many cores as it can see
     DEFAULT_VALUE = -1                                          # WARNING
-    popSize = int(sys.argv[2])   #110                           # Population size
+    popSize = 50                           # Population size
     nNodes = 25
     nGenes = nNodes**2                                          # Number of genes
-    crossoverProb = 1. #0.8                                     # Crossover probability
+    crossoverProb = 0.2 #0.8                                     # Crossover probability
     mutationProb = 1. #0.5                                      # Mutation probability
     crossMutProb = 0.5                                          # probability of doing mutation or crossover
     #tournamentSelParam = 0.75                                  # Tournament selection parameter
@@ -326,8 +333,8 @@ if __name__ == '__main__':
     timeSteps = 200
     nLattice = 50
     mode = True
-    fileName = sys.argv[3] #'benchmark_test_ozzy_20171015_crossP1a'
-    chunkSize = 10                                              # TEST 
+    fileName = sys.argv[1] #'benchmark_test_ozzy_20171015_crossP1a'
+    chunkSize = 1                                              # TEST 
     
     # timing variables!
     generationAvg = 0
