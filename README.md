@@ -120,3 +120,22 @@
 * Test all different configurations: serial/parallel, optimised/not optimised.
 * Separate the ploting code completely from the GA/CA.
 * Ozzy version must write more information as csv files with good and descriptive names.
+
+### 20171101
+#### Done:
+* Testing different parameters: number of processors, number of individuals, chunk sizes, number of generations.
+* Script to run the different tests. To do this the main\_GA was modified to accept command line arguments.
+* Now working on two different versions on two branches: the production branch is "ozzy-branch" and doesn't do any plotting at all, master branch is for plotting and do some minor testing that doesn't need much computational power.
+* Saving data as csv files.
+* gnuplot script to get some quick plots of the generated data.
+* Fixed fitness function. Now it's possible to get a fitness of 1.
+* Fixed the compass. V[5] -> V[7].
+* Data for chemicals map. To see steady states and so on, a la dynamical systems.
+
+#### To do:
+* Use a database or pickle module to store the data in a systematic way.
+* Test a different approach for parallelization: run GAs in parallel and maybe implement multithreading to evaluate individuals.
+* Do a major cleaning of code.
+* Implement the NEAT algorithm (?).
+* Implement death cells.
+* Use the try, except, finally statements. Learn about useful exceptions.
