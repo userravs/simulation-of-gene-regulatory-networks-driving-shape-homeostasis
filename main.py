@@ -1,5 +1,5 @@
 import sys
-#import time
+import time
 #import random
 import numpy as np
 #import matplotlib.pyplot as plt
@@ -67,9 +67,9 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
     #print('time taken to call figures, subplots, plots: {:.5f} s'.format(secs))
 
     # DEBUG
-    #print('Time running...')
+    print('Time running...')
     #### Timing!
-    #start_time_mainLoop = time.time()
+    start_time_mainLoop = time.time()
     while iTime < timeSteps:
         # DEBUG
         #print('\n######### time step #{}'.format(iTime))
@@ -84,8 +84,8 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
         tmpCellList = list(cellList)                                # a copy of the list of current cells is used to iterate over all the cells
 
         # Timing!
-        #start_time_tmpListLoop = time.time()
-        #tmpCellListLength = len(tmpCellList)
+        start_time_tmpListLoop = time.time()
+        tmpCellListLength = len(tmpCellList)
         while len(tmpCellList) > 0:                                 # while  the tmp list of cells is longer than 1
             # 1st step => choose a random cell from the list of existing cells
             rndCell = np.random.randint(len(tmpCellList))
@@ -115,11 +115,11 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
                 del tmpCellList[rndCell]                            # delete cell from temporal list
 
             elif tmpCellList[rndCell].state == 'Split':
-                tmpCellList[rndCell].Split2(cellGrid,cellList)
+                tmpCellList[rndCell].Split(cellGrid,cellList)
                 del tmpCellList[rndCell]
 
             elif tmpCellList[rndCell].state == 'Move':
-                tmpCellList[rndCell].Move2(cellGrid)
+                tmpCellList[rndCell].Move(cellGrid)
                 del tmpCellList[rndCell]
 
             else: # Die
@@ -127,10 +127,10 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
                 del tmpCellList[rndCell]
         # while
         #### Timing!
-        #end_time_tmpListLoop = time.time()
-        #secs = end_time_tmpListLoop - start_time_tmpListLoop
+        end_time_tmpListLoop = time.time()
+        secs = end_time_tmpListLoop - start_time_tmpListLoop
         #print('time taken to loop through all living cells: {:.5f}, number of cells: {}'.format(secs, tmpCellListLength))
-        #tmpListLoopAvg += secs
+        tmpListLoopAvg += secs
 
         # A list of cells that "died" is stored to later actually kill the cells...
         listLength = len(cellList) - 1
@@ -220,7 +220,7 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
                                     iGen,
                                     individual,
                                     mode)
-            ##### Timing!
+            ## Timing!
             #end_time_plotUpdate = time.time()
             #secs = end_time_plotUpdate - start_time_plotUpdate
             ##print('time taken to update plots: {:.5f}'.format(secs))
@@ -234,11 +234,12 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
             break
     # while
     # Timing!
-    #end_time_mainLoop = time.time()
-    #secs = end_time_mainLoop - start_time_mainLoop
+    end_time_mainLoop = time.time()
+    secs = end_time_mainLoop - start_time_mainLoop
+    tmpListLoopAvg += secs
     #print('\ntime taken in main loop: {:.5f}'.format(secs))
     #print('Avg time updating chemicals: {:.5f}'.format(chemicalsUpdateAvg/timeSteps))
-    #print('Avg time taken looping through all living cells: {:.5f}'.format(tmpListLoopAvg/timeSteps))
+    print('Avg time looping through cells: {:.3f}, total: {:.3f}'.format(tmpListLoopAvg/timeSteps, tmpListLoopAvg))
     #print('Avg time taken to update plots: {:.5f}'.format(plotUpdateAvg/timeSteps))
     # DEBUG
     # print(str(timeSteps)+' time steps complete')
