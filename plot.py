@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
@@ -52,10 +53,10 @@ class Environment:
         cbar1.ax.get_yaxis().labelpad = 15
         cbar1.ax.set_ylabel('states', rotation = 270)
 
-        sgfPlot = sgfSubplot.imshow(sgfGrid, origin = 'lower', cmap = 'Reds', interpolation = 'none', vmin = 0, vmax = 6)
+        sgfPlot = sgfSubplot.imshow(sgfGrid, origin = 'lower', cmap = 'Reds', interpolation = 'none', vmin = 0, vmax = 3)
         cbar2 = cellsFigure.colorbar(sgfPlot, ax = sgfSubplot, orientation = 'horizontal')
 
-        lgfPlot = lgfSubplot.imshow(lgfGrid, origin = 'lower', cmap = 'Blues', interpolation = 'none', vmin = 0, vmax = 8)
+        lgfPlot = lgfSubplot.imshow(lgfGrid, origin = 'lower', cmap = 'Blues', interpolation = 'none', vmin = 0, vmax = 3)
         cbar3 = cellsFigure.colorbar(lgfPlot, ax = lgfSubplot, orientation = 'horizontal')
 
         if mode == False:
@@ -134,3 +135,39 @@ class Environment:
         #    plt.savefig('CA_gen' + '{:02d}'.format(iGen) + '_ind' + '{:02d}'.format(individual) +'_tstep' + '{:03d}'.format(tStep) + '.png', bbox_inches='tight')
     # UpdatePlot
 # Environment
+
+def StatsPlot(statsFile):
+    varSpace = 2
+    nGen = 10
+    with open('stats/{}'.format(statsFile), 'r') as dataFile:
+        statsArray = np.loadtxt(dataFile,delimiter=',')
+        statsArray = statsArray.reshape(varSpace, nGen, 2)
+
+    #dataFigure, (dataSubplot) = plt.subplots(1, 1, figsize = (15,5))
+
+    plt.close()
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    #fig.suptitle('')
+    genList = np.arange(1, nGen+1) #np.arange(nGen)
+    # xticks = 
+    ax.set_xlabel('number of generations')
+    ax.set_ylabel('fitness')
+    ax.set_xticks(genList)
+    #ax.set_xscale('log')
+    #ax.set_yscale('log')
+    
+    ax.set_title('change in fitness over generations')   
+    ax.plot(genList, statsArray[0,:,1], 'r--', label='8 nodes')
+    ax.plot(genList, statsArray[1,:,1], 'b-', label='25 nodes')
+    ax.scatter(genList, statsArray[0,:,0], label='max fitness')
+    ax.scatter(genList, statsArray[1,:,0], label='max fitness')
+    # ax.plot(syntheticForest,normRank,label='Synthetic data')
+    ax.legend(loc = 'best')
+    #plt.savefig('fire_vs_synthetic_datatic-p'+str(p)+'-f'+str(f)+'.png')
+    plt.show()
+    
+    
+if __name__ == '__main__':
+    dataFile = sys.argv[1]
+    StatsPlot(dataFile)

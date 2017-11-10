@@ -139,3 +139,17 @@
 * Implement the NEAT algorithm (?).
 * Implement death cells.
 * Use the try, except, finally statements. Learn about useful exceptions.
+
+### 20171110
+#### Done:
+* Changed the way in which files are stored. Each run has a unique ID based on current time and all the generated files are asociated according to this ID. Parameter settings, population file names, and benchmarks are stored automatically.
+* Fixed number of runs (specified as positional argument passed to the script) for every setting is executed now whitin main\_GA. This means that al the stistics stored are averaged over the amount of runs. Mentioned statistics are for now: max fitness and average fitness for every generation, benchmarks for each generation and for the total GA run.
+* Fixed the way in which cells move. Using now try, except statements. Worth testing again.
+* Adding new methods to plot.py. These methods will plot the generated data (GA statistics and benchmarks) using matplotlib.
+
+#### To do:
+* Fix, if it actually needs to be fixed, the network dynamics. Not sure if the current implementation is adequate for this problem. See Haykin.
+* Get the required plots.
+* Write the actual thesis document! Start by describing the model in detail.
+* Fix the boundaries of the lattice. Some networks act as if the lattice was a torus!
+* Investigate why initial individuals have a such a high fitness.
