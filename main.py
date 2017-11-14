@@ -12,7 +12,7 @@ import cProfile
 # from numba import jit
 
 #@jit
-def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
+def sim(wMatrix, timeSteps, nNodes, nLattice, mode):
     """
     Parameters: sim(wMatrix, numberOfTimeSteps, NumberOfGeneration, nNodes, individual, nLattice, mode)
     # mode = True: cell_system as fitness function
@@ -25,7 +25,11 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
     # TODO: organize in different categories...
     #nLattice = 5                              # TODO change name
     #timeSteps = 40                              # Number of simulation time steps
-    cellGrid = np.zeros([nLattice,nLattice,3])  # Initialize empty grid
+    npCellGrid = np.zeros([nLattice,nLattice])    # Initialize empty grid
+    semiFlatGrid = [flatList(npCellGrid[r,:]) for r in range(nLattice)]
+    cellGrid = flatList(semiFlatGrid)
+
+    chemGrid = np.zeros([nLattice,nLattice,2])
     SGF_read = 0.                                # in the future values will be read from the grid
     LGF_read = 0.
     ix = int(nLattice/2)                        # Initial position for the mother cell
@@ -53,7 +57,7 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     # create mother cell and update the grid with its initial location
     cellList.append(cell(ix,iy,wMatrix, nNodes))
-    cellGrid[ix][iy][0] = 1
+    cellGrid[ix][iy] = 1
     #print('Initial grid:\n' + str(cellGrid[:,:,0]))
     #cellGrid[ix][iy][2] = 400.
 
@@ -94,15 +98,15 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
             #tmpCellList[rndCell].nNodes = nNodes                   # WARNING hardcoded
 
             # 2nd step => read chemicals
-            SGF_reading, LGF_reading = tmpCellList[rndCell].Sense(cellGrid)
+            SGF_reading, LGF_reading = tmpCellList[rndCell].Sense(chemGrid)
 
             # 3rd step => random cell should decide and action
             tmpCellList[rndCell].GenerateStatus(SGF_reading, LGF_reading)     # get status of this cell
 
             # 4th step => update SGF and LGF amounts on the 'production' matrices sigma & lambda
             # production matrices get updated values
-            sigma_m[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos] = tmpCellList[rndCell].sgfAmount
-            lambda_m[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos] = tmpCellList[rndCell].lgfAmount
+            sigma_m[tmpCellList[rndCell].yPos,tmpCellList[rndCell].xPos] = tmpCellList[rndCell].sgfAmount
+            lambda_m[tmpCellList[rndCell].yPos,tmpCellList[rndCell].xPos] = tmpCellList[rndCell].lgfAmount
 
             # DEBUG
             #print('\ncell number: ' + str(len(cellList)) + '\nCell status: ' + str(tmpCellList[rndCell].state))# + '\n')
@@ -139,18 +143,13 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
             if cellList[jCell].amidead:
                 del cellList[jCell]
 
-        ### TEST! equivalent to: cellList[cell].'status'(param_x,param_y)
-        #    state = getattr(tmpCellList[rndCell], status)
-        #    action = getattr(tmpCellList[rndCell], state)
-        #    action(cellGrid, cellList)
-
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         #    SGF/LGF diffusion and/or decay     #
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         #### Timing!
         #start_time_chemicalsUpdate = time.time()
-        cellGrid[:,:,1] = SGFDiffEq(cellGrid[:,:,1], sigma_m, deltaS, deltaT)
-        cellGrid[:,:,2] = LGFDiffEq(i_matrix, t_matrix, cellGrid[:,:,2], lambda_m, deltaL, deltaT, deltaR, diffConst)
+        chemGrid[:,:,0] = SGFDiffEq(chemGrid[:,:,0], sigma_m, deltaS, deltaT)
+        chemGrid[:,:,1] = LGFDiffEq(i_matrix, t_matrix, chemGrid[:,:,1], lambda_m, deltaL, deltaT, deltaR, diffConst)
         #### Timing!
         #end_time_chemicalsUpdate = time.time()
         #secs = end_time_chemicalsUpdate - start_time_chemicalsUpdate
@@ -208,6 +207,7 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
             ## Timing!
             #start_time_plotUpdate = time.time()
         Environment.AntGridPlot(    cellGrid,
+                                    chemGrid,
                                     nLattice,
                                     cellsFigure,
                                     cellsSubplot,
@@ -217,8 +217,6 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
                                     sgfPlot,
                                     lgfPlot,
                                     iTime,
-                                    iGen,
-                                    individual,
                                     mode)
             ## Timing!
             #end_time_plotUpdate = time.time()
@@ -283,6 +281,6 @@ if __name__ == '__main__':
     #wMatrix = wMatrix.reshape(nNodes,nNodes)
     #cProfile.run('sim(wMatrix,    timeSteps,  iGen, nNodes, individual, nLattice, mode)')
     # parameters
-    sim(wMatrix,    timeSteps,  iGen, nNodes, individual, nLattice, mode)
+    sim(wMatrix,    timeSteps, nNodes, nLattice, mode)
 #else:
     # if called from another script
