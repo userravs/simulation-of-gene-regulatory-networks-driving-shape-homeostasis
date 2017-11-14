@@ -72,6 +72,7 @@ class Environment:
     # CellsGridFigure
 
     def AntGridPlot(cellGrid,
+                    chemGrid,
                     nLattice,
                     cellsFigure,
                     cellsSubplot,
@@ -81,13 +82,11 @@ class Environment:
                     sgfPlot,
                     lgfPlot,
                     tStep,
-                    iGen,
-                    individual,
                     mode):
 
-        cell_data = cellGrid[:,:,0]         # slice the grid to get the layer with the cell positions
-        sgf_data = cellGrid[:,:,1]          # slice the grid to get the layer with the SGF profile
-        lgf_data = cellGrid[:,:,2]          # slice the grid to get the layer with the LGF profile
+        cell_data = cellGrid         # slice the grid to get the layer with the cell positions
+        sgf_data = chemGrid[:,:,0]          # slice the grid to get the layer with the SGF profile
+        lgf_data = chemGrid[:,:,1]          # slice the grid to get the layer with the LGF profile
 
         Environment.UpdatePlot( cellsFigure,
                                 cellsSubplot,
@@ -100,8 +99,6 @@ class Environment:
                                 sgf_data,
                                 lgf_data,
                                 tStep,
-                                iGen,
-                                individual,
                                 mode)
 
     def UpdatePlot( cellsFigure,
@@ -115,8 +112,6 @@ class Environment:
                     sgf_data,
                     lgf_data,
                     tStep,
-                    iGen,
-                    individual,
                     mode):
         #
         cellPlot.set_data(cell_data)
