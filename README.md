@@ -153,3 +153,14 @@
 * Write the actual thesis document! Start by describing the model in detail.
 * Fix the boundaries of the lattice. Some networks act as if the lattice was a torus!
 * Investigate why initial individuals have a such a high fitness.
+
+### 20171116
+#### Done:
+* Simulation runs in parallel using multiprocessing but in python 2.7. Had to drop `starmap` and now using `map` using a workaround to pass multiple arguments.
+* New container for the cellgrid permits using the try except statements to keep the cells inbounds.
+
+#### To do :
+* Install anaconda with python 2.7 and try the optimization libraries (jit).
+* Test the GA and in case is too fast there's no need to spawn multiple processes to run it. Do multiple runs in parallel instead.
+* Try to use cython to make the simulation even faster.
+* Finish the method for plotting the data!
