@@ -159,10 +159,43 @@ def StatsPlot(statsFile):
     ax.scatter(genList, statsArray[1,:,0], label='max fitness')
     # ax.plot(syntheticForest,normRank,label='Synthetic data')
     ax.legend(loc = 'best')
-    #plt.savefig('fire_vs_synthetic_datatic-p'+str(p)+'-f'+str(f)+'.png')
+    #plt.savefig(''.format())
     plt.show()
     
+def benchPlot(benchFile):
+    varSpace = 2
+    nGen = 10
+    with open('benchmarks/{}'.format(benchFile), 'r') as dataFile:
+        benchArray = np.loadtxt(dataFile,delimiter=',')
+        benchArray = benchArray.reshape(2, 2)
+
+    #dataFigure, (dataSubplot) = plt.subplots(1, 1, figsize = (15,5))
+
+    plt.close()
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    #fig.suptitle('')
+    runList = np.arange(1,2)#, nGen+1) #np.arange(nGen)
+    # xticks = 
+    ax.set_xlabel('number of generations')
+    ax.set_ylabel('time (s)')
+    ax.set_xticks(runList)
+    #ax.set_xscale('log')
+    #ax.set_yscale('log')
+    
+    #ax.set_title('benchmarks for each generation number')   
+    #ax.hist(genList, benchArray[0,:], 'r--', label='8 nodes')
+    #ax.hist(genList, benchArray[0,:], 'r--', label='8 nodes')
+    ax.bar(runList, benchArray[runList,1], align ='center', alpha = 0.5, color = 'g')
+    #ax.plot(genList, benchArray[1,:], 'b-', label='25 nodes')
+    #ax.scatter(genList, benchArray[0,:], label='max fitness')
+    #ax.scatter(genList, benchArray[1,:], label='max fitness')
+    # ax.plot(syntheticForest,normRank,label='Synthetic data')
+    ax.legend(loc = 'best')
+    #plt.savefig(''.format())
+    plt.show()
     
 if __name__ == '__main__':
     dataFile = sys.argv[1]
-    StatsPlot(dataFile)
+    #StatsPlot(dataFile)
+    benchPlot(dataFile)
