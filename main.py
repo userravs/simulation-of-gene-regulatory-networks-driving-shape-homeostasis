@@ -18,7 +18,6 @@ def sim(wMatrix, timeSteps, nNodes, nLattice, mode):
     # mode = True: cell_system as fitness function
     # mode = False: cell_system as display system
     """
-
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     #       PARAMETERS                 #
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -28,7 +27,6 @@ def sim(wMatrix, timeSteps, nNodes, nLattice, mode):
     npCellGrid = np.zeros([nLattice,nLattice])    # Initialize empty grid
     semiFlatGrid = [flatList(npCellGrid[r,:]) for r in range(nLattice)]
     cellGrid = flatList(semiFlatGrid)
-
     chemGrid = np.zeros([nLattice,nLattice,2])
     SGF_read = 0.                                # in the future values will be read from the grid
     LGF_read = 0.
@@ -94,7 +92,7 @@ def sim(wMatrix, timeSteps, nNodes, nLattice, mode):
             # 1st step => choose a random cell from the list of existing cells
             rndCell = np.random.randint(len(tmpCellList))
             # store lattice size
-            tmpCellList[rndCell].border = nLattice                  # TODO rethink this
+            #tmpCellList[rndCell].border = nLattice                  # TODO rethink this
             #tmpCellList[rndCell].nNodes = nNodes                   # WARNING hardcoded
 
             # 2nd step => read chemicals
@@ -225,11 +223,11 @@ def sim(wMatrix, timeSteps, nNodes, nLattice, mode):
             #plotUpdateAvg += secs
             ##time.sleep(0.1)
         iTime += 1
-
-        if len(cellList) == 0:
-            #halfwayStruct = np.zeros([nLattice,nLattice])
-            #finalStruct = np.zeros([nLattice,nLattice])
-            break
+        # this script is used to see what comes up from the main_GA, doesn't have to check for any conditions on the system, just let it run
+        #if len(cellList) == 0:
+            ##halfwayStruct = np.zeros([nLattice,nLattice])
+            ##finalStruct = np.zeros([nLattice,nLattice])
+            #break
     # while
     # Timing!
     end_time_mainLoop = time.time()
@@ -269,13 +267,13 @@ def sim(wMatrix, timeSteps, nNodes, nLattice, mode):
 if __name__ == '__main__':
     # if executed as main module!
     print('System visualization')
-    individual = int(sys.argv[1]) #1
+    individual = int(sys.argv[3]) #1
     nNodes = int(sys.argv[2]) #25
     timeSteps = 400
     iGen = 0
     nLattice = 50
     mode = False
-    fileName = sys.argv[3]
+    fileName = sys.argv[1]
     
     wMatrix = GetrNN(fileName,individual,nNodes)
     #wMatrix = wMatrix.reshape(nNodes,nNodes)
