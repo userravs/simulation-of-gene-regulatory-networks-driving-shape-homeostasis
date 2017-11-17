@@ -163,11 +163,11 @@ def StatsPlot(statsFile):
     plt.show()
     
 def benchPlot(benchFile):
-    varSpace = 2
-    nGen = 10
+    varSpace = 5
+    #nGen = 10
     with open('benchmarks/{}'.format(benchFile), 'r') as dataFile:
         benchArray = np.loadtxt(dataFile,delimiter=',')
-        benchArray = benchArray.reshape(2, 2)
+#        benchArray = benchArray.reshape(2, varSpace)
 
     #dataFigure, (dataSubplot) = plt.subplots(1, 1, figsize = (15,5))
 
@@ -175,18 +175,22 @@ def benchPlot(benchFile):
     fig = plt.figure()
     ax = fig.add_subplot(111)
     #fig.suptitle('')
-    runList = np.arange(1,2)#, nGen+1) #np.arange(nGen)
+    runList = np.arange(0,varSpace)
+    x_ticks = np.arange(0, 26, 5)#, nGen+1) #np.arange(nGen)
     # xticks = 
+    width = 0.25
     ax.set_xlabel('number of generations')
     ax.set_ylabel('time (s)')
-    ax.set_xticks(runList)
+    ax.set_xticks(runList + (width/2.))
+    ax.set_xticklabels(x_ticks)
     #ax.set_xscale('log')
     #ax.set_yscale('log')
     
-    #ax.set_title('benchmarks for each generation number')   
+    ax.set_title('benchmarks for each generation number')   
     #ax.hist(genList, benchArray[0,:], 'r--', label='8 nodes')
     #ax.hist(genList, benchArray[0,:], 'r--', label='8 nodes')
-    ax.bar(runList, benchArray[runList,1], align ='center', alpha = 0.5, color = 'g')
+    ax.bar(runList, benchArray[runList, 1], width, align ='center', alpha = 0.85, color = 'g', label = 'avg time per generation')
+    ax.bar(runList + width, benchArray[runList, 0], width, align ='center', alpha = 0.85, color = 'r', label = 'total time per generation')
     #ax.plot(genList, benchArray[1,:], 'b-', label='25 nodes')
     #ax.scatter(genList, benchArray[0,:], label='max fitness')
     #ax.scatter(genList, benchArray[1,:], label='max fitness')
