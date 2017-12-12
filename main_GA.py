@@ -1,6 +1,7 @@
 import sys                                  # to get command line args
 import os                                   # to handle paths
 import time                                 # to get system time
+from datetime import datetime as dt
 #import random                   
 import numpy as np  
 from tools_GA import *
@@ -14,6 +15,8 @@ import csv
 import multiprocessing as mp
 import ctypes
 #from numba import jit
+from contextlib import contextmanager
+from functools import partial
 
 #============================================================#
 #                                                            #
@@ -107,8 +110,8 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
 
             # 4th step => update SGF and LGF amounts on the 'production' matrices sigma & lambda
             # production matrices get updated values
-            sigma_m[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos] = tmpCellList[rndCell].sgfAmount
-            lambda_m[tmpCellList[rndCell].xPos,tmpCellList[rndCell].yPos] = tmpCellList[rndCell].lgfAmount
+            sigma_m[tmpCellList[rndCell].yPos,tmpCellList[rndCell].xPos] = tmpCellList[rndCell].sgfAmount
+            lambda_m[tmpCellList[rndCell].yPos,tmpCellList[rndCell].xPos] = tmpCellList[rndCell].lgfAmount
 
             # DEBUG
             #print('\ncell number: ' + str(len(cellList)) + '\nCell status: ' + str(tmpCellList[rndCell].state))# + '\n')
@@ -281,7 +284,7 @@ def sim(wMatrix, timeSteps, iGen, nNodes, individual, nLattice, mode):
     #print('final structure:\n' + str(finalStruct))
     #print('delta matrix:\n' + str(deltaMatrix))
     
-    if mode is True:
+    if mode:
         return deltaMatrix
 
 #@jit

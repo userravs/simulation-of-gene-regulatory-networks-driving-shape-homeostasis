@@ -269,16 +269,18 @@ if __name__ == '__main__':
     print('System visualization')
     individual = int(sys.argv[3]) #1
     nNodes = int(sys.argv[2]) #25
-    timeSteps = 400
-    iGen = 0
+    timeSteps = 200
     nLattice = 50
     mode = False
+    # mode = True: cell_system as fitness function
+    # mode = False: cell_system as display system
     fileName = sys.argv[1]
     
-    wMatrix = GetrNN(fileName,individual,nNodes)
+    wMatrix = GetrNN(fileName,individual)
     #wMatrix = wMatrix.reshape(nNodes,nNodes)
     #cProfile.run('sim(wMatrix,    timeSteps,  iGen, nNodes, individual, nLattice, mode)')
     # parameters
     sim(wMatrix,    timeSteps, nNodes, nLattice, mode)
+    plt.close()
 #else:
     # if called from another script

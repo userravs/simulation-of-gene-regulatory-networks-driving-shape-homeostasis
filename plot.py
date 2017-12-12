@@ -63,7 +63,7 @@ class Environment:
         cbar1.ax.get_yaxis().labelpad = 15
         cbar1.ax.set_ylabel('states', rotation = 270)
 
-        sgfPlot = sgfSubplot.imshow(sgfGrid, origin = 'lower', cmap = 'Reds', interpolation = 'none', vmin = 0, vmax = 3)
+        sgfPlot = sgfSubplot.imshow(sgfGrid, origin = 'lower', cmap = 'Reds', interpolation = 'none', vmin = 0, vmax = 0.05)
         cbar2 = cellsFigure.colorbar(sgfPlot, ax = sgfSubplot, orientation = 'horizontal')
 
         # hide ticks
@@ -153,8 +153,10 @@ class Environment:
         #cellsSubplot.spines['bottom'].set_visible(True)
         #cellsSubplot.spines['left'].set_visible(True)        
 
-        #if mode == True:
-        #    plt.savefig('CA_gen' + '{:02d}'.format(iGen) + '_ind' + '{:02d}'.format(individual) +'_tstep' + '{:03d}'.format(tStep) + '.png', bbox_inches='tight')
+#        if mode == False:
+#            plt.savefig('plots/ind493/cell_system-{:03d}.png'.format(tStep), format='png', bbox_inches='tight')
+#            plt.savefig('plots/ind493/cell_system-{:03d}.eps'.format(tStep), format='eps', bbox_inches='tight')
+#                        'CA_gen' + '{:02d}'.format(iGen) + '_ind' + '{:02d}'.format(individual) +'_tstep' + '{:03d}'.format(tStep) + '.png', )
     # UpdatePlot
 # Environment
 
@@ -176,6 +178,7 @@ def FitvsNnodesPlot(statsFile):
     ax.set_xlabel('number of nodes')
     ax.set_ylabel('fitness of best individual')
     ax.set_xticks(nodeList)
+    ax.set_ylim([0,1])
     #ax.set_xscale('log')
     #ax.set_yscale('log')
     
@@ -216,17 +219,17 @@ def FitvsnGenPlot(statsFile):
     #ax.set_yscale('log')
     
     ax.set_title('change in fitness over generations')   
-    ax.plot(genList, statsArray[0,:,1], 'r--', label = '25 nodes')
+    ax.plot(genList, statsArray[0,:,1], 'r--', label = 'average fitness')
     ax.plot(genList, statsArray[1,:,1], 'b--', label = '20 nodes')
     ax.plot(genList, statsArray[2,:,1], 'k--', label = '15 nodes')
     ax.plot(genList, statsArray[3,:,1], 'y--', label = '10 nodes')
-    ax.plot(genList, statsArray[4,:,1], 'c--', label = '8 nodes')
+    ax.plot(genList, statsArray[4,:,1], 'g--', label = '8 nodes')
 
-    ax.scatter(genList, statsArray[0,:,0], marker =',', c = 'r', label = 'max fitness 25')
+    ax.scatter(genList, statsArray[0,:,0], marker =',', c = 'r', label = 'max fitness')
     ax.scatter(genList, statsArray[1,:,0], marker ='o', c = 'b', label = 'max fitness 20')
     ax.scatter(genList, statsArray[2,:,0], marker ='*', c = 'k', label = 'max fitness 15')
     ax.scatter(genList, statsArray[3,:,0], marker ='+', c = 'y', label = 'max fitness 10')
-    ax.scatter(genList, statsArray[4,:,0], marker ='_', c = 'c', label = 'max fitness 8')
+    ax.scatter(genList, statsArray[4,:,0], marker ='_', c = 'g', label = 'max fitness 8')
     ax.legend(loc = 'best')
     #plt.savefig(''.format())
     plt.show()
@@ -270,9 +273,9 @@ def benchPlot(benchFile):
     
 def ShowNetwork(dataFile):
     csvFile = 'populations/{}.csv'.format(dataFile)
-    iGen =  0
+    ind = 460
     nNodes = 25
-    wMatrix = tools.GetrNN(csvFile, iGen, nNodes)
+    wMatrix = tools.GetrNN(csvFile, ind)
     G = nx.from_numpy_matrix(wMatrix)
     plt.close()
     fig = plt.figure()
@@ -287,30 +290,30 @@ def ShowNetwork(dataFile):
     #ax.plot(expPk,label='Exp pred')
     #ax.plot(theoPk,label='Theo pred',linewidth=3)
     #ax.legend(loc='best')
-    #pos = nx.spring_layout(G)
-    #nx.draw_circular(G, ax=ax)
+    pos = nx.spring_layout(G)
+    nx.draw(G, ax=ax)
     #nx.draw_networkx_nodes(G, pos, cmap=plt.get_cmap('jet'), node_color = values, node_size = 500)
     #nx.draw_networkx_labels(G, pos)
     #nx.draw_networkx_edges(G, pos, edgelist=red_edges, edge_color='r', arrows=True)
     #draw_networkx_edges(G, pos, edgelist=None, width=1.0, style='solid', alpha = 1.0, edge_cmap = plt.cm.Blues, edge_vmin = -1, edge_vmax = 1, ax=ax, arrows=True, label='label!')
     
-    edgesArray = list(range(nx.number_of_edges(G)))
-    print('{}'.format(edgesArray))
+    #edgesArray = list(range(nx.number_of_edges(G)))
+    #print('{}'.format(edgesArray))
     # These values could be seen as dummy edge weights
 
-    jet = cm = plt.get_cmap('jet') 
-    cNorm  = colors.Normalize(vmin = -1, vmax = 1)
-    scalarMap = cmx.ScalarMappable(norm = cNorm, cmap = jet)
-    colorList = []
+    #jet = cm = plt.get_cmap('jet') 
+    #cNorm  = colors.Normalize(vmin = -1, vmax = 1)
+    #scalarMap = cmx.ScalarMappable(norm = cNorm, cmap = jet)
+    #colorList = []
 
-    for i in edgesArray:
-        colorVal = scalarMap.to_rgba(edgesArray[i])
-        colorList.append(colorVal)
-    nx.draw_circular(G, ax = ax, edge_color = colorList)
-    print('{}'.format(colorList))
+    #for i in edgesArray:
+    #    colorVal = scalarMap.to_rgba(edgesArray[i])
+    #    colorList.append(colorVal)
+    #    nx.draw_spring(G, ax = ax, edge_color = colorList)
+    #print('{}'.format(colorList))
     
     #ax.legend(loc='best')
-    #plt.savefig('name-of-the-file.png')
+    #plt.savefig('network.eps', format='eps', bbox_inches='tight')
     plt.show()
     
 def Histogram(fitArray):
@@ -323,20 +326,34 @@ def Histogram(fitArray):
     ax = fig.add_subplot(111)
     #fig.suptitle('')
     #ax.set_xlabel('number of generations')
-    ax.set_ylabel('# networks')
-    ax.set_xlabel('fitness')
+    ax.set_ylabel('Frequency')
+    ax.set_xlabel('Fitness')
     ax.set_xticks(np.linspace(0,1,11))
-    ax.set_title('histogram')   
-    ax.hist(fitData, bins = 10, range = (0,1), align = 'left')
+    ax.set_title('Fitness distibution')   
+    ax.hist(fitData[0], bins = 10, range = (0,1))#, align = 'left')
     #ax.legend(loc = 'best')
     #plt.savefig('test.png')
-    print('{}'.format(fitData))
+    #print('{}'.format(fitData))
+    plt.show()
+    
+def MapPlot(mapFile):
+    plt.close()
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    fileName = 'maps/{}.csv'.format(mapFile)
+    with open(fileName, 'r') as dataFile:
+        networkMap = np.loadtxt(dataFile, delimiter = ',')
+    #discrete color scheme
+    cMap = ListedColormap(['y', 'g', 'r', 'b', 'w'])
+    mapPlot = ax.imshow(networkMap, origin = 'lower', cmap = cMap, interpolation = 'none', vmin = 0, vmax = 4)
+    cbar1 = fig.colorbar(mapPlot, ax = ax, ticks = [], orientation='horizontal')#, shrink=0.75)
     plt.show()
 
 if __name__ == '__main__':
     dataFile = sys.argv[1]
-    #FitvsNnodesPlot(dataFile)
-    #FitvsnGenPlot(dataFile)
+    # FitvsNnodesPlot(dataFile)
+    # FitvsnGenPlot(dataFile)
     # benchPlot(dataFile)
     # ShowNetwork(dataFile)
-    Histogram(dataFile)
+    # Histogram(dataFile)
+    MapPlot(dataFile)

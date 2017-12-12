@@ -143,10 +143,12 @@ def GetStructure(cell_array, nLattice):
     return structure
 # GetStructure
 
-def GetrNN(csvFile, iGen, nNodes):
+def GetrNN(csvFile, ind):
     #with open('successful_test.csv', 'r') as csvfile:
     with open(csvFile, 'r') as csvfile:
         #reader = csv.reader(csvfile)
         bestIndividuals = np.loadtxt(csvfile,delimiter=',')
-    wMatrix = np.array(bestIndividuals[iGen,:].reshape(nNodes,nNodes))
+    # get nNodes from nGenes
+    nNodes = int(np.sqrt(len(bestIndividuals[ind,:])))
+    wMatrix = np.array(bestIndividuals[ind,:].reshape(nNodes,nNodes))
     return wMatrix
