@@ -164,3 +164,19 @@
 * Test the GA and in case is too fast there's no need to spawn multiple processes to run it. Do multiple runs in parallel instead.
 * Try to use cython to make the simulation even faster.
 * Finish the method for plotting the data!
+
+### 20171215
+#### Done:
+* Many scripts to get plots from the networks.
+* Scripts that generate graphs with some topology (as Erdõs-Rényi graphs) and then generate a network from them.
+* Poster to present on the 9th Swedish Meeting on Mathematical Biology 201712-07/08, Västerås, Sweden.
+* Read NEAT paper.
+* Installed neat-python package.
+* Script that runs neat-python using cell system as fitness function.
+* Created a new branch to handle new code, scripts and modifications made in order to use neat-python.
+
+#### To do:
+* Test neat-python. Try to explore the parameter space to get ideal parameters for testing and production of the algorithm.
+* Produce genomes in ozzy and visualise them on laptop.
+* Play around with neat-python. See what interesting results could be obtained from it.
+* Explore other implementations of NEAT.
