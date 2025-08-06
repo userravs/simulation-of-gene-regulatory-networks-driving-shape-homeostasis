@@ -2,7 +2,7 @@
 
 This repository contains the software developed as part of the master’s thesis  
 **“Classification of Gene Regulatory Networks Driving Shape Homeostasis”**  
-by **M.Sc. Jose Esteban Pérez Hidalgo**, under the supervision of **PhD. Philip Gerlee**  
+by **M.Sc. Jose Esteban Pérez Hidalgo** (School of Physics, Costa Rica Institute of Technology), under the supervision of **PhD. Philip Gerlee**  
 (Department of Mathematical Sciences, University of Gothenburg & Chalmers University of Technology, Sweden).
 
 ---
@@ -52,3 +52,9 @@ This software represents a **novel, multidisciplinary product**, combining:
 It provides a computational platform for studying **emergent homeostasis**, offering insights into how multicellular systems organize and regulate their shape.
 
 ---
+
+## 👨‍🏫 Autor
+
+M.Sc. Jose Esteban Pérez Hidalgo (School of Physics, Costa Rica Institute of Technology)
+Master's Thesis – University of Gothenburg & Chalmers University of Technology  
+Email: jose.perez@tec.ac.cr
