@@ -57,6 +57,6 @@ It provides a computational platform for studying **emergent homeostasis**, offe
 
 ## 👨‍🏫 Autor
 
-M.Sc. Jose Esteban Pérez Hidalgo (School of Physics, Costa Rica Institute of Technology)
-Master's Thesis – University of Gothenburg & Chalmers University of Technology  
-Email: jose.perez@tec.ac.cr
+- M.Sc. Jose Esteban Pérez Hidalgo (School of Physics, Costa Rica Institute of Technology)
+- Master's Thesis – University of Gothenburg & Chalmers University of Technology  
+- Email: jose.perez@tec.ac.cr
