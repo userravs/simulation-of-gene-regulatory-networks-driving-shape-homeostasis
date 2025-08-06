@@ -1,7 +1,9 @@
 # 🧬 Simulation of Gene Regulatory Networks Driving Shape Homeostasis
 
-This repository contains the software developed as part of the master’s thesis  
+This repository contains the software developed as part of the master’s thesis
+
 **“Classification of Gene Regulatory Networks Driving Shape Homeostasis”**  
+
 by **M.Sc. Jose Esteban Pérez Hidalgo** (School of Physics, Costa Rica Institute of Technology), under the supervision of **PhD. Philip Gerlee**  
 (Department of Mathematical Sciences, University of Gothenburg & Chalmers University of Technology, Sweden).
 
