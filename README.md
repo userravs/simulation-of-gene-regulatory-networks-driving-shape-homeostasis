@@ -212,14 +212,14 @@ It provides a computational platform for studying **emergent homeostasis**, offe
 
 This project has benefited from contributions by:
 
-- **Esteban** - Original research and initial implementation
+- **M.Sc. J. Esteban Pérez-Hidalgo** - Original research and initial implementation
 - **Reymer Vargas** - Technical Consultant & Platform Engineering Specialist
   - Project modernization, containerization, documentation, and web interface development
   - Infrastructure as Code, DevOps, and research software engineering
 
 ## 🚀 Development History
 
-### Original Research (Esteban)
+### Original Research (M.Sc. J. Esteban Pérez-Hidalgo)
 - Master's thesis on gene regulatory networks and shape homeostasis
 - Initial implementation of cellular automata and neural networks
 - Core simulation engine and genetic algorithm
