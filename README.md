@@ -128,6 +128,10 @@ python evolution/main_ga.py [filename] [parameters]
 │   ├── run_simulation.py    # Basic simulation example
 │   └── run_evolution.py     # GA example
 ├── web_app.py               # Streamlit web application
+├── neat_cell_agent.py       # NEAT-based cell agent implementation
+├── neat_parallel.py         # Parallel NEAT implementation
+├── plots_gp                 # Gnuplot configuration
+├── run_web_app.sh           # Local web app launcher script
 ├── Dockerfile               # Container configuration
 ├── docker-compose.yml       # Container orchestration
 ├── run_docker.sh            # Container launcher script
