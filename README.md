@@ -213,7 +213,9 @@ It provides a computational platform for studying **emergent homeostasis**, offe
 This project has benefited from contributions by:
 
 - **Esteban** - Original research and initial implementation
-- **Reymer Vargas** - Project modernization, documentation, containerization, and web interface development
+- **Reymer Vargas** - Technical Consultant & Platform Engineering Specialist
+  - Project modernization, containerization, documentation, and web interface development
+  - Infrastructure as Code, DevOps, and research software engineering
 
 ## 🚀 Development History
 
