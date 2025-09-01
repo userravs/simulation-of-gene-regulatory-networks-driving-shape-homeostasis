@@ -82,7 +82,7 @@ def CheckifPreferred(xOri, yOri, xCoord, yCoord):
 # sgfDiffEq
 
 # SGF dynamics with matrix approach
-@jit # WARNING ON is good!
+@jit  # WARNING: ON is good!
 def SGFDiffEq(s_matrix, sigma_matrix, deltaS, deltaT):
     """
     Update SGF (Short-range Growth Factor) concentrations using matrix operations.
@@ -110,9 +110,9 @@ def SGFDiffEq(s_matrix, sigma_matrix, deltaS, deltaT):
     return updated_matrix
 # sgfDiffEq
 
-# TODO use linalg solve to make it faster and numerically more stable
+# TODO: use linalg solve to make it faster and numerically more stable
 # LGF dynamics with matrix approach
-@jit # WARNING ON is good!
+@jit  # WARNING: ON is good!
 def LGFDiffEq(i_matrix, t_matrix, l_matrix, lambda_matrix, deltaL, deltaT, deltaR, D):
     """
     Update LGF (Long-range Growth Factor) concentrations using matrix operations.

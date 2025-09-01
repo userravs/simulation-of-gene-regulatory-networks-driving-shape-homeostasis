@@ -48,7 +48,7 @@ class Environment:
         cellsFigure, (cellsSubplot,sgfSubplot,lgfSubplot) = plt.subplots(1, 3, figsize = (15,5))
         #plt.tick_params(axis='x', left='off', bottom='off', labelleft='off', labelbottom='off')
 
-        cellsSubplot.set_aspect('equal')                        # TODO does this work?
+        cellsSubplot.set_aspect('equal')                        # TODO: does this work?
         sgfSubplot.set_aspect('equal')
         lgfSubplot.set_aspect('equal')
 

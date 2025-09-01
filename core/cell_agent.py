@@ -62,7 +62,7 @@ class cell:
         self.state = 'Quiet'                        # State of the cell. DEFAULT: quiet
         self.xPos = xPos                            # Initial position on x axis
         self.yPos = yPos                            # Initial position on y axis
-        self.compass = True                         # Polarization: WARNING ON/OFF => True/False
+        self.compass = True                         # Polarization: WARNING: ON/OFF => True/False
         self.orientation = [self.yPos,self.xPos]    # Preferred direction. DEFAULT: own position
         #self.neighbourList = flatList([flatList([self.yPos - 1, self.xPos]), flatList([self.yPos + 1, self.xPos]), flatList([self.yPos, self.xPos - 1]), flatList([self.yPos, self.xPos + 1])])
         self.neighbourList = [[self.yPos - 1, self.xPos], [self.yPos + 1, self.xPos], [self.yPos, self.xPos - 1], [self.yPos, self.xPos + 1]]
@@ -80,7 +80,7 @@ class cell:
         #self.WMatrix = W
         #self.phi = phi
         #self.theta = theta
-        self.nNodes = nodes                            # WARNING hardcoded!
+        self.nNodes = nodes                            # WARNING: hardcoded!
 #        self.nInputs = 2
         self.V = np.zeros([self.nNodes])
     # self
@@ -91,7 +91,7 @@ class cell:
     #       2   =>  moving cell
     #       3   =>  divided cell
 
-    # WARNING Do I use this method??
+    # WARNING: Do I use this method??
     #def GetNeighbours(self, grid, border):
         #neighbourList = []
         ## TODO check if this works if orientation is OFF
@@ -174,7 +174,7 @@ class cell:
         # ORIENTATION:
         # randomly sets a preferred neighbour (polarization)
         # if the direction is out of bounds then no preferred direction is stored
-        # WARNING This code needs to be revisited depending on the implementation of the NN later on
+        # WARNING: This code needs to be revisited depending on the implementation of the NN later on
         if self.compass:
             # boundaries for orientation
             nBoundary = 0.25
@@ -218,7 +218,7 @@ class cell:
         xThreshold = 0.5
         yThreshold = 0.01
 
-        # TODO is the order of this operations the ideal?
+        # TODO: is the order of these operations ideal?
         if iStatus < xThreshold and jStatus < xThreshold and kStatus < xThreshold:
             self.state = 'Quiet'
             # DEBUG
@@ -317,7 +317,7 @@ class cell:
         #needOtherNeighbours = True
         #border = self.border - 1
         #for neighbr in self.neighbourList:                               # for each possible neighbour:
-            ## TODO its more likely to have neighbours than to be out of bounds... need to swap next two ifs
+            ## TODO: it's more likely to have neighbours than to be out of bounds... need to swap next two ifs
             #if CheckInBorders(neighbr[0], neighbr[1], border):      # if neighbour is inbunds:
                 #if CheckifOccupied(neighbr[0], neighbr[1], grid):   # if its occupied
                     ## DEBUG

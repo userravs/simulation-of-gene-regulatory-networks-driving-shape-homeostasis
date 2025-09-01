@@ -179,8 +179,33 @@ It provides a computational platform for studying **emergent homeostasis**, offe
 
 ---
 
-## 👨‍🏫 Autor
+## 👨‍🏫 Authors
 
-- M.Sc. J. Esteban Pérez-Hidalgo (School of Physics, Costa Rica Institute of Technology)
-- Master's Thesis – University of Gothenburg & Chalmers University of Technology  
-- Email: jose.perez@tec.ac.cr
+- **M.Sc. J. Esteban Pérez-Hidalgo** (School of Physics, Costa Rica Institute of Technology)
+  - Master's Thesis – University of Gothenburg & Chalmers University of Technology  
+  - Email: jose.perez@tec.ac.cr
+- **Reymer Vargas** - Project modernization and development
+  - Containerization, web interface, and documentation improvements
+
+## 👥 Contributors
+
+This project has benefited from contributions by:
+
+- **Esteban** - Original research and initial implementation
+- **Reymer Vargas** - Project modernization, documentation, containerization, and web interface development
+
+## 🚀 Development History
+
+### Original Research (Esteban)
+- Master's thesis on gene regulatory networks and shape homeostasis
+- Initial implementation of cellular automata and neural networks
+- Core simulation engine and genetic algorithm
+
+### Modernization (Reymer Vargas)
+- **Documentation**: Comprehensive documentation restructuring and improvements
+- **Containerization**: Docker setup for reproducible environments
+- **Web Interface**: Interactive Streamlit application for real-time simulation
+- **Code Quality**: PEP8 compliance and project structure improvements
+- **Deployment**: Production-ready containerized deployment
+
+

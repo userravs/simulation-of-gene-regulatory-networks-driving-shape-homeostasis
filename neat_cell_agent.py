@@ -11,7 +11,7 @@ class cell:
         self.state = 'Quiet'                        # State of the cell. DEFAULT: quiet
         self.xPos = xPos                            # Initial position on x axis
         self.yPos = yPos                            # Initial position on y axis
-        self.compass = True                         # Polarisation: WARNING ON/OFF => True/False
+        self.compass = True                         # Polarization: WARNING: ON/OFF => True/False
         self.orientation = [self.yPos,self.xPos]    # Preferred direction. DEFAULT: own position
         #self.neighbourList = flatList([flatList([self.yPos - 1, self.xPos]), flatList([self.yPos + 1, self.xPos]), flatList([self.yPos, self.xPos - 1]), flatList([self.yPos, self.xPos + 1])])
         self.neighbourList = [[self.yPos - 1, self.xPos], [self.yPos + 1, self.xPos], [self.yPos, self.xPos - 1], [self.yPos, self.xPos + 1]]
@@ -75,7 +75,7 @@ class cell:
         # ORIENTATION:
         # randomly sets a preferred neighbour (polarisation)
         # if the direction is out of bounds then no preferred direction is stored
-        # WARNING This code need to be revisited depending on the implementation of the NN later on
+        # WARNING: This code needs to be revisited depending on the implementation of the NN later on
         if self.compass:
             # boundaries for orientation
             nBoundary = 0.25
@@ -119,7 +119,7 @@ class cell:
         xThreshold = 0.5
         yThreshold = 0.01
 
-        # TODO is the order of this operations the ideal?
+        # TODO: is the order of these operations ideal?
         if iStatus < xThreshold and jStatus < xThreshold and kStatus < xThreshold:
             self.state = 'Quiet'
             # DEBUG

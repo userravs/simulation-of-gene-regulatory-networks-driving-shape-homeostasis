@@ -43,7 +43,7 @@ def sim(wMatrix, timeSteps, nNodes, nLattice, mode):
     #       PARAMETERS                 #
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     # TODO: organize in different categories...
-    #nLattice = 5                              # TODO change name
+    #nLattice = 5                              # TODO: change name
     #timeSteps = 40                              # Number of simulation time steps
     npCellGrid = np.zeros([nLattice,nLattice])    # Initialize empty grid
     semiFlatGrid = [flatList(npCellGrid[r,:]) for r in range(nLattice)]
@@ -113,8 +113,8 @@ def sim(wMatrix, timeSteps, nNodes, nLattice, mode):
             # 1st step => choose a random cell from the list of existing cells
             rndCell = np.random.randint(len(tmpCellList))
             # store lattice size
-            #tmpCellList[rndCell].border = nLattice                  # TODO rethink this
-            #tmpCellList[rndCell].nNodes = nNodes                   # WARNING hardcoded
+            #tmpCellList[rndCell].border = nLattice                  # TODO: rethink this
+            #tmpCellList[rndCell].nNodes = nNodes                   # WARNING: hardcoded
 
             # 2nd step => read chemicals
             SGF_reading, LGF_reading = tmpCellList[rndCell].Sense(chemGrid)
