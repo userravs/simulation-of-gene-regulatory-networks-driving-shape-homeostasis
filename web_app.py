@@ -277,7 +277,7 @@ def main():
         
         **Original Research**: M.Sc. J. Esteban Pérez-Hidalgo (School of Physics, Costa Rica Institute of Technology)
         
-        **Project Modernization**: Reymer Vargas - Technical Consultant & Platform Engineering Specialist
+        **Project Modernization**: Reymer Vargas - Platform Engineer
         - Containerization and web interface development
         - Infrastructure as Code and DevOps implementation
         - Research software engineering improvements
