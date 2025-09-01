@@ -261,9 +261,27 @@ def main():
         - **Language**: Python
         - **Dependencies**: NumPy, SciPy, Matplotlib, NetworkX
         - **Web Interface**: Streamlit + Plotly
+        - **Containerization**: Docker for reproducible environments
         """)
         
-        st.info("This is a research project developed as part of a master's thesis on the classification of gene regulatory networks driving shape homeostasis.")
+        st.info("""
+        **Proof of Concept (PoC)**: This web interface demonstrates the containerization and modernization 
+        of the original research project, making it accessible through a web browser with real-time 
+        simulation controls and visualization.
+        """)
+        
+        st.markdown("""
+        ### Research Project Information
+        
+        This is a research project developed as part of a master's thesis on the classification of gene regulatory networks driving shape homeostasis.
+        
+        **Original Research**: M.Sc. J. Esteban Pérez-Hidalgo (School of Physics, Costa Rica Institute of Technology)
+        
+        **Project Modernization**: Reymer Vargas - Technical Consultant & Platform Engineering Specialist
+        - Containerization and web interface development
+        - Infrastructure as Code and DevOps implementation
+        - Research software engineering improvements
+        """)
 
 if __name__ == "__main__":
     main()
