@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 # to check for matplotlib backend: >> matplotlib.get_backend()
 from matplotlib.colors import ListedColormap
 import networkx as nx
-import tools
+import core.tools as tools
 import matplotlib.colors as colors
 import matplotlib.cm as cmx
 #import pylab

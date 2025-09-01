@@ -46,10 +46,23 @@ These components interact to simulate the dynamics of cellular collectives, wher
 
 ### Prerequisites
 
-- Python 3.7+
-- Dependencies listed in `requirements.txt`
+- **Docker** (recommended) - No local Python installation needed
+- **Python 3.7+** (for local development)
 
 ### Installation
+
+#### Option 1: Docker (Recommended)
+
+```bash
+# Clone the repository
+git clone https://github.com/your-username/simulation-of-gene-regulatory-networks-driving-shape-homeostasis.git
+cd simulation-of-gene-regulatory-networks-driving-shape-homeostasis
+
+# Start the web interface (no local Python installation needed)
+./run-docker.sh
+```
+
+#### Option 2: Local Installation
 
 ```bash
 # Clone the repository
@@ -61,6 +74,24 @@ pip install -r requirements.txt
 ```
 
 ### Basic Usage
+
+#### 🌐 Web Interface (Recommended)
+
+```bash
+# Start the containerized web application
+./run-docker.sh
+
+# Open your browser and go to: http://localhost:8501
+# Interactive interface with real-time visualization
+```
+
+The web interface provides:
+- **Interactive simulation controls** with real-time parameter adjustment
+- **Live visualization** of cell states, SGF, and LGF concentrations
+- **Fitness analysis** tools and evolutionary progress tracking
+- **Parameter exploration** for different network architectures
+
+#### 💻 Command Line
 
 ```bash
 # Run a simple simulation example
@@ -96,8 +127,28 @@ python evolution/main_GA.py [filename] [parameters]
 ├── examples/                # Usage examples
 │   ├── run_simulation.py    # Basic simulation example
 │   └── run_evolution.py     # GA example
-└── requirements.txt         # Dependencies
+├── web_app.py               # Streamlit web application
+├── Dockerfile               # Container configuration
+├── docker-compose.yml       # Container orchestration
+├── run-docker.sh            # Container launcher script
+├── .dockerignore            # Docker build exclusions
+├── requirements.txt         # Dependencies
+├── README.md                # Main project documentation
+├── WEB_INTERFACE.md         # Web interface documentation
+├── DOCKER.md                # Docker usage guide
+├── thesis_summary           # Research overview
+└── history.log.md           # Development history
 ```
+
+### 🏗️ Architecture Overview
+
+- **`core/`**: Core simulation engine with cellular automata and neural networks
+- **`evolution/`**: Genetic algorithm implementation for network optimization
+- **`visualization/`**: Plotting and visualization tools
+- **`analysis/`**: Research and evaluation tools
+- **`examples/`**: Ready-to-run examples for different use cases
+- **`web_app.py`**: Interactive web interface using Streamlit
+- **`Dockerfile`**: Container configuration for reproducible environments
 
 ---
 
@@ -105,11 +156,25 @@ python evolution/main_GA.py [filename] [parameters]
 
 This software represents a **novel, multidisciplinary product**, combining:
 
-- Computational Physics  
-- Numerical Methods in Mathematics  
-- Computational Biology  
+- **Computational Physics** - Cellular automata and spatial dynamics
+- **Numerical Methods in Mathematics** - Differential equations and optimization
+- **Computational Biology** - Gene regulatory networks and emergent behavior
 
 It provides a computational platform for studying **emergent homeostasis**, offering insights into how multicellular systems organize and regulate their shape.
+
+### 🔬 Research Applications
+
+- **Developmental Biology**: Understanding shape formation and maintenance
+- **Artificial Life**: Exploring emergent behavior in cellular systems
+- **Systems Biology**: Modeling gene regulatory networks
+- **Evolutionary Computation**: Optimizing network architectures
+
+### 📊 Key Features
+
+- **Interactive Web Interface**: Real-time simulation control and visualization
+- **Containerized Deployment**: Reproducible environments with Docker
+- **Modular Architecture**: Clean separation of concerns
+- **Comprehensive Documentation**: Detailed explanations and examples
 
 ---
 

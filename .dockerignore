@@ -1,0 +1,47 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# Documentation
+*.md
+docs/
+
+# Development
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Data and outputs
+*.png
+*.avi
+*.csv
+runs/
+populations/
+results/
+
+# Experimental files
+neat-*.py
+plots.gp
+
+# History and logs
+history.log.md
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local web app script (not needed in container)
+run_web_app.sh
