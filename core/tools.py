@@ -240,11 +240,11 @@ def GenerateIMatrix(size):
     #return 1./(1 + np.exp(-beta*x))
 ## TransferFunction
 
-@jit #WARNING ON is good!
+# @jit #WARNING ON is good! - temporarily disabled for testing
 def RecurrentNeuralNetwork(inputs, wMatrix, V):             # Recurrent Neural Network dynamics
     #beta = 2
     # bj = wMatrix@V - inputs
-    bj = np.matmul(wMatrix,V) - inputs
+    bj = wMatrix @ V - inputs
     # might be improved ussing list comprehension...
     for ix in range(len(bj)):
         V[ix] = 1./(1 + np.exp(-2*bj[ix]))   #TransferFunction(bj[ix],2)
