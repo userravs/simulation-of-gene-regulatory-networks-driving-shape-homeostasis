@@ -12,7 +12,7 @@ This document tracks the development history of the Gene Regulatory Networks (GR
 
 ## Useful Commands
 * ffmpeg -f image2 -pattern_type glob -framerate 24 -i 'cell_system-*.png' -s 1024x1024 cell_system.avi
-* Docker: `./run-docker.sh` - Start the web interface
+* Docker: `./run_docker.sh` - Start the web interface
 * Web interface: http://localhost:8501
 
 ## Thesis events
@@ -90,7 +90,7 @@ This document tracks the development history of the Gene Regulatory Networks (GR
 #### Done:
 * Implemented correct dynamics for Recurrent Neural Network.
 * In principle, done with GA.
-* main.py as function called by main_GA.py
+* main.py as function called by main_ga.py
 * GA functions: fitness, crossover, mutate, elitism, tournament selection.
 * Read/write code to store rNN and to read it later.
 

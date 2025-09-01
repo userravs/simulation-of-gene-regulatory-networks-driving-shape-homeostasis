@@ -1,6 +1,6 @@
 import sys
 import core.main as main
-import evolution.main_GA as main_GA
+import evolution.main_ga as main_GA
 import numpy as np
 from datetime import datetime as dt
 from contextlib import contextmanager

@@ -22,7 +22,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 # Import our simulation modules
 import core.main as main
 import core.tools as tools
-import evolution.main_GA as main_GA
+import evolution.main_ga as main_GA
 
 # Page configuration
 st.set_page_config(

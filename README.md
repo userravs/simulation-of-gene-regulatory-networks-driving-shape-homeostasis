@@ -59,7 +59,7 @@ git clone https://github.com/your-username/simulation-of-gene-regulatory-network
 cd simulation-of-gene-regulatory-networks-driving-shape-homeostasis
 
 # Start the web interface (no local Python installation needed)
-./run-docker.sh
+./run_docker.sh
 ```
 
 #### Option 2: Local Installation
@@ -79,7 +79,7 @@ pip install -r requirements.txt
 
 ```bash
 # Start the containerized web application
-./run-docker.sh
+./run_docker.sh
 
 # Open your browser and go to: http://localhost:8501
 # Interactive interface with real-time visualization
@@ -102,7 +102,7 @@ python examples/run_evolution.py
 
 # Run main applications directly
 python core/main.py [filename] [nNodes] [individual]
-python evolution/main_GA.py [filename] [parameters]
+python evolution/main_ga.py [filename] [parameters]
 ```
 
 ---
@@ -115,8 +115,8 @@ python evolution/main_GA.py [filename] [parameters]
 │   ├── main.py              # Basic simulation engine
 │   └── tools.py             # Utility functions
 ├── evolution/               # Genetic algorithm
-│   ├── main_GA.py           # Main GA application
-│   └── tools_GA.py          # GA utilities
+│   ├── main_ga.py           # Main GA application
+│   └── tools_ga.py          # GA utilities
 ├── visualization/           # Plotting and visualization
 │   └── plot.py              # Plotting functions
 ├── config/                  # Configuration files
@@ -130,14 +130,14 @@ python evolution/main_GA.py [filename] [parameters]
 ├── web_app.py               # Streamlit web application
 ├── Dockerfile               # Container configuration
 ├── docker-compose.yml       # Container orchestration
-├── run-docker.sh            # Container launcher script
+├── run_docker.sh            # Container launcher script
 ├── .dockerignore            # Docker build exclusions
 ├── requirements.txt         # Dependencies
 ├── README.md                # Main project documentation
 ├── WEB_INTERFACE.md         # Web interface documentation
 ├── DOCKER.md                # Docker usage guide
-├── thesis_summary           # Research overview
-└── history.log.md           # Development history
+├── thesis_summary.md        # Research overview
+└── history_log.md           # Development history
 ```
 
 ### 🏗️ Architecture Overview

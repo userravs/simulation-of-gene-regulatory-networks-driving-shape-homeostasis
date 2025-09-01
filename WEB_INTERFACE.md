@@ -15,7 +15,7 @@ The Gene Regulatory Network simulation includes an interactive web interface bui
 #### Option 1: Docker (Recommended)
 ```bash
 # Start the containerized web application
-./run-docker.sh
+./run_docker.sh
 
 # Open your browser and go to: http://localhost:8501
 ```

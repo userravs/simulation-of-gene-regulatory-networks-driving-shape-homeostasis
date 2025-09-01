@@ -32,11 +32,11 @@ populations/
 results/
 
 # Experimental files
-neat-*.py
-plots.gp
+neat_*.py
+plots_gp
 
 # History and logs
-history.log.md
+history_log.md
 *.log
 
 # OS

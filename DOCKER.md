@@ -14,7 +14,7 @@ This project includes Docker support for easy deployment and reproducible enviro
 
 ```bash
 # Start the web interface
-./run-docker.sh
+./run_docker.sh
 
 # Or manually with docker-compose
 docker-compose up --build
@@ -50,7 +50,7 @@ Specifies files to exclude from the Docker build context:
 - Data and output files (*.png, *.avi, *.csv)
 - Experimental files (neat-*.py)
 
-### run-docker.sh
+### run_docker.sh
 A convenient script that:
 - Checks if Docker is running
 - Creates necessary directories
@@ -92,7 +92,7 @@ A convenient script that:
 ### Basic Usage
 ```bash
 # Start the web interface
-./run-docker.sh
+./run_docker.sh
 
 # Access at http://localhost:8501
 ```
@@ -132,7 +132,7 @@ docker-compose run --rm grn-simulation bash
 
 # Inside container, run commands like:
 python examples/run_simulation.py
-python evolution/main_GA.py
+python evolution/main_ga.py
 ```
 
 ## Troubleshooting
@@ -172,7 +172,7 @@ docker stats
 #### Permission Issues
 ```bash
 # Fix file permissions
-chmod +x run-docker.sh
+chmod +x run_docker.sh
 
 # Check user permissions in container
 docker-compose run --rm grn-simulation whoami
