@@ -42,6 +42,65 @@ These components interact to simulate the dynamics of cellular collectives, wher
 
 ---
 
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Python 3.7+
+- Dependencies listed in `requirements.txt`
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/your-username/simulation-of-gene-regulatory-networks-driving-shape-homeostasis.git
+cd simulation-of-gene-regulatory-networks-driving-shape-homeostasis
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### Basic Usage
+
+```bash
+# Run a simple simulation example
+python examples/run_simulation.py
+
+# Run genetic algorithm example
+python examples/run_evolution.py
+
+# Run main applications directly
+python core/main.py [filename] [nNodes] [individual]
+python evolution/main_GA.py [filename] [parameters]
+```
+
+---
+
+## 📁 Project Structure
+
+```
+├── core/                    # Core simulation components
+│   ├── cell_agent.py        # Cell class and neural network
+│   ├── main.py              # Basic simulation engine
+│   └── tools.py             # Utility functions
+├── evolution/               # Genetic algorithm
+│   ├── main_GA.py           # Main GA application
+│   └── tools_GA.py          # GA utilities
+├── visualization/           # Plotting and visualization
+│   └── plot.py              # Plotting functions
+├── config/                  # Configuration files
+│   └── config-ca            # NEAT configuration
+├── analysis/                # Research tools
+│   ├── graph_generator.py   # Network generation
+│   └── graph_evaluation.py  # Network evaluation
+├── examples/                # Usage examples
+│   ├── run_simulation.py    # Basic simulation example
+│   └── run_evolution.py     # GA example
+└── requirements.txt         # Dependencies
+```
+
+---
+
 ## 🧬 Scientific Contribution
 
 This software represents a **novel, multidisciplinary product**, combining:
