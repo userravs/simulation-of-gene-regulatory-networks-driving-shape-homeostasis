@@ -134,10 +134,11 @@ python evolution/main_ga.py [filename] [parameters]
 ├── .dockerignore            # Docker build exclusions
 ├── requirements.txt         # Dependencies
 ├── README.md                # Main project documentation
-├── WEB_INTERFACE.md         # Web interface documentation
-├── DOCKER.md                # Docker usage guide
-├── thesis_summary.md        # Research overview
-└── history_log.md           # Development history
+├── docs/                    # Documentation
+│   ├── web-interface.md     # Web interface documentation
+│   ├── docker.md            # Docker usage guide
+│   ├── thesis-summary.md    # Research overview
+│   └── history-log.md       # Development history
 ```
 
 ### 🏗️ Architecture Overview

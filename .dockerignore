@@ -36,7 +36,7 @@ neat_*.py
 plots_gp
 
 # History and logs
-history_log.md
+docs/history-log.md
 *.log
 
 # OS

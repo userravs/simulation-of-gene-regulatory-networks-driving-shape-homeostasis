@@ -1,0 +1,23 @@
+# Documentation
+
+This directory contains all project documentation.
+
+## Documentation Files
+
+- **[web-interface.md](web-interface.md)** - Web interface documentation and usage guide
+- **[docker.md](docker.md)** - Docker setup and usage guide
+- **[thesis-summary.md](thesis-summary.md)** - Research overview and scientific background
+- **[history-log.md](history-log.md)** - Development history and changelog
+
+## Quick Links
+
+- [Main README](../README.md) - Project overview and quick start
+- [Web Interface](web-interface.md) - Interactive web application guide
+- [Docker Setup](docker.md) - Containerization guide
+
+## Contributing
+
+When adding new documentation:
+- Use lowercase letters with hyphens for filenames (e.g., `new-feature.md`)
+- Follow markdown formatting standards
+- Update this index file when adding new documentation
