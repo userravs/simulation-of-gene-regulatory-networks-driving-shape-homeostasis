@@ -16,6 +16,16 @@ The simulation is entirely written in **Python** and is based on the framework p
 
 ---
 
+## 🔗 Original Repository
+
+This is a **fork** of the original research project by **M.Sc. J. Esteban Pérez-Hidalgo**:
+
+**Original Repository**: [https://github.com/j0sees/Simulation-of-Gene-Regulatory-Networks-Driving-Shape-Homeostasis](https://github.com/j0sees/Simulation-of-Gene-Regulatory-Networks-Driving-Shape-Homeostasis)
+
+This fork includes modernization improvements including containerization, web interface, and enhanced documentation while preserving the original scientific research and implementation.
+
+---
+
 ## 🎯 Purpose
 
 - To simulate multicellular collectives and observe adaptive behavior under dynamic environments.
@@ -55,7 +65,7 @@ These components interact to simulate the dynamics of cellular collectives, wher
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/simulation-of-gene-regulatory-networks-driving-shape-homeostasis.git
+git clone https://github.com/j0sees/Simulation-of-Gene-Regulatory-Networks-Driving-Shape-Homeostasis.git
 cd simulation-of-gene-regulatory-networks-driving-shape-homeostasis
 
 # Start the web interface (no local Python installation needed)
@@ -66,7 +76,7 @@ cd simulation-of-gene-regulatory-networks-driving-shape-homeostasis
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/simulation-of-gene-regulatory-networks-driving-shape-homeostasis.git
+git clone https://github.com/j0sees/Simulation-of-Gene-Regulatory-Networks-Driving-Shape-Homeostasis.git
 cd simulation-of-gene-regulatory-networks-driving-shape-homeostasis
 
 # Install dependencies
