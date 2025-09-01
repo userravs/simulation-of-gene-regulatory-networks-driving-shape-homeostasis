@@ -171,7 +171,7 @@ class Environment:
         lgfSubplot.draw_artist(lgfPlot)
         
         #
-        cellsFigure.canvas.update()
+        # cellsFigure.canvas.update()  # Disabled for container environment
         cellsFigure.canvas.flush_events()
         #cellsSubplot.spines['right'].set_visible(True)
         #cellsSubplot.spines['top'].set_visible(True)
