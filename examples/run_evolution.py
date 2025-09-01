@@ -13,8 +13,8 @@ import numpy as np
 # Add parent directory to path to import modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from evolution import main_GA
-from evolution import tools_GA
+import evolution.main_GA as main_GA
+import evolution.tools_GA as tools_GA
 
 def run_evolution_example():
     """Run a simple genetic algorithm example."""

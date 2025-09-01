@@ -1,6 +1,6 @@
 import numpy as np
 #from tools import flatList, CheckifOccupied, CheckifPreferred, SGFDiffEq, LGFDiffEq, 
-from tools import *
+from core.tools import *
 #from tools import flatList as fl
 #from numba import jit
 

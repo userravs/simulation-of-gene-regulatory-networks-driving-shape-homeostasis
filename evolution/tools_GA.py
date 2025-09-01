@@ -2,7 +2,7 @@ import os
 import time
 import random
 import numpy as np
-#from main import *
+#from core.main import *
 #from numba import jit
 
 # Evaluate variable using the fitness function

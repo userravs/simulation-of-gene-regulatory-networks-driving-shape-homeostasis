@@ -12,8 +12,8 @@ import os
 # Add parent directory to path to import modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from core import main
-from core import tools
+import core.main as main
+import core.tools as tools
 
 def run_basic_simulation():
     """Run a basic simulation with default parameters."""
