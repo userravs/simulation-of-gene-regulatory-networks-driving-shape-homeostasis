@@ -11,8 +11,33 @@ import matplotlib.cm as cmx
 #from mpl_toolkits.axes_grid1 import ImageGrid
 
 class Environment:
+    """
+    Visualization environment for the cellular automata simulation.
+    
+    Provides methods for creating and updating plots showing:
+    - Cell states and positions
+    - SGF (Short-range Growth Factor) concentrations
+    - LGF (Long-range Growth Factor) concentrations
+    """
 
     def CellsGridFigure(fieldSize, mode):
+        """
+        Create the main figure with subplots for cell system visualization.
+        
+        Parameters:
+        -----------
+        fieldSize : int
+            Size of the square field (fieldSize x fieldSize)
+        mode : bool
+            True: cell_system as fitness function (no visualization)
+            False: cell_system as display system (with visualization)
+        
+        Returns:
+        --------
+        tuple
+            (cellsFigure, cellsSubplot, sgfSubplot, lgfSubplot, cellPlot, sgfPlot, lgfPlot)
+            Figure and plot objects for updating during simulation
+        """
         # mode = True: cell_system as fitness function
         # mode = False: cell_system as display system
         plt.close()

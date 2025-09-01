@@ -5,12 +5,64 @@ from tools import *
 #from numba import jit
 
 class cell:
-    # defines whats needed when a new agent (Cell) of this class is created
+    """
+    A cell agent representing a single cell in the multicellular system.
+    
+    Each cell contains a neural network that acts as a gene regulatory network,
+    controlling the cell's behavior based on local chemical concentrations.
+    The cell can perform actions like moving, splitting, dying, or remaining quiet.
+    
+    Attributes:
+    -----------
+    state : str
+        Current state of the cell ('Quiet', 'Move', 'Split', 'Die')
+    xPos, yPos : int
+        Current position coordinates on the lattice
+    compass : bool
+        Whether the cell uses orientation/polarization (True/False)
+    orientation : list
+        Preferred direction for movement [y, x]
+    neighbourList : list
+        List of neighboring positions [[y-1,x], [y+1,x], [y,x-1], [y,x+1]]
+    splitCounter : int
+        Counter tracking split timing
+    splitTime : int
+        Time scale for splitting
+    deathCounter : int
+        Countdown to cell death
+    deathTime : int
+        Time scale for dying
+    amidead : bool
+        Whether the cell is dead (True) or alive (False)
+    quietCounter : int
+        Counter for quiet state timing
+    sgfAmount, lgfAmount : float
+        Amount of SGF/LGF chemicals to deposit
+    wMatrix : numpy.ndarray
+        Weight matrix for the neural network
+    nNodes : int
+        Number of nodes in the neural network
+    V : numpy.ndarray
+        Current neural network activation values
+    """
+    
     def __init__(self, yPos, xPos, w, nodes):
+        """
+        Initialize a new cell agent.
+        
+        Parameters:
+        -----------
+        yPos, xPos : int
+            Initial position coordinates
+        w : numpy.ndarray
+            Weight matrix for the neural network
+        nodes : int
+            Number of nodes in the neural network
+        """
         self.state = 'Quiet'                        # State of the cell. DEFAULT: quiet
         self.xPos = xPos                            # Initial position on x axis
         self.yPos = yPos                            # Initial position on y axis
-        self.compass = True                         # Polarisation: WARNING ON/OFF => True/False
+        self.compass = True                         # Polarization: WARNING ON/OFF => True/False
         self.orientation = [self.yPos,self.xPos]    # Preferred direction. DEFAULT: own position
         #self.neighbourList = flatList([flatList([self.yPos - 1, self.xPos]), flatList([self.yPos + 1, self.xPos]), flatList([self.yPos, self.xPos - 1]), flatList([self.yPos, self.xPos + 1])])
         self.neighbourList = [[self.yPos - 1, self.xPos], [self.yPos + 1, self.xPos], [self.yPos, self.xPos - 1], [self.yPos, self.xPos + 1]]
@@ -61,6 +113,19 @@ class cell:
         #return neighbourList
     #@jit
     def Sense(self, grid):
+        """
+        Sense chemical concentrations from the grid at the cell's current position.
+        
+        Parameters:
+        -----------
+        grid : numpy.ndarray
+            3D array containing chemical concentrations [y, x, [SGF, LGF]]
+        
+        Returns:
+        --------
+        tuple
+            (SGF_reading, LGF_reading) - chemical concentration values
+        """
         # sense chemicals from the grid
         SGF_reading = grid[self.yPos, self.xPos][0] # grid contains two values on each coordinate:
         LGF_reading = grid[self.yPos, self.xPos][1] # occupation (boolean), SGF level, LGF level
@@ -70,6 +135,21 @@ class cell:
 
     #@jit
     def GenerateStatus(self, SGF_lecture, LGF_lecture):
+        """
+        Generate cell status using the neural network based on chemical readings.
+        
+        The neural network processes SGF and LGF inputs to determine:
+        - Cell state (split, move, die, quiet)
+        - Chemical production amounts
+        - Orientation preferences
+        
+        Parameters:
+        -----------
+        SGF_lecture : float
+            SGF concentration reading
+        LGF_lecture : float
+            LGF concentration reading
+        """
         # neural network generates a status based on the reads
         #inputs = np.array([SGF_lecture, LGF_lecture])
         # Neural network first implementation
@@ -92,9 +172,9 @@ class cell:
         self.lgfAmount = self.V[6] #np.random.randint(5) #O[5]
 
         # ORIENTATION:
-        # randomly sets a preferred neighbour (polarisation)
+        # randomly sets a preferred neighbour (polarization)
         # if the direction is out of bounds then no preferred direction is stored
-        # WARNING This code need to be revisited depending on the implementation of the NN later on
+        # WARNING This code needs to be revisited depending on the implementation of the NN later on
         if self.compass:
             # boundaries for orientation
             nBoundary = 0.25
