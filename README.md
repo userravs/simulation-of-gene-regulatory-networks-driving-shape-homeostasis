@@ -170,17 +170,17 @@ It provides a computational platform for studying **emergent homeostasis**, offe
 ### 📊 Example Visualizations
 
 #### Cell System Simulation
-![Cell System Example](docs/images/cell_system_example.png)
+![Cell System Example](./docs/images/cell_system_example.png)
 
 *The simulation shows cells in different states (empty, quiet, moving, dividing) alongside SGF and LGF concentration patterns.*
 
 #### Gene Regulatory Network
-![Network Example](docs/images/network_example.png)
+![Network Example](./docs/images/network_example.png)
 
 *Example of a gene regulatory network with feedback loops and regulatory interactions.*
 
 #### Evolutionary Progress
-![Evolution Example](docs/images/evolution_example.png)
+![Evolution Example](./docs/images/evolution_example.png)
 
 *Typical fitness progression during genetic algorithm optimization.*
 

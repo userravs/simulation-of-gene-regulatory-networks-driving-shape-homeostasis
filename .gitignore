@@ -2,7 +2,9 @@ __pycache*
 *.swp
 .project
 .pydev*
+# Ignore PNG files except documentation images
 *.png
+!docs/images/*.png
 *.avi
 *.csv
 

@@ -71,7 +71,7 @@ The web interface provides three main tabs:
 - **SGF Concentration**: Short-range Growth Factor distribution
 - **LGF Concentration**: Long-range Growth Factor distribution
 
-![Simulation Visualization](../docs/images/cell_system_example.png)
+![Simulation Visualization](./images/cell_system_example.png)
 
 *The web interface provides interactive versions of these visualizations with real-time controls.*
 

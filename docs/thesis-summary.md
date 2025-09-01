@@ -17,7 +17,7 @@ of chemicals they produce and an orientation in the grid. Every individual cell 
 cell, this is the cell genotype. To reach the expected solutions, i.e., the homeostatic structure, an 
 evolutionary algorithm optimizes the neural network.
 
-![Cell System Simulation](../docs/images/cell_system_example.png)
+![Cell System Simulation](./images/cell_system_example.png)
 
 *The simulation environment shows cells in different states alongside SGF and LGF concentration patterns.*
 
@@ -29,7 +29,7 @@ evolutionary algorithm optimizes the neural network.
 - **Chemical Signaling**: SGF (Short-range Growth Factor) and LGF (Long-range Growth Factor)
 - **Evolutionary Algorithms**: Genetic algorithm for network optimization
 
-![Gene Regulatory Network](../docs/images/network_example.png)
+![Gene Regulatory Network](./images/network_example.png)
 
 *Example of a gene regulatory network showing regulatory interactions and feedback loops.*
 
@@ -40,7 +40,7 @@ evolutionary algorithm optimizes the neural network.
 - **Interactive web interface** for real-time simulation control
 - **Containerized deployment** for reproducible environments
 
-![Evolutionary Progress](../docs/images/evolution_example.png)
+![Evolutionary Progress](./images/evolution_example.png)
 
 *Typical fitness progression during genetic algorithm optimization.*
 
