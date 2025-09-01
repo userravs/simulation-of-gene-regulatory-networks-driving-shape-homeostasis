@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  grn-simulation:
+    build: .
+    container_name: grn-simulation
+    volumes:
+      # Mount current directory for development
+      - .:/app
+      # Mount a data directory for results
+      - ./data:/app/data
+    environment:
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+    # Interactive mode for development
+    stdin_open: true
+    tty: true
+    # Override default command for interactive use
+    command: ["bash"]

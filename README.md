@@ -51,6 +51,8 @@ These components interact to simulate the dynamics of cellular collectives, wher
 
 ### Installation
 
+#### Option 1: Local Installation
+
 ```bash
 # Clone the repository
 git clone https://github.com/your-username/simulation-of-gene-regulatory-networks-driving-shape-homeostasis.git
@@ -60,7 +62,33 @@ cd simulation-of-gene-regulatory-networks-driving-shape-homeostasis
 pip install -r requirements.txt
 ```
 
+#### Option 2: Docker (Recommended)
+
+```bash
+# Clone the repository
+git clone https://github.com/your-username/simulation-of-gene-regulatory-networks-driving-shape-homeostasis.git
+cd simulation-of-gene-regulatory-networks-driving-shape-homeostasis
+
+# Run with Docker (no local Python installation needed)
+./run-docker.sh
+```
+
 ### Basic Usage
+
+#### With Docker (Recommended)
+
+```bash
+# Start the container
+./run-docker.sh
+
+# Inside the container, run:
+python examples/run_simulation.py    # Basic simulation
+python examples/run_evolution.py    # Genetic algorithm example
+python evolution/main_GA.py         # Main GA application
+python core/main.py                 # Visualization simulation
+```
+
+#### Local Installation
 
 ```bash
 # Run a simple simulation example
