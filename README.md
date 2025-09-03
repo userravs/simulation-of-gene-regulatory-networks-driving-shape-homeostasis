@@ -214,7 +214,7 @@ It provides a computational platform for studying **emergent homeostasis**, offe
 
 - **M.Sc. J. Esteban Pérez-Hidalgo** (School of Physics, Costa Rica Institute of Technology)
   - Master's Thesis – University of Gothenburg & Chalmers University of Technology  
-  - Email: jose.perez@tec.ac.cr
+  - Email: jose.perez at tec.ac.cr
 - **Reymer Vargas** - Project modernization and development
   - Containerization, web interface, and documentation improvements
 
