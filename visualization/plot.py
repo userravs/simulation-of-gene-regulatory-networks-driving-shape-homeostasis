@@ -4,15 +4,40 @@ import matplotlib.pyplot as plt
 # to check for matplotlib backend: >> matplotlib.get_backend()
 from matplotlib.colors import ListedColormap
 import networkx as nx
-import tools
+import core.tools as tools
 import matplotlib.colors as colors
 import matplotlib.cm as cmx
 #import pylab
 #from mpl_toolkits.axes_grid1 import ImageGrid
 
 class Environment:
+    """
+    Visualization environment for the cellular automata simulation.
+    
+    Provides methods for creating and updating plots showing:
+    - Cell states and positions
+    - SGF (Short-range Growth Factor) concentrations
+    - LGF (Long-range Growth Factor) concentrations
+    """
 
     def CellsGridFigure(fieldSize, mode):
+        """
+        Create the main figure with subplots for cell system visualization.
+        
+        Parameters:
+        -----------
+        fieldSize : int
+            Size of the square field (fieldSize x fieldSize)
+        mode : bool
+            True: cell_system as fitness function (no visualization)
+            False: cell_system as display system (with visualization)
+        
+        Returns:
+        --------
+        tuple
+            (cellsFigure, cellsSubplot, sgfSubplot, lgfSubplot, cellPlot, sgfPlot, lgfPlot)
+            Figure and plot objects for updating during simulation
+        """
         # mode = True: cell_system as fitness function
         # mode = False: cell_system as display system
         plt.close()
@@ -23,7 +48,7 @@ class Environment:
         cellsFigure, (cellsSubplot,sgfSubplot,lgfSubplot) = plt.subplots(1, 3, figsize = (15,5))
         #plt.tick_params(axis='x', left='off', bottom='off', labelleft='off', labelbottom='off')
 
-        cellsSubplot.set_aspect('equal')                        # TODO does this work?
+        cellsSubplot.set_aspect('equal')                        # TODO: does this work?
         sgfSubplot.set_aspect('equal')
         lgfSubplot.set_aspect('equal')
 

@@ -19,7 +19,7 @@ from __future__ import print_function
 import math
 import os
 import time
-import main
+import core.main as main
 import neat
 
 #import visualize

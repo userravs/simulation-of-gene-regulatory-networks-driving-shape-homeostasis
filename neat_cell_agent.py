@@ -1,16 +1,17 @@
 import numpy as np
 #from tools import flatList, CheckifOccupied, CheckifPreferred, SGFDiffEq, LGFDiffEq, 
 from tools import *
+import neat
 #from tools import flatList as fl
 #from numba import jit
 
 class cell:
     # defines whats needed when a new agent (Cell) of this class is created
-    def __init__(self, yPos, xPos, w, nodes):
+    def __init__(self, yPos, xPos, genome, config):
         self.state = 'Quiet'                        # State of the cell. DEFAULT: quiet
         self.xPos = xPos                            # Initial position on x axis
         self.yPos = yPos                            # Initial position on y axis
-        self.compass = True                         # Polarisation: WARNING ON/OFF => True/False
+        self.compass = True                         # Polarization: WARNING: ON/OFF => True/False
         self.orientation = [self.yPos,self.xPos]    # Preferred direction. DEFAULT: own position
         #self.neighbourList = flatList([flatList([self.yPos - 1, self.xPos]), flatList([self.yPos + 1, self.xPos]), flatList([self.yPos, self.xPos - 1]), flatList([self.yPos, self.xPos + 1])])
         self.neighbourList = [[self.yPos - 1, self.xPos], [self.yPos + 1, self.xPos], [self.yPos, self.xPos - 1], [self.yPos, self.xPos + 1]]
@@ -24,13 +25,14 @@ class cell:
         self.sgfAmount = 0                          # Amount of "pheromone" to deposit in the grid
         self.lgfAmount = 0
         # Neural network stuff
-        self.wMatrix = np.array(w)
+        #self.wMatrix = np.array(w)
         #self.WMatrix = W
-        #self.phi = phi
+        self.network = neat.nn.recurrent.RecurrentNetwork.create(genome, config)
+ #self.phi = phi
         #self.theta = theta
-        self.nNodes = nodes                            # WARNING hardcoded!
+#        self.nNodes = nodes                            # WARNING hardcoded!
 #        self.nInputs = 2
-        self.V = np.zeros([self.nNodes])
+#        self.V = np.zeros([self.nNodes])
     # self
 
     #   Values stored in grid according to state:
@@ -39,27 +41,6 @@ class cell:
     #       2   =>  moving cell
     #       3   =>  divided cell
 
-    # WARNING Do I use this method??
-    #def GetNeighbours(self, grid, border):
-        #neighbourList = []
-        ## TODO check if this works if orientation is OFF
-        ## if orientation is OFF the method returns the probable neighbours
-        #if self.xPos - 1 >= 0: # if coordinate is in-bounds
-            #if grid[self.xPos - 1, self.yPos][0] == 0 and self.orientation[0] != self.xPos - 1 and self.orientation[1] != self.yPos:
-                ## if is not occupied and not the preferred neighbour
-                #neighbourList.append([self.xPos - 1, self.yPos])
-        #if self.xPos + 1 <= border:
-            #if grid[self.xPos + 1, self.yPos][0] == 0 and self.orientation[0] != self.xPos + 1 and self.orientation[1] != self.yPos:
-                #neighbourList.append([self.xPos + 1, self.yPos])
-        #if self.yPos - 1 >= 0:
-            #if grid[self.xPos, self.yPos - 1][0] == 0 and self.orientation[0] != self.xPos and self.orientation[1] != self.yPos - 1:
-                #neighbourList.append([self.xPos, self.yPos - 1])
-        #if self.yPos + 1 <= border:
-            #if grid[self.xPos, self.yPos + 1][0] == 0 and self.orientation[0] != self.xPos and self.orientation[1] != self.yPos + 1:
-                #neighbourList.append([self.xPos, self.yPos + 1])
-        ## returns a list of possible neighbours which are not the prefered
-        #return neighbourList
-    #@jit
     def Sense(self, grid):
         # sense chemicals from the grid
         SGF_reading = grid[self.yPos, self.xPos][0] # grid contains two values on each coordinate:
@@ -94,7 +75,7 @@ class cell:
         # ORIENTATION:
         # randomly sets a preferred neighbour (polarisation)
         # if the direction is out of bounds then no preferred direction is stored
-        # WARNING This code need to be revisited depending on the implementation of the NN later on
+        # WARNING: This code needs to be revisited depending on the implementation of the NN later on
         if self.compass:
             # boundaries for orientation
             nBoundary = 0.25
@@ -138,7 +119,7 @@ class cell:
         xThreshold = 0.5
         yThreshold = 0.01
 
-        # TODO is the order of this operations the ideal?
+        # TODO: is the order of these operations ideal?
         if iStatus < xThreshold and jStatus < xThreshold and kStatus < xThreshold:
             self.state = 'Quiet'
             # DEBUG
@@ -228,57 +209,6 @@ class cell:
     ## Move
 
     # OrientedMove, works with orientation ON and OFF
-    #@jit
-    #def Move2(self, grid):
-        ## create a list with the four Von Neumann neighbours
-        ##finalList = []
-        #tmpList = []
-        #movePos = []
-        #needOtherNeighbours = True
-        #border = self.border - 1
-        #for neighbr in self.neighbourList:                               # for each possible neighbour:
-            ## TODO its more likely to have neighbours than to be out of bounds... need to swap next two ifs
-            #if CheckInBorders(neighbr[0], neighbr[1], border):      # if neighbour is inbunds:
-                #if CheckifOccupied(neighbr[0], neighbr[1], grid):   # if its occupied
-                    ## DEBUG
-                    ##print(str(neighbr) + ': neighbour occupied')
-                    #continue
-                #else:
-                    #xOri = self.orientation[0]
-                    #yOri = self.orientation[1]
-                    #if CheckifPreferred(xOri, yOri, neighbr[0], neighbr[1]):    # if is preferred
-                        #movePos.append(neighbr[0])                  # if available, the return it as available
-                        #movePos.append(neighbr[1])
-                        #needOtherNeighbours = False                 # if available there's no need to find more spots
-                        ## DEBUG
-                        ##print(str(neighbr) + ': preferred position available')
-                        #break                                       # and stop looking for available spots
-                    #else:
-                        ## DEBUG
-                        ##print(str(neighbr) + ': available neighbour')
-                        #tmpList.append(neighbr)                     # list with other available neighbours
-            #else:
-                ## DEBUG
-                ##print(str(neighbr) + ': neighbour not in bounds')
-                #continue
-        ## if needed and if there's more than one spot available, the move to that spot
-        #if needOtherNeighbours and len(tmpList) > 0:
-            #r = np.random.randint(len(tmpList))
-            #movePos.append(tmpList[r][0])
-            #movePos.append(tmpList[r][1])
-
-        #if len(movePos) > 0:
-            #grid[movePos[0]][movePos[1]][0] = 2                     # new position gets a 2 value to mark as moving cell
-            #grid[self.xPos][self.yPos][0] = 0                      # old position gets a -1 value to indicate that there was a cell there before
-            #self.xPos = movePos[0]                                  # update position
-            #self.yPos = movePos[1]
-            ## DEBUG
-            ##print('cell moved!')
-        #else:
-            #grid[self.xPos][self.yPos][0] = 1                       # if moving fails then cell is marked as quiet
-            ## DEBUG
-            ##print('moving failed\n')
-    # Move2
 
     def Split(self, grid, cellList):
         self.splitCounter += 1
@@ -335,63 +265,5 @@ class cell:
 
     # works with polarisation ON and OFF
     # initial for and then if are the same as in Move2, might be useful to use a single function
-    #@jit
-    #def Split2(self, grid, cellList):
-        #self.splitCounter += 1
-        #if self.splitCounter == self.splitTime:
-            #self.splitCounter = 0
 
-            ## create a list with the four Von Neumann neighbours
-            #neighbourList = [[self.xPos - 1, self.yPos],[self.xPos + 1, self.yPos],[self.xPos, self.yPos - 1],[self.xPos, self.yPos + 1]]
-            ##finalList = []
-            #tmpList = []
-            #movePos = []
-            #needOtherNeighbours = True
-            #border = self.border - 1
-
-            #for neighbr in neighbourList:                                           # for each possible neighbour:
-                #if CheckInBorders(neighbr[0], neighbr[1], border):                  # if neighbour is inbunds:
-                    #if CheckifOccupied(neighbr[0], neighbr[1], grid):               # if its occupied
-                        ## DEBUG
-                        ##print(str(neighbr) + ': neighbour occupied')
-                        #continue
-                    #else:
-                        #xOri = self.orientation[0]
-                        #yOri = self.orientation[1]
-                        #if CheckifPreferred(xOri, yOri, neighbr[0], neighbr[1]):    # if is preferred
-                            #movePos.append(neighbr[0])                              # if available, the return it as available
-                            #movePos.append(neighbr[1])
-                            #needOtherNeighbours = False                             # if available the no need to find more spots
-                            ## DEBUG
-                            ##print(str(neighbr) + ': preferred position available')
-                            #break                                                   # and stop looking for available spots
-                        #else:
-                            ## DEBUG
-                            ##print(str(neighbr) + ': available neighbour')
-                            #tmpList.append(neighbr)                                 # list with other available neighbours
-                #else:
-                    ## DEBUG
-                    ##print(str(neighbr) + ': neighbour not in bounds')
-                    #continue
-            ## if needed and if there's more than one spot available, then move to that spot
-            #if needOtherNeighbours and len(tmpList) > 0:
-                #r = np.random.randint(len(tmpList))
-                #movePos.append(tmpList[r][0])
-                #movePos.append(tmpList[r][1])
-                ##finalList.append(tmpList[r])
-            #if len(movePos) > 0:
-                #grid[self.xPos][self.yPos][0] = 3
-                #cellList.append(cell(movePos[0], movePos[1],self.wMatrix,self.nNodes))
-                #grid[movePos[0]][movePos[1]][0] = 1
-                ## DEBUG
-                ##print('new cell created!')
-            #else:
-                #grid[self.xPos][self.yPos][0] = 1
-                ## DEBUG
-                ##print('split failed\n')
-        #else:
-            #grid[self.xPos][self.yPos][0] = 1
-            ## DEBUG
-            ##print('split counter + 1\n')
-    # Split2
 # Cell

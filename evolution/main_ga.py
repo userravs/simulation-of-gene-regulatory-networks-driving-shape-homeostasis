@@ -4,12 +4,12 @@ import time                                 # to get system time
 from datetime import datetime as dt
 #import random                   
 import numpy as np  
-from tools_GA import *
+from evolution.tools_ga import *
 ############
 # self made classes
-from cell_agent import *                    # it is allowed to call from this class because there's an __init__.py file in this directory
-from tools import *
-from plot import *
+from core.cell_agent import *                    # it is allowed to call from this class because there's an __init__.py file in this directory
+from core.tools import *
+from visualization.plot import *
 import csv
 ############
 import multiprocessing as mp

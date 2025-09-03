@@ -1,12 +1,19 @@
 
 
-# CA
+# Gene Regulatory Networks Driving Shape Homeostasis - Development History
 
-## Useful links
+## Project Overview
+This document tracks the development history of the Gene Regulatory Networks (GRN) simulation project, from initial implementation to the current containerized web interface.
+
+## Useful Links
 * Diffusion equation with python: https://hinderedsettling.com/2015/02/06/exploring-the-diffusion-equation-with-python/
+* Streamlit documentation: https://docs.streamlit.io/
+* Docker documentation: https://docs.docker.com/
 
-## Useful commands
+## Useful Commands
 * ffmpeg -f image2 -pattern_type glob -framerate 24 -i 'cell_system-*.png' -s 1024x1024 cell_system.avi
+* Docker: `./run_docker.sh` - Start the web interface
+* Web interface: http://localhost:8501
 
 ## Thesis events
 ### 20170901: Started working 
@@ -83,7 +90,7 @@
 #### Done:
 * Implemented correct dynamics for Recurrent Neural Network.
 * In principle, done with GA.
-* main.py as function called by main_GA.py
+* main.py as function called by main_ga.py
 * GA functions: fitness, crossover, mutate, elitism, tournament selection.
 * Read/write code to store rNN and to read it later.
 
@@ -180,3 +187,31 @@
 * Produce genomes in ozzy and visualise them on laptop.
 * Play around with neat-python. See what interesting results could be obtained from it.
 * Explore other implementations of NEAT.
+
+---
+
+## Recent Development (2024-2025)
+
+### 2024-2025: Project Modernization and Web Interface
+#### Done:
+* **Project Restructuring**: Reorganized code into modular structure (core/, evolution/, visualization/, analysis/, examples/)
+* **Documentation Improvements**: Enhanced README, added comprehensive docstrings, improved grammar and clarity
+* **Containerization**: Implemented Docker support with Dockerfile, docker-compose.yml, and .dockerignore
+* **Web Interface**: Created interactive Streamlit application with real-time visualization
+* **Import Path Fixes**: Resolved all module import issues after restructuring
+* **Dependencies Management**: Created requirements.txt with all necessary packages
+* **Git Workflow**: Implemented proper branching strategy (master → main, feature branches)
+
+#### Key Features Added:
+* **Interactive Web Interface**: Real-time simulation control via Streamlit
+* **Containerized Deployment**: Reproducible environments with Docker
+* **Modular Architecture**: Clean separation of concerns across modules
+* **Comprehensive Documentation**: Detailed explanations and usage examples
+* **Modern Python Practices**: Updated import paths, dependency management
+
+#### Technical Improvements:
+* **Performance**: Optimized imports and module structure
+* **Usability**: Web interface makes simulation accessible to non-programmers
+* **Reproducibility**: Docker ensures consistent environments
+* **Maintainability**: Modular structure improves code organization
+* **Documentation**: Comprehensive guides and examples

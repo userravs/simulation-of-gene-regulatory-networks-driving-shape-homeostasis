@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  grn-simulation:
+    build: .
+    container_name: grn-simulation
+    ports:
+      - "8501:8501"  # Streamlit web interface
+    volumes:
+      # Mount current directory for development
+      - .:/app
+      # Mount a data directory for results
+      - ./data:/app/data
+    environment:
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+    # Keep container running
+    tty: true
+    stdin_open: true

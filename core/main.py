@@ -4,9 +4,9 @@ import time
 import numpy as np
 #import matplotlib.pyplot as plt
 # self made classes
-from cell_agent import *                    # it is allowed to call from this class because there's an __init__.py file in this directory
-from tools import *
-from plot import *
+from core.cell_agent import *                    # it is allowed to call from this class because there's an __init__.py file in this directory
+from core.tools import *
+from visualization.plot import *
 #import csv
 import cProfile
 # from numba import jit
@@ -14,15 +14,36 @@ import cProfile
 #@jit
 def sim(wMatrix, timeSteps, nNodes, nLattice, mode):
     """
-    Parameters: sim(wMatrix, numberOfTimeSteps, NumberOfGeneration, nNodes, individual, nLattice, mode)
-    # mode = True: cell_system as fitness function
-    # mode = False: cell_system as display system
+    Run a cellular automata simulation with gene regulatory networks.
+    
+    This function simulates a multicellular system where each cell contains a neural network
+    that acts as a gene regulatory network. The simulation tracks cell states, chemical
+    diffusion (SGF and LGF), and emergent behavior over time.
+    
+    Parameters:
+    -----------
+    wMatrix : numpy.ndarray
+        Weight matrix for the neural network representing the gene regulatory network
+    timeSteps : int
+        Number of simulation time steps to run
+    nNodes : int
+        Number of nodes in the neural network
+    nLattice : int
+        Size of the square lattice grid (nLattice x nLattice)
+    mode : bool
+        True: cell_system as fitness function (no visualization)
+        False: cell_system as display system (with visualization)
+    
+    Returns:
+    --------
+    tuple
+        Various simulation metrics and timing information
     """
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     #       PARAMETERS                 #
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     # TODO: organize in different categories...
-    #nLattice = 5                              # TODO change name
+    #nLattice = 5                              # TODO: change name
     #timeSteps = 40                              # Number of simulation time steps
     npCellGrid = np.zeros([nLattice,nLattice])    # Initialize empty grid
     semiFlatGrid = [flatList(npCellGrid[r,:]) for r in range(nLattice)]
@@ -41,7 +62,7 @@ def sim(wMatrix, timeSteps, nNodes, nLattice, mode):
     deltaR = 1.                                  # space step for discretisation [L]
     deltaS = 0.5                                # decay rate for SGF
     deltaL = 0.1                                 # decay rate for LGF
-    diffConst = 1.#0.05                              # diffusion constant D [dimentionless]
+    diffConst = 1.#0.05                              # diffusion constant D [dimensionless]
     t_matrix = GenerateTMatrix(nLattice)        # T matrix for LGF operations
     i_matrix = GenerateIMatrix(nLattice)        # I matrix for LGF operations
     
@@ -78,7 +99,7 @@ def sim(wMatrix, timeSteps, nNodes, nLattice, mode):
 
         ## decay chemicals in spots where there is some but no cell
 
-        # this matrixes must be updated everytime so that if there's no production in one spot that spot contains a zero
+        # these matrices must be updated every time so that if there's no production in one spot that spot contains a zero
         # but must not lose contained information, i.e. must use it before setting it to zero
         sigma_m = np.zeros([nLattice,nLattice])     # matrix representation of SGF production
         lambda_m = np.zeros([nLattice,nLattice])    # matrix representation of LGF production
@@ -88,12 +109,12 @@ def sim(wMatrix, timeSteps, nNodes, nLattice, mode):
         # Timing!
         start_time_tmpListLoop = time.time()
         tmpCellListLength = len(tmpCellList)
-        while len(tmpCellList) > 0:                                 # while  the tmp list of cells is longer than 1
+        while len(tmpCellList) > 0:                                 # while the tmp list of cells is longer than 1
             # 1st step => choose a random cell from the list of existing cells
             rndCell = np.random.randint(len(tmpCellList))
             # store lattice size
-            #tmpCellList[rndCell].border = nLattice                  # TODO rethink this
-            #tmpCellList[rndCell].nNodes = nNodes                   # WARNING hardcoded
+            #tmpCellList[rndCell].border = nLattice                  # TODO: rethink this
+            #tmpCellList[rndCell].nNodes = nNodes                   # WARNING: hardcoded
 
             # 2nd step => read chemicals
             SGF_reading, LGF_reading = tmpCellList[rndCell].Sense(chemGrid)
