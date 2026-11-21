@@ -1374,7 +1374,7 @@ def main() -> None:
           supervised by [Ph.D. Philip Gerlee]({gerlee_url})
           (University of Gothenburg & Chalmers University of Technology)
           — [Baseline (`6c3fae7`)]({baseline_url})
-        - **Software Architecture, Core Engine & Lead Maintainer (`v0.2.0`–`v0.3.0`)**:
+        - **Software Architecture, Core Engine & Lead Maintainer (`v0.2.0`–`v0.4.0`)**:
           Reymer Vargas ([@userravs](https://github.com/userravs),
           [ORCID `0009-0002-9091-8431`]({reymer_orcid}),
           Independent Research Software Engineer) — Unified headless engine,
