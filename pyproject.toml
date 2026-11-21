@@ -6,7 +6,7 @@ readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.11"
 authors = [
-    { name = "J. Esteban Pérez-Hidalgo" },
+    { name = "José Esteban Pérez-Hidalgo", email = "jose.perez@tec.ac.cr" },
     { name = "Reymer Vargas" },
 ]
 maintainers = [
