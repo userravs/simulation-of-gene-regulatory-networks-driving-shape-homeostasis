@@ -13,7 +13,9 @@
 ![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey)
 ![Containers](https://img.shields.io/badge/containers-Podman%20%7C%20Docker-892CA0?logo=podman&logoColor=white)
 
-<img src="./docs/images/cell_system_example.png" alt="2D Cellular Automaton and SGF/LGF Chemical Signaling Fields" width="860" />
+<img src="./docs/images/morphogenesis_timelapse.gif" alt="Animated 2D Cellular Automaton Morphogenesis, Polarization Compass, and SGF/LGF Reaction-Diffusion" width="860" />
+
+<img src="./docs/images/phase_space_example.png" alt="GRN (SGF, LGF) Phase-Space Decision Map and Shape Homeostasis Comparison" width="860" />
 
 </div>
 
