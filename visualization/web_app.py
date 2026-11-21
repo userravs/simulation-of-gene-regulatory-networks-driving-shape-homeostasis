@@ -379,18 +379,27 @@ def main() -> None:
         """
         )
 
+        baseline_url = (
+            "https://github.com/j0sees/"
+            "Simulation-of-Gene-Regulatory-Networks-Driving-Shape-Homeostasis/"
+            "tree/6c3fae7834a2ca502b1a439d7535c4adab1673f3"
+        )
+        esteban_url = "https://orion.tec.ac.cr/en/persons/jos%C3%A9-esteban-p%C3%A9rez-hidalgo/"
+        gerlee_url = "https://research.chalmers.se/en/person/gerlee"
         st.markdown(
-            """
+            f"""
         ### Research Project Information
 
         This software is based on the master's thesis
         *"Classification of Gene Regulatory Networks Driving Shape Homeostasis"*.
 
-        - **Original Research & Model (`v0.1.0`)**: [M.Sc. José Esteban Pérez-Hidalgo](https://orion.tec.ac.cr/en/persons/jos%C3%A9-esteban-p%C3%A9rez-hidalgo/)
-          ([@j0sees](https://github.com/j0sees), School of Physics, Costa Rica Institute of Technology),
-          supervised by [Ph.D. Philip Gerlee](https://research.chalmers.se/en/person/gerlee)
+        - **Original Research & Model (`v0.1.0`)**:
+          [M.Sc. José Esteban Pérez-Hidalgo]({esteban_url})
+          ([@j0sees](https://github.com/j0sees),
+          School of Physics, Costa Rica Institute of Technology),
+          supervised by [Ph.D. Philip Gerlee]({gerlee_url})
           (University of Gothenburg & Chalmers University of Technology)
-          — [Baseline (`6c3fae7`)](https://github.com/j0sees/Simulation-of-Gene-Regulatory-Networks-Driving-Shape-Homeostasis/tree/6c3fae7834a2ca502b1a439d7535c4adab1673f3)
+          — [Baseline (`6c3fae7`)]({baseline_url})
         - **Software Architecture & Lead Maintainer (`v0.2.0`–`v0.3.0`)**: Reymer Vargas
           ([@userravs](https://github.com/userravs), Independent Researcher)
         """
