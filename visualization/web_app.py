@@ -1359,6 +1359,7 @@ def main() -> None:
         )
         esteban_url = "https://orion.tec.ac.cr/en/persons/jos%C3%A9-esteban-p%C3%A9rez-hidalgo/"
         gerlee_url = "https://research.chalmers.se/en/person/gerlee"
+        reymer_orcid = "https://orcid.org/0009-0002-9091-8431"
         st.markdown(
             f"""
         ### Research Project Information
@@ -1375,6 +1376,7 @@ def main() -> None:
           — [Baseline (`6c3fae7`)]({baseline_url})
         - **Software Architecture, Core Engine & Lead Maintainer (`v0.2.0`–`v0.3.0`)**:
           Reymer Vargas ([@userravs](https://github.com/userravs),
+          [ORCID `0009-0002-9091-8431`]({reymer_orcid}),
           Independent Research Software Engineer) — Unified headless engine,
           $O(N^2)$ Thomas ADI solver, evolutionary diversity & NEAT upgrades,
           interactive phase-space/GRN inspector & vector overlays, accessible
