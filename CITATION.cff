@@ -16,6 +16,7 @@ authors:
   - family-names: "Vargas"
     given-names: "Reymer"
     affiliation: "Independent Research Software Engineer"
+    orcid: "https://orcid.org/0009-0002-9091-8431"
 references:
   - type: thesis
     title: "Classification of Gene Regulatory Networks Driving Shape Homeostasis"
