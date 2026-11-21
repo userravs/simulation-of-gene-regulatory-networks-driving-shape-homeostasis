@@ -134,6 +134,10 @@ flowchart LR
 #### Dynamical Systems Phase-Space Maps (`MapPlot`)
 To classify evolved GRNs into behavioral regimes, each network can be probed across a 2D grid of `(SGF, LGF)` input concentrations to record its steady-state cellular decision (`0..4`). The `MapPlot` utility in `visualization/plot.py` (and interactive `create_phase_space_plot` in `visualization/web_app.py`) renders these discrete decision regions across chemical concentration space, revealing the dynamical mechanism driving homeostasis.
 
+![Phase-Space Map and Shape Homeostasis Comparison](./images/phase_space_example.png)
+
+*Steady-state `(SGF, LGF)` cellular decision map (`Die`, `Quiet`, `Move`, `Split`) paired with midpoint occupancy ($S_{T/2}$), final occupancy ($S_T$), and structural delta ($|S_{T/2} - S_T|$).*
+
 ---
 
 ## 3. Software Architecture

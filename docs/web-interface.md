@@ -62,10 +62,14 @@ uv run streamlit run visualization/web_app.py --server.port 8501 --server.addres
 
 ![Simulation Visualization](./images/cell_system_example.png)
 
+![Morphogenesis Timelapse Animation](./images/morphogenesis_timelapse.gif)
+
 ### 2. Analysis Tab
 - **Evolutionary Optimization (GA)**: Configure population size, generation count, elitism, tournament size, and per-gene Gaussian mutation rate (powered by `tools_ga.initialize_population` and `tools_ga.create_next_generation`), inspect best vs. average fitness progression curves, and click **Load Best Evolved GRN into Simulation** to simulate the winning network in Tab 1.
 - **Interactive `(SGF, LGF)` Phase-Space Decision Map**: Probe the active or evolved GRN across a 2D chemical concentration grid (`compute_phase_space_map`) to visualize steady-state cellular decision regions (`Die`, `Quiet`, `Moving`, `Divided`) using the colorblind-safe palette.
 - **Interactive Directed GRN Graph**: Inspect excitatory ($w_{ij} > 0$) and inhibitory ($w_{ij} < 0$) regulatory connections and functional node roles (`SGF_in`, `LGF_in`, `Split`, `Move`, `Die`, `SGF_out`, `LGF_out`, `Compass`, and hidden nodes).
+
+![Phase-Space Decision Map and Homeostasis Comparison](./images/phase_space_example.png)
 
 ### 3. About Tab
 - **Model Summary**: Overview of the cellular automata, chemical signaling, and recurrent neural network architecture.
