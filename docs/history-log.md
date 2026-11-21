@@ -29,13 +29,11 @@ This document summarizes the major development milestones of the Gene Regulatory
 
 ---
 
-## Roadmap & Issue Tracker (Extracted from Original Thesis Notes)
+## Planned Improvements (Derived from 2017 Thesis Notes)
 
-All tasks and improvements derived from the 2017 research logs are tracked as GitHub Issues in [`userravs/simulation-of-gene-regulatory-networks-driving-shape-homeostasis/issues`](https://github.com/userravs/simulation-of-gene-regulatory-networks-driving-shape-homeostasis/issues):
+The following future improvements were identified from the original 2017 research notes:
 
-- [x] **[Issue #8](https://github.com/userravs/simulation-of-gene-regulatory-networks-driving-shape-homeostasis/issues/8)** — `docs(architecture): re-infuse v0.1.0 (6c3fae7) thesis context and multi-topology CLI support` *(Completed in PR #14)*
-- [ ] **[Issue #9](https://github.com/userravs/simulation-of-gene-regulatory-networks-driving-shape-homeostasis/issues/9)** — `refactor(core): decouple simulation engine from Matplotlib plotting and consolidate duplicate sim() loops`
-- [ ] **[Issue #10](https://github.com/userravs/simulation-of-gene-regulatory-networks-driving-shape-homeostasis/issues/10)** — `perf(core): optimize LGFDiffEq Crank-Nicolson solver, standardize coordinates, and add flow diagram`
-- [ ] **[Issue #11](https://github.com/userravs/simulation-of-gene-regulatory-networks-driving-shape-homeostasis/issues/11)** — `feat(visualization): adopt colorblind-safe palette for cell states and add timelapse snapshot export`
-- [ ] **[Issue #12](https://github.com/userravs/simulation-of-gene-regulatory-networks-driving-shape-homeostasis/issues/12)** — `feat(evolution): improve GA offspring diversity and align NEAT config-ca with [0, 1] fitness scale`
-- [x] **[Issue #13](https://github.com/userravs/simulation-of-gene-regulatory-networks-driving-shape-homeostasis/issues/13)** — `docs(history): convert raw 2017 scratch notes in docs/history-log.md into structured milestone history` *(Completed in PR #14)*
+- `refactor(core)`: decouple simulation engine from Matplotlib plotting and consolidate duplicate `sim()` loops
+- `perf(core)`: optimize `LGFDiffEq` Crank-Nicolson solver, standardize coordinates, and add flow diagram
+- `feat(visualization)`: adopt colorblind-safe palette for cell states and add timelapse snapshot export
+- `feat(evolution)`: improve GA offspring diversity and align NEAT `config-ca` with `[0, 1]` fitness scale
