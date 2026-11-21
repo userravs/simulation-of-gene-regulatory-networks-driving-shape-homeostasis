@@ -2,7 +2,7 @@
 
 ## 1. Scientific Background and Thesis Objectives
 
-This project implements the computational framework developed in the master's thesis **"Classification of Gene Regulatory Networks Driving Shape Homeostasis"** (*M.Sc. in Complex Adaptive Systems*) by **[M.Sc. José Esteban Pérez-Hidalgo](https://orion.tec.ac.cr/en/persons/jos%C3%A9-esteban-p%C3%A9rez-hidalgo/)** ([@j0sees](https://github.com/j0sees), [ORCID `0000-0001-7184-9974`](https://orcid.org/0000-0001-7184-9974), School of Physics, Costa Rica Institute of Technology; supervised by **[Ph.D. Philip Gerlee](https://research.chalmers.se/en/person/gerlee)**; [original `v0.1.0` baseline `6c3fae7`](https://github.com/j0sees/Simulation-of-Gene-Regulatory-Networks-Driving-Shape-Homeostasis/tree/6c3fae7834a2ca502b1a439d7535c4adab1673f3)), with software architecture, Python 3 refactoring, web interface, and containerization engineered and maintained by **Reymer Vargas** ([@userravs](https://github.com/userravs), Independent Researcher, `v0.2.0`–`v0.3.0`). The model builds upon:
+This project implements the computational framework developed in the master's thesis **"Classification of Gene Regulatory Networks Driving Shape Homeostasis"** (*M.Sc. in Complex Adaptive Systems*) by **[M.Sc. José Esteban Pérez-Hidalgo](https://orion.tec.ac.cr/en/persons/jos%C3%A9-esteban-p%C3%A9rez-hidalgo/)** ([@j0sees](https://github.com/j0sees), [ORCID `0000-0001-7184-9974`](https://orcid.org/0000-0001-7184-9974), School of Physics, Costa Rica Institute of Technology; supervised by **[Ph.D. Philip Gerlee](https://research.chalmers.se/en/person/gerlee)**; [original `v0.1.0` baseline `6c3fae7`](https://github.com/j0sees/Simulation-of-Gene-Regulatory-Networks-Driving-Shape-Homeostasis/tree/6c3fae7834a2ca502b1a439d7535c4adab1673f3)), with software architecture, unified headless simulation engine (`core/engine.py`), $O(N^2)$ Thomas ADI reaction-diffusion solver (`LGFThomasSolver`), evolutionary diversity & NEAT upgrades, interactive phase-space/GRN inspector & vector overlays, accessible visualization, Podman/Docker containerization, and CI/test suite engineered and maintained by **Reymer Vargas** ([@userravs](https://github.com/userravs), Independent Research Software Engineer, `v0.2.0`–`v0.3.0`). The model builds upon:
 
 > Gerlee, P., Basanta, D., & Anderson, A. R. A. (2015). *The influence of cellular characteristics on the evolution of shape homeostasis*. Journal of the Royal Society Interface, 12(103), 20141222. [Chalmers Publication `251511`](https://research.chalmers.se/en/publication/251511) | [DOI: `10.1098/rsif.2014.1222`](https://doi.org/10.1098/rsif.2014.1222)
 
@@ -45,7 +45,7 @@ Intercellular communication is mediated by two chemical concentration fields ove
 
 2. **Long-range Growth Factor (LGF, $l$)**: Produced locally at rate $\lambda$, decays at rate $\delta_l$, and diffuses across the lattice with diffusion constant $D$:
    $$\frac{\partial l}{\partial t} = D \nabla^2 l + \lambda - \delta_l l$$
-   Integrated numerically in `core/tools.py` (`LGFDiffEq`) via an alternating-direction semi-implicit Crank-Nicolson scheme using the discrete 1D Laplacian matrix $T$ (`GenerateTMatrix`):
+   Integrated numerically in `core/tools.py` (`LGFThomasSolver` and `LGFDiffEq`) via an alternating-direction semi-implicit Crank-Nicolson (ADI) scheme using a precomputed Thomas tridiagonal factorization ($O(N^2)$ per time step) of $I - \frac{\alpha}{2}T$, where $T$ (`GenerateTMatrix`) is the discrete 1D Laplacian matrix:
    $$T = \begin{pmatrix} -1 & 1 & 0 & \cdots & 0 \\ 1 & -2 & 1 & \cdots & 0 \\ \vdots & \ddots & \ddots & \ddots & \vdots \\ 0 & \cdots & 1 & -2 & 1 \\ 0 & \cdots & 0 & 1 & -1 \end{pmatrix}$$
    Setting the corner entries $T_{0,0} = T_{N-1,N-1} = -1$ (instead of $-2$) enforces **zero-flux (homogeneous Neumann) boundary conditions** ($\nabla l \cdot \mathbf{n} = 0$) along the lattice perimeter so chemical factors do not leak out of the domain.
 
@@ -132,56 +132,96 @@ flowchart LR
 *Best and average population fitness across generations during evolutionary optimization.*
 
 #### Dynamical Systems Phase-Space Maps (`MapPlot`)
-To classify evolved GRNs into behavioral regimes, each network can be probed across a 2D grid of `(SGF, LGF)` input concentrations to record its steady-state cellular decision (`0..4`). The `MapPlot` utility in `visualization/plot.py` renders these discrete decision regions across chemical concentration space, revealing the dynamical mechanism driving homeostasis.
+To classify evolved GRNs into behavioral regimes, each network can be probed across a 2D grid of `(SGF, LGF)` input concentrations to record its steady-state cellular decision (`0..4`). The `MapPlot` utility in `visualization/plot.py` (and interactive `create_phase_space_plot` in `visualization/web_app.py`) renders these discrete decision regions across chemical concentration space, revealing the dynamical mechanism driving homeostasis.
 
 ---
 
 ## 3. Software Architecture
 
+### Platform Overview
+
+```mermaid
+flowchart LR
+    subgraph Topologies["Graph Topologies (analysis/)"]
+        ER["Erdos-Renyi"]
+        WS["Watts-Strogatz"]
+        BA["Barabasi-Albert"]
+    end
+
+    subgraph Engine["Headless Core Engine (core/engine.py)"]
+        RNN["Intracellular RNN\n(RecurrentNeuralNetwork)"]
+        CA["2D Cellular Automaton\n(Quiet, Move, Split, Die)"]
+        PDE["Reaction-Diffusion PDEs\n(SGF Euler & LGFThomasSolver)"]
+        RNN --> CA --> PDE --> RNN
+    end
+
+    subgraph Evolution["Evolutionary Optimization (evolution/)"]
+        GA["Parallel Genetic Algorithm\n(main_ga.py, tools_ga.py)"]
+        NEAT["NEAT Neuroevolution\n(neat_parallel.py)"]
+    end
+
+    subgraph UI["Visualization & Export (visualization/)"]
+        Web["Streamlit & Plotly Web App\n(web_app.py)"]
+        Plot["Matplotlib, Palettes & Timelapse\n(plot.py, palettes.py, timelapse.py)"]
+    end
+
+    Topologies --> Engine
+    Evolution <-->|"Fitness F in [0, 1]"| Engine
+    Engine -->|"StepSnapshot / SimulationResult"| UI
+```
+
 The codebase is organized into modular Python 3.11+ namespace packages:
 
 | Directory / File | Responsibility |
 |---|---|
-| `core/cell_agent.py` | Defines the `cell` agent class (`Sense`, `GenerateStatus`, `Quiet`, `Move`, `Split`, `Die`). |
-| `core/tools.py` | Implements `flatList`, Numba `@njit`-accelerated `SGFDiffEq`, `LGFDiffEq`, `RecurrentNeuralNetwork`, and matrix utilities. |
-| `core/main.py` | Standalone simulation loop combining cellular automata updates, PDE integration, and Matplotlib rendering. |
-| `evolution/main_ga.py` | Multiprocessing genetic algorithm with elitism and tournament selection. |
-| `evolution/tools_ga.py` | Genetic operators (`Crossover`, `Mutate`, `DiracDelta`, `DifferentIndex`). |
+| `core/engine.py` | Unified, plotting-free simulation stepper (`SimulationConfig`, `SimulationEngine`, `StepSnapshot`, `SimulationResult`, `run_simulation`) with deterministic PRNG seeding and $O(M)$ Fisher-Yates cell shuffling. |
+| `core/cell_agent.py` | Defines the `cell` agent class (`Sense`, `GenerateStatus`, `Quiet`, `Move`, `Split`, `Die`) with `(y, x)` coordinates and injected RNG. |
+| `core/tools.py` | Implements `flatList`, `(y, x)` grid helpers, Numba `@njit`-accelerated `SGFDiffEq`, precomputed $O(N^2)$ `LGFThomasSolver` / `LGFDiffEq`, `RecurrentNeuralNetwork`, and matrix utilities. |
+| `core/main.py` | Headless simulation entrypoint and convenience API delegating directly to `core/engine.py`. |
+| `evolution/main_ga.py` | Multiprocessing genetic algorithm (`run_ga`, `evaluate_genome`) delegating fitness evaluation to `core/engine.py`. |
+| `evolution/tools_ga.py` | Genetic operators and population helpers (`Crossover`, per-gene `Mutate`, `initialize_population`, `select_tournament_parents`, `create_next_generation`, `DiracDelta`, `DifferentIndex`). |
 | `evolution/neat_cell_agent.py` | Cell agent variant driven by a `neat-python` recurrent network genome. |
-| `evolution/neat_parallel.py` | Parallel NEAT neuroevolution runner using `config/config-ca`. |
+| `evolution/neat_parallel.py` | Parallel NEAT neuroevolution runner using `config/config-ca` and `SimulationEngine`. |
 | `analysis/graph_generator.py` | Generates Erdős-Rényi, Watts-Strogatz, and Barabási-Albert graph ensembles for GRN topology studies. |
-| `analysis/graph_evaluation.py` | Evaluates saved network populations in parallel and plots fitness distributions. |
-| `visualization/plot.py` | Matplotlib `Environment` class, benchmark/fitness plots, and chemical phase-space `MapPlot`. |
-| `visualization/web_app.py` | Interactive Streamlit and Plotly web interface for real-time browser simulation. |
+| `analysis/graph_evaluation.py` | Evaluates saved network populations in parallel via `core.engine.run_simulation` and plots fitness distributions. |
+| `visualization/palettes.py` | Centralized Okabe-Ito colorblind-safe and legacy palettes plus discrete Plotly colorscales. |
+| `visualization/timelapse.py` | Headless PNG snapshot rendering and animated GIF assembly (`TimelapseExporter`). |
+| `visualization/plot.py` | Matplotlib `Environment` class, `make_live_plot_observer`, benchmark/fitness plots, and chemical phase-space `MapPlot`. |
+| `visualization/web_app.py` | Interactive Streamlit and Plotly web interface powered by `SimulationEngine`, accessible palettes, vector overlays, phase-space/GRN inspectors, and GIF export. |
 | `examples/` | Self-contained scripts (`run_simulation.py`, `run_evolution.py`, `generate_documentation_images.py`). |
-| `tests/` | `pytest` unit test suite covering PDE solvers, cell transitions, genetic operators, and network topologies. |
+| `tests/` | `pytest` unit test suite and golden numerical parity fixtures (`tests/fixtures/golden_parity_v0_2.json`). |
 
 ### Simulation Execution Flow
+
+#### Coordinate Convention
+
+All spatial indexing across `core/`, `evolution/`, and `visualization/` uses standardized row-major `(y, x)` ordering (`cell_grid[y][x]`, `chem_grid[y, x, channel]`, `CheckifOccupied(y, x, grid)`, and `CheckifPreferred(y_ori, x_ori, y, x)`). Within `cell`, compass directions map `North` to `y - 1`, `South` to `y + 1`, `East` to `x + 1`, and `West` to `x - 1`, rendered with `origin="lower"` in plots.
 
 The diagram below illustrates the discrete time-step loop coupling asynchronous cellular updates with continuous SGF/LGF reaction-diffusion integration:
 
 ```mermaid
 flowchart TD
-    Start["Initialize N x N Lattice\ncellgrid (flatList), SGF=0, LGF=0, Neumann Matrix T"] --> Seed["Seed Initial Cell at Lattice Center (N/2, N/2)"]
+    Start["Initialize N x N Lattice\ncell_grid (flatList), SGF=0, LGF=0\nPrecompute LGFThomasSolver (Neumann T)"] --> Seed["Seed Mother Cell at (y=N/2, x=N/2)"]
     Seed --> StepLoop["Time Step t = 0 .. T - 1"]
-    StepLoop --> Shuffle["Collect Living Cells & Shuffle Order\n(Asynchronous Update)"]
-    Shuffle --> CellLoop["For Each Living Cell at (y, x):\n1. Sense(SGF[y,x], LGF[y,x])\n2. Update RNN State V(t+1)\n3. Decode Action & Compass"]
-    CellLoop --> Action{"Selected Action"}
+    StepLoop --> Async["Zero sigma_m, lambda_m\nDraw Living Cells in Random Asynchronous Order"]
+    Async --> Sense["For Living Cell at (y, x):\n1. Sense(SGF[y,x], LGF[y,x])\n2. Update RNN State V(t+1)\n3. Decode Action & Compass"]
+    Sense --> Secrete["Record Local Secretions Before Action:\nsigma_m[y,x] = V[5], lambda_m[y,x] = V[6]"]
+    Secrete --> Action{"Selected Action"}
     Action -->|"1: Quiet"| Quiet["Remain at (y, x)"]
     Action -->|"2: Move"| Move["Migrate to Compass / Free Neighbor\n(flatList Rejects Out-of-Bounds)"]
     Action -->|"3: Split"| Split["Place Daughter Cell in Neighbor\n(flatList Rejects Out-of-Bounds)"]
-    Action -->|"0: Die"| Die["Vacate Site (y, x)"]
-    Quiet --> Secrete["Add Local Secretions\ndSGF[y,x] += V[5], dLGF[y,x] += V[6]"]
-    Move --> Secrete
-    Split --> Secrete
-    Die --> PDE
-    Secrete --> PDE["Integrate Chemical Fields over Lattice:\nSGF = SGFDiffEq(SGF, dSGF)\nLGF = LGFDiffEq(LGF, dLGF, T, I)"]
-    PDE --> MidCheck{"t == T / 2 ?"}
-    MidCheck -->|"Yes"| SaveMid["Record Midpoint Occupancy Matrix S_{T/2}"]
+    Action -->|"0: Die"| Die["Vacate Site (y, x)\nMark amidead = True"]
+    Quiet --> Prune["Prune Dead Cells from cell_list"]
+    Move --> Prune
+    Split --> Prune
+    Die --> Prune
+    Prune --> PDE["Integrate Chemical Fields:\nSGF = SGFDiffEq(SGF, sigma_m)\nLGF = LGFThomasSolver.step(LGF, lambda_m) [O(N^2)]"]
+    PDE --> MidCheck{"t == (T / 2) - 1 ?"}
+    MidCheck -->|"Yes"| SaveMid["Check <= 1% Cutoff\nRecord Midpoint Occupancy Matrix S_{T/2}"]
     MidCheck -->|"No"| EndCheck{"t == T - 1 ?"}
     SaveMid --> EndCheck
     EndCheck -->|"No"| StepLoop
-    EndCheck -->|"Yes"| Score["Record Final Occupancy Matrix S_T\n& Compute Homeostasis Fitness F"]
+    EndCheck -->|"Yes"| Score["Check Saturation\nRecord S_T & Compute Fitness F in [0, 1]"]
 ```
 
 ---

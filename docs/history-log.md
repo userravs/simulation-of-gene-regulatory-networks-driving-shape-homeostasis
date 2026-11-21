@@ -1,16 +1,18 @@
 # Project History and Roadmap
 
-This document summarizes the major development milestones of the Gene Regulatory Networks (GRN) shape homeostasis simulation project and links to the active GitHub Issues derived from the original 2017 thesis notes. For detailed per-commit release notes with timestamps, see [`CHANGELOG.md`](../CHANGELOG.md) and [`VERSION`](../VERSION).
+This document summarizes the major development milestones of the Gene Regulatory Networks (GRN) shape homeostasis simulation project and tracks the roadmap derived from the original 2017 thesis notes. For detailed release notes, see [`CHANGELOG.md`](../CHANGELOG.md) and [`VERSION`](../VERSION).
 
 ---
 
 ## Release & Milestone History
 
-### `v0.3.0` — Architecture Refactoring, `uv`, and CI/Test Suite (2026)
-- **Modern Python Packaging**: Migrated to PEP 621 [`pyproject.toml`](../pyproject.toml) and [`uv`](https://docs.astral.sh/uv/) for dependency management (`Python 3.11+`).
-- **Repository Restructuring**: Organized modules into PEP 420 namespace packages (`core/`, `evolution/`, `visualization/`, `analysis/`, `config/`, `examples/`, `scripts/`, `tests/`).
-- **API & Engine Modernization**: Updated NetworkX 3.x (`from_numpy_array`, `to_numpy_array`), Numba (`@njit`), and Matplotlib (`draw_idle`) calls; wired `visualization/web_app.py` and `examples/run_evolution.py` to the live cellular automata and reaction-diffusion engine.
-- **Continuous Integration & Unit Testing**: Added GitHub Actions workflow (`.github/workflows/ci.yml`) and a `pytest` unit test suite (`tests/`).
+### `v0.3.0` — Unified Headless Engine, Thomas ADI Solver, Evolution, Interactive Inspector & CI/Test Suite (2026)
+- **Unified Headless Core & Golden Numerical Parity Fixtures**: Decoupled `core/` and `evolution/` from Matplotlib via `core/engine.py` (`SimulationConfig`, `SimulationEngine`, `StepSnapshot`, `SimulationResult`, `run_simulation`), consolidated all four duplicated simulation loops (`core/main.py`, `evolution/main_ga.py`, `evolution/neat_parallel.py`, `visualization/web_app.py`, `analysis/graph_evaluation.py`), replaced $O(M^2)$ cell deletion with $O(M)$ Fisher-Yates shuffling, added deterministic PRNG seeding, and added golden numerical parity fixtures (`tests/fixtures/golden_parity_v0_2.json`).
+- **Precomputed $O(N^2)$ Thomas ADI Solver & `(y, x)` Coordinate Standardization**: Replaced per-step $O(N^3)$ `np.linalg.inv` in `LGFDiffEq` with a Numba `@njit` precomputed Thomas tridiagonal factorization (`LGFThomasSolver`, verified within `1e-12` against dense Crank-Nicolson and preserving zero-flux Neumann mass conservation), standardized row-major `(y, x)` coordinates across `core/`, `evolution/`, and `visualization/`, and updated `docs/architecture.md`.
+- **GA Offspring Diversity & NEAT `config-ca` Alignment**: Fixed `[-1, 1]` weight initialization (`initialize_population`), single-copy elitism with distinct tournament parents (`select_tournament_parents`, `create_next_generation`), per-gene Gaussian mutation with optional weight bounds, explicit multiprocessing genome passing (`evaluate_genome`, `run_ga`), and aligned `config/config-ca` (`fitness_threshold = 0.95` on `[0, 1]`, `neat-python 2.0` compatibility).
+- **Accessible Visualization, Headless Timelapse Export & Web Telemetry**: Added centralized Okabe-Ito colorblind-safe and legacy palettes (`visualization/palettes.py`), headless PNG/GIF `TimelapseExporter` (`visualization/timelapse.py`), deterministic seed controls, 1:1 square heatmaps, instant **Run Full Horizon** batch mode with **Timeline Scrubber**, per-step telemetry curves, and **Shape Homeostasis Summary** ($F$, $S_{T/2}$, $S_T$, $\Delta$) in `visualization/web_app.py`.
+- **Interactive GA Evolution, Phase-Space Decision Map, Directed GRN Graph & Vector Overlays**: Wired Tab 2 (`Analysis`) in `visualization/web_app.py` to `tools_ga` operators (`run_evolution_pass`) with a **Load Best Evolved GRN into Simulation** bridge, interactive 2D `(SGF, LGF)` steady-state decision maps (`compute_phase_space_map`, `create_phase_space_plot`), directed excitatory/inhibitory GRN topology graphs (`create_grn_network_plot`), and **Show Cell Polarization Arrows** / **Show LGF Gradient Vectors** ($\nabla \text{LGF}$) overlays (`extract_orientation_grid`, `compute_lgf_gradient`).
+- **Modern Python Packaging, Containers & Path-Filtered CI**: Migrated to PEP 621 [`pyproject.toml`](../pyproject.toml) and [`uv`](https://docs.astral.sh/uv/) (`Python 3.11+`) with PEP 420 namespace packages, unified Podman/Docker container scripts (`scripts/run_container.sh`, `scripts/teardown_container.sh`), added `docs/getting-started.md`, and split GitHub Actions into path-filtered `.github/workflows/ci.yml` and `.github/workflows/docker.yml` with Buildx caching and 67 `pytest` unit tests (`tests/`).
 - **Scientific Documentation & Topologies**: Consolidated mathematical and architectural documentation in [`docs/architecture.md`](./architecture.md) and added multi-topology graph generation (`erdos-renyi`, `watts-strogatz`, `barabasi-albert`) in `analysis/graph_generator.py`.
 
 ### `v0.2.0` — Containerization and Interactive Web Interface (2025)
@@ -29,11 +31,14 @@ This document summarizes the major development milestones of the Gene Regulatory
 
 ---
 
-## Planned Improvements (Derived from 2017 Thesis Notes)
+## Completed Roadmap Improvements (Derived from 2017 Thesis Notes)
 
-The following future improvements were identified from the original 2017 research notes:
+All planned improvements identified from the original 2017 research notes have been implemented and verified in `v0.3.0`:
 
-- `refactor(core)`: decouple simulation engine from Matplotlib plotting and consolidate duplicate `sim()` loops
-- `perf(core)`: optimize `LGFDiffEq` Crank-Nicolson solver, standardize coordinates, and add flow diagram
-- `feat(visualization)`: adopt colorblind-safe palette for cell states and add timelapse snapshot export
-- `feat(evolution)`: improve GA offspring diversity and align NEAT `config-ca` with `[0, 1]` fitness scale
+- [x] `docs(architecture)`: re-infuse `v0.1.0` (`6c3fae7`) thesis context and multi-topology CLI support
+- [x] `refactor(core)`: decouple simulation engine from Matplotlib plotting and consolidate duplicate `sim()` loops (`core/engine.py`)
+- [x] `perf(core)`: optimize `LGFDiffEq` Crank-Nicolson solver via $O(N^2)$ Thomas ADI factorization (`LGFThomasSolver`), standardize `(y, x)` coordinates, and add flow diagram
+- [x] `feat(visualization)`: adopt Okabe-Ito colorblind-safe palette (`visualization/palettes.py`) and add headless timelapse PNG/GIF export (`visualization/timelapse.py`)
+- [x] `feat(evolution)`: improve GA offspring diversity (`evolution/tools_ga.py`, `evolution/main_ga.py`) and align NEAT `config-ca` with `[0, 1]` fitness scale
+- [x] `docs(history)`: convert raw 2017 scratch notes in `docs/history-log.md` into structured milestone history
+- [x] `feat(visualization)`: add deterministic PRNG seed, batch timeline scrubber, homeostasis telemetry, interactive GA evolution tab, `(SGF, LGF)` phase-space decision map, directed GRN graph, and cell polarization compass / $\nabla \text{LGF}$ gradient vector overlays

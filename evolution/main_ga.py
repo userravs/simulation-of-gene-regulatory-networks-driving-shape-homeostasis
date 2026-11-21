@@ -2,25 +2,19 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 import csv
-import ctypes
 import multiprocessing as mp
 import os
 import sys
 import time
 import numpy as np
 
-from core.cell_agent import cell
-from core.tools import (
-    GenerateIMatrix,
-    GenerateTMatrix,
-    GetStructure,
-    LGFDiffEq,
-    SGFDiffEq,
-    flatList,
-)
-from evolution.tools_ga import Crossover, Mutate
-from visualization.plot import Environment
+from core.engine import StepSnapshot, run_simulation
+from evolution.tools_ga import create_next_generation, initialize_population
+
+population: np.ndarray | None = None
+fitness: np.ndarray | None = None
 
 
 def sim(
@@ -31,9 +25,12 @@ def sim(
     individual: int,
     nLattice: int,
     mode: bool,
+    *,
+    seed: int | None = None,
+    on_step: Callable[[StepSnapshot], None] | None = None,
 ) -> np.ndarray | None:
     """
-    Run a cellular automata simulation for fitness evaluation or visualization.
+    Run a cellular automata simulation via the unified core engine.
 
     Parameters
     ----------
@@ -51,132 +48,47 @@ def sim(
         Dimension of the square lattice grid.
     mode : bool
         True: evaluate fitness and return the binary structural difference matrix.
-        False: display simulation visually.
+        False: run full horizon with optional ``on_step`` observer and return None.
     """
-    np_cell_grid = np.zeros((nLattice, nLattice))
-    semi_flat_grid = [flatList(np_cell_grid[r, :]) for r in range(nLattice)]
-    cell_grid = flatList(semi_flat_grid)
-    chem_grid = np.zeros((nLattice, nLattice, 2))
-    halfway_struct = np.zeros((nLattice, nLattice))
-    final_struct = np.ones((nLattice, nLattice))
-
-    ix = nLattice // 2
-    iy = nLattice // 2
-    i_time = 0
-
-    cell_list = [cell(ix, iy, wMatrix, nNodes)]
-    cell_grid[ix][iy] = 1
-
-    # SGF/LGF reaction-diffusion parameters
-    delta_t = 1.0
-    delta_r = 1.0
-    delta_s = 0.5
-    delta_l = 0.1
-    diff_const = 1.0
-    t_matrix = GenerateTMatrix(nLattice)
-    i_matrix = GenerateIMatrix(nLattice)
-
-    if not mode:
-        (
-            cells_figure,
-            cells_subplot,
-            sgf_subplot,
-            lgf_subplot,
-            cell_plot,
-            sgf_plot,
-            lgf_plot,
-        ) = Environment.CellsGridFigure(nLattice, mode)
-
-    start_time_main_loop = time.time()
-
-    while i_time < timeSteps:
-        sigma_m = np.zeros((nLattice, nLattice))
-        lambda_m = np.zeros((nLattice, nLattice))
-
-        tmp_cell_list = list(cell_list)
-        while len(tmp_cell_list) > 0:
-            rnd_cell = np.random.randint(len(tmp_cell_list))
-            current_cell = tmp_cell_list[rnd_cell]
-            current_cell.border = nLattice
-
-            sgf_reading, lgf_reading = current_cell.Sense(chem_grid)
-            current_cell.GenerateStatus(sgf_reading, lgf_reading)
-
-            sigma_m[current_cell.yPos, current_cell.xPos] = current_cell.sgfAmount
-            lambda_m[current_cell.yPos, current_cell.xPos] = current_cell.lgfAmount
-
-            if current_cell.state == "Quiet":
-                current_cell.Quiet(cell_grid)
-            elif current_cell.state == "Split":
-                current_cell.Split(cell_grid, cell_list)
-            elif current_cell.state == "Move":
-                current_cell.Move(cell_grid)
-            else:
-                current_cell.Die(cell_grid)
-
-            del tmp_cell_list[rnd_cell]
-
-        for j_cell in range(len(cell_list) - 1, -1, -1):
-            if cell_list[j_cell].amidead:
-                del cell_list[j_cell]
-
-        chem_grid[:, :, 0] = SGFDiffEq(chem_grid[:, :, 0], sigma_m, delta_s, delta_t)
-        chem_grid[:, :, 1] = LGFDiffEq(
-            i_matrix,
-            t_matrix,
-            chem_grid[:, :, 1],
-            lambda_m,
-            delta_l,
-            delta_t,
-            delta_r,
-            diff_const,
-        )
-
-        if mode:
-            if len(cell_list) == 0:
-                halfway_struct = np.zeros((nLattice, nLattice))
-                final_struct = np.ones((nLattice, nLattice))
-                break
-            if i_time == int(timeSteps / 2) - 1:
-                if len(cell_list) <= int((nLattice**2) * 0.01):
-                    halfway_struct = np.zeros((nLattice, nLattice))
-                    final_struct = np.ones((nLattice, nLattice))
-                    break
-                halfway_struct = np.array(cell_grid)
-            elif i_time == timeSteps - 1:
-                if len(cell_list) == nLattice**2:
-                    halfway_struct = np.zeros((nLattice, nLattice))
-                    final_struct = np.ones((nLattice, nLattice))
-                else:
-                    final_struct = np.array(cell_grid)
-        else:
-            Environment.AntGridPlot(
-                cell_grid,
-                chem_grid,
-                nLattice,
-                cells_figure,
-                cells_subplot,
-                sgf_subplot,
-                lgf_subplot,
-                cell_plot,
-                sgf_plot,
-                lgf_plot,
-                i_time,
-                mode,
-            )
-
-        i_time += 1
-
-    elapsed = time.time() - start_time_main_loop
-    print(f"Avg time looping through cells: {elapsed / timeSteps:.3f} s, total: {elapsed:.3f} s")
-
-    halfway_struct = GetStructure(halfway_struct, nLattice)
-    final_struct = GetStructure(final_struct, nLattice)
-    delta_matrix = (halfway_struct != final_struct).astype(np.float64)
-
+    _ = (iGen, individual)
+    result = run_simulation(
+        wMatrix,
+        time_steps=timeSteps,
+        n_nodes=nNodes,
+        n_lattice=nLattice,
+        early_stop=mode,
+        seed=seed,
+        on_step=on_step,
+    )
     if mode:
-        return delta_matrix
+        return result.delta_matrix
     return None
+
+
+def evaluate_genome(
+    w_matrix: np.ndarray,
+    time_steps: int,
+    i_gen: int,
+    n_nodes: int,
+    individual: int,
+    n_lattice: int,
+    mode: bool = True,
+    seed: int | None = None,
+) -> float:
+    """Evaluate a single GRN weight matrix and return scalar fitness in [0.0, 1.0]."""
+    _ = (i_gen, individual)
+    start_time = time.time()
+    result = run_simulation(
+        w_matrix,
+        time_steps=time_steps,
+        n_nodes=n_nodes,
+        n_lattice=n_lattice,
+        early_stop=mode,
+        seed=seed,
+    )
+    secs = time.time() - start_time
+    print(f"Proc {os.getpid()}: Time taken to run sim: {secs:.3f} s")
+    return result.fitness
 
 
 def EvaluateIndividual(
@@ -187,39 +99,127 @@ def EvaluateIndividual(
     nLattice: int,
     mode: bool,
 ) -> np.ndarray:
-    """Evaluate a single individual's fitness in the shared population array."""
-    w_matrix = population[individual, :].reshape(nNodes, nNodes)
-    start_time = time.time()
-    delta_m = sim(w_matrix, timeSteps, iGen, nNodes, individual, nLattice, mode)
-    secs = time.time() - start_time
-    print(f"Proc {os.getpid()}: Time taken to run sim: {secs:.3f} s")
+    """Evaluate a single individual's fitness in the legacy shared population array."""
+    if population is None or fitness is None:
+        raise RuntimeError("Legacy global population and fitness buffers are not initialized.")
 
-    tot_sum = float(np.sum(delta_m))
-    fitness[individual] = 1.0 - (tot_sum / (nLattice**2))
+    w_matrix = population[individual, :].reshape(nNodes, nNodes)
+    fitness[individual] = evaluate_genome(
+        w_matrix, timeSteps, iGen, nNodes, individual, nLattice, mode
+    )
     return fitness
+
+
+def run_ga(
+    pop_size: int = 6,
+    n_nodes: int = 25,
+    n_generations: int = 15,
+    time_steps: int = 200,
+    n_lattice: int = 50,
+    *,
+    elite_num: int = 2,
+    tournament_size: int = 4,
+    crossover_prob: float = 0.8,
+    mutation_prob: float = 0.9,
+    gene_mutation_rate: float | None = None,
+    weight_bounds: tuple[float, float] = (-1.0, 1.0),
+    n_procs: int = 2,
+    chunk_size: int = 1,
+    seed: int | None = None,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Run the Genetic Algorithm and return (final_population, fitness_history)."""
+    if n_procs < 1:
+        raise ValueError("n_procs must be >= 1.")
+    if n_generations < 1:
+        raise ValueError("n_generations must be >= 1.")
+
+    rng = np.random.default_rng(seed)
+    n_genes = n_nodes**2
+    pop = initialize_population(
+        pop_size,
+        n_genes,
+        weight_bounds=weight_bounds,
+        rng=rng,
+    )
+    fitness_info = np.zeros((n_generations, 2), dtype=np.float64)
+    generation_avg = 0.0
+
+    for i_gen in range(n_generations):
+        start_time_generation = time.time()
+        print(f"\nGeneration #{i_gen + 1}")
+
+        args = [
+            (
+                pop[idx].reshape(n_nodes, n_nodes),
+                time_steps,
+                i_gen,
+                n_nodes,
+                idx,
+                n_lattice,
+                True,
+                (seed + i_gen * pop_size + idx) if seed is not None else None,
+            )
+            for idx in range(pop_size)
+        ]
+
+        if n_procs > 1:
+            with mp.Pool(processes=n_procs) as pool:
+                scores = np.asarray(
+                    pool.starmap(evaluate_genome, args, chunk_size),
+                    dtype=np.float64,
+                )
+        else:
+            scores = np.asarray(
+                [evaluate_genome(*item) for item in args],
+                dtype=np.float64,
+            )
+
+        fitness_info[i_gen, 0] = float(np.max(scores))
+        fitness_info[i_gen, 1] = float(np.mean(scores))
+        print(
+            f"Gen: {i_gen + 1}, max fit: {fitness_info[i_gen, 0]:.3f}, "
+            f"avg fit: {fitness_info[i_gen, 1]:.3f}"
+        )
+
+        if i_gen < n_generations - 1:
+            pop = create_next_generation(
+                pop,
+                scores,
+                elite_num=elite_num,
+                tournament_size=tournament_size,
+                crossover_prob=crossover_prob,
+                mutation_prob=mutation_prob,
+                gene_mutation_rate=gene_mutation_rate,
+                weight_bounds=weight_bounds,
+                rng=rng,
+            )
+
+        secs = time.time() - start_time_generation
+        generation_avg += secs
+        minutes = int(secs / 60)
+        rem_secs = 60.0 * ((secs / 60.0) - minutes)
+        print(f"Time to complete generation: {minutes} m {rem_secs:.3f} s")
+
+    avg_gen_min = int(generation_avg / n_generations / 60)
+    avg_gen_sec = 60.0 * ((generation_avg / n_generations / 60.0) - avg_gen_min)
+    print(f"Avg time per generation: {avg_gen_min} m {avg_gen_sec:.3f} s")
+
+    return pop, fitness_info
 
 
 if __name__ == "__main__":
     nProcs = 2
-    DEFAULT_VALUE = -1
     popSize = 6
     nNodes = 25
-    nGenes = nNodes**2
-    crossoverProb = 1.0
-    mutationProb = 1.0
-    crossMutProb = 0.5
+    crossoverProb = 0.8
+    mutationProb = 0.9
     tournamentSize = 4
     eliteNum = 2
     nOfGenerations = 15
     timeSteps = 200
     nLattice = 50
-    mode = True
     fileName = sys.argv[1]
     chunkSize = 1
-
-    generationAvg = 0.0
-    contestants = np.zeros((tournamentSize, nGenes))
-    fitnessInfo = np.zeros((nOfGenerations, 2))
 
     print(
         f"Parameters:\nFile name: {fileName}\n"
@@ -228,84 +228,20 @@ if __name__ == "__main__":
         f"Crossover Prob = {crossoverProb}, Mutation prob = {mutationProb}"
     )
 
-    population_base = mp.Array(ctypes.c_float, popSize * nGenes, lock=False)
-    population = np.frombuffer(population_base, dtype=ctypes.c_float).reshape(popSize, nGenes)
-    np.copyto(population, np.random.rand(popSize, nGenes))
-
-    fitness_base = mp.Array(ctypes.c_float, popSize, lock=False)
-    fitness = np.frombuffer(fitness_base, dtype=ctypes.c_float)
-
-    for iGen in range(nOfGenerations):
-        start_time_generation = time.time()
-        print(f"\nGeneration #{iGen + 1}")
-
-        fitness.fill(DEFAULT_VALUE)
-        args = [
-            (idx, timeSteps, iGen, nNodes, nLattice, mode) for idx in range(popSize)
-        ]
-
-        with mp.Pool(processes=nProcs) as pool:
-            pool.starmap(EvaluateIndividual, args, chunkSize)
-
-        sorted_fitness = np.argsort(fitness)
-        tempPopulation = np.zeros((popSize, nGenes))
-
-        fitnessInfo[iGen, 0] = np.amax(fitness)
-        fitnessInfo[iGen, 1] = np.average(fitness)
-        print(
-            f"Gen: {iGen + 1}, max fit: {fitness[sorted_fitness[popSize - 1]]:.3f}, "
-            f"avg fit: {np.average(fitness):.3f}"
-        )
-
-        # Elitism: preserve the top eliteNum individuals
-        for i_elit in range(1, eliteNum + 1):
-            index = sorted_fitness[popSize - i_elit]
-            tempPopulation[i_elit - 1, :] = np.array(population[index, :])
-
-        # Tournament selection over the remaining population
-        loopCounter = 0
-        while len(sorted_fitness) >= tournamentSize:
-            selectedInd = np.random.choice(
-                range(len(sorted_fitness)), tournamentSize, replace=False
-            )
-            selectedInd.sort()
-
-            win_index1 = sorted_fitness[selectedInd[tournamentSize - 1]]
-            contestants[0, :] = np.array(population[win_index1, :])
-            win_index2 = sorted_fitness[selectedInd[tournamentSize - 2]]
-            contestants[1, :] = np.array(population[win_index2, :])
-
-            if np.random.random() >= crossMutProb:
-                contestants[2, :], contestants[3, :] = Crossover(
-                    contestants[0, :], contestants[1, :], crossoverProb
-                )
-            else:
-                contestants[2, :], contestants[3, :] = Mutate(
-                    np.array(contestants[0, :]),
-                    np.array(contestants[1, :]),
-                    mutationProb,
-                )
-
-            for offset, ix in enumerate(selectedInd):
-                sorted_fitness = np.delete(sorted_fitness, ix - offset)
-
-            for jk in range(tournamentSize):
-                index = eliteNum + (loopCounter * tournamentSize) + jk
-                tempPopulation[index] = contestants[jk, :]
-            loopCounter += 1
-
-        population = np.array(tempPopulation)
-
-        secs = time.time() - start_time_generation
-        generationAvg += secs
-        minutes = int(secs / 60)
-        rem_secs = 60.0 * ((secs / 60.0) - minutes)
-        print(f"Time to complete generation: {minutes} m {rem_secs:.3f} s")
-
-    avg_gen_min = int(generationAvg / nOfGenerations / 60)
-    avg_gen_sec = 60.0 * ((generationAvg / nOfGenerations / 60.0) - avg_gen_min)
-    print(f"Avg time per generation: {avg_gen_min} m {avg_gen_sec:.3f} s")
+    final_pop, _ = run_ga(
+        pop_size=popSize,
+        n_nodes=nNodes,
+        n_generations=nOfGenerations,
+        time_steps=timeSteps,
+        n_lattice=nLattice,
+        elite_num=eliteNum,
+        tournament_size=tournamentSize,
+        crossover_prob=crossoverProb,
+        mutation_prob=mutationProb,
+        n_procs=nProcs,
+        chunk_size=chunkSize,
+    )
 
     with open(f"{fileName}.csv", "w", encoding="utf-8", newline="") as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerows(population)
+        writer.writerows(final_pop)

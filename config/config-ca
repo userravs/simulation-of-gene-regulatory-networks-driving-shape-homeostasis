@@ -1,14 +1,15 @@
-#--- parameters fot the cellular network 		---#
-#--- based on the parameters for the XOR-2 experiment 	---#
+#--- Parameters for the cellular automaton GRN simulation ---#
+#--- Homeostasis fitness F lies strictly in [0.0, 1.0]    ---#
 
 [NEAT]
 fitness_criterion     = mean
-# algorithm finishes when avg fitness reaches threshold value
-fitness_threshold     = 8.0
+# Algorithm finishes when mean fitness reaches threshold in (0.0, 1.0]
+fitness_threshold     = 0.95
 pop_size              = 20
 reset_on_extinction   = False
-# If this evaluates to True, when all species simultaneously become 
-# extinct due to stagnation, a new random population will be created. 
+no_fitness_termination = False
+# If this evaluates to True, when all species simultaneously become
+# extinct due to stagnation, a new random population will be created.
 # If False, a CompleteExtinctionException will be thrown.
 
 [DefaultGenome]
@@ -85,4 +86,5 @@ species_elitism      = 1
 [DefaultReproduction]
 elitism            = 1
 survival_threshold = 0.2
+min_species_size   = 1
 

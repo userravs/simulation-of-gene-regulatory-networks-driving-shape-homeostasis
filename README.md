@@ -21,130 +21,33 @@
 
 ## Overview
 
-This software simulates multicellular collectives where shape homeostasis emerges from local cellular interactions. It integrates a 2D discrete **cellular automaton**, reaction-diffusion solvers for **Short-range (SGF)** and **Long-range (LGF)** growth factors, intracellular **recurrent neural networks**, and **evolutionary optimization** (Genetic Algorithms and NEAT), based on the framework of [*Gerlee et al. (2015)*](https://research.chalmers.se/en/publication/251511).
-
-Key scientific objectives include:
-
-- Simulating multicellular collectives and observing adaptive morphogenesis under dynamic chemical environments.
-- Generalizing the intracellular signaling network into a fully connected **Recurrent Neural Network (RNN)** to expand the evolutionary search space.
-- Classifying evolved GRNs into **three major behavioral classes** that achieve shape homeostasis through a dynamic equilibrium of proliferation (`Split`), migration (`Move`), quiescence (`Quiet`), and apoptosis (`Die`).
-- Exploring network topology effects across **Erdős-Rényi**, **Watts-Strogatz**, and **Barabási-Albert** graph architectures.
-
-```mermaid
-flowchart LR
-    subgraph Topologies["Graph Topologies (analysis/)"]
-        ER["Erdos-Renyi"]
-        WS["Watts-Strogatz"]
-        BA["Barabasi-Albert"]
-    end
-
-    subgraph Engine["Core Simulation Engine (core/)"]
-        RNN["Intracellular RNN\n(RecurrentNeuralNetwork)"]
-        CA["2D Cellular Automaton\n(Quiet, Move, Split, Die)"]
-        PDE["Reaction-Diffusion PDEs\n(SGF Euler & LGF Crank-Nicolson)"]
-        RNN --> CA --> PDE --> RNN
-    end
-
-    subgraph Evolution["Evolutionary Optimization (evolution/)"]
-        GA["Parallel Genetic Algorithm\n(main_ga.py)"]
-        NEAT["NEAT Neuroevolution\n(neat_parallel.py)"]
-    end
-
-    subgraph UI["Visualization & Analysis (visualization/)"]
-        Web["Streamlit & Plotly Web App\n(web_app.py)"]
-        Plot["Matplotlib & Phase-Space Maps\n(plot.py)"]
-    end
-
-    Topologies --> Engine
-    Evolution <-->|"Fitness F in [0, 1]"| Engine
-    Engine --> UI
-```
-
----
+This platform models self-organizing multicellular collectives where shape homeostasis emerges from local cellular interactions, coupling a 2D non-toroidal cellular automaton, reaction-diffusion solvers for Short-range (SGF) and Long-range (LGF) growth factors ($O(N^2)$ Thomas ADI Crank-Nicolson), intracellular Recurrent Neural Networks (RNNs), and evolutionary optimization (Genetic Algorithms and NEAT) based on [*Gerlee et al. (2015)*](https://research.chalmers.se/en/publication/251511). See [docs/architecture.md](./docs/architecture.md) for the mathematical model, research objectives, and system diagrams.
 
 ## Quick Start
 
-### Option 1: Container — Podman or Docker (Recommended on macOS & Linux)
-
 ```bash
+# Container (Podman or Docker — recommended on macOS & Linux)
 git clone https://github.com/j0sees/Simulation-of-Gene-Regulatory-Networks-Driving-Shape-Homeostasis.git
-cd Simulation-of-Gene-Regulatory-Networks-Driving-Shape-Homeostasis
+cd Simulation-of-Gene-Regulatory-Networks-Driving-Shape-Homeostasis && ./scripts/run_container.sh
 
-# Auto-detects Podman or Docker, builds the image, and starts the web app at http://localhost:8501
-./scripts/run_container.sh
+# Or run locally with Python 3.11+ and uv (http://localhost:8501)
+uv sync --dev && ./scripts/run_web_app.sh
 ```
 
-### Option 2: Local Setup with `uv`
-
-Requires **Python 3.11+** and **[uv](https://docs.astral.sh/uv/)**:
-
-```bash
-# Install dependencies (including dev tools)
-uv sync --dev
-
-# Launch the interactive web interface at http://localhost:8501
-./scripts/run_web_app.sh
-```
-
-### Command-Line Execution & Testing
-
-```bash
-# Run a standalone simulation or genetic algorithm example
-uv run python examples/run_simulation.py
-uv run python examples/run_evolution.py
-
-# Regenerate documentation figures
-uv run python examples/generate_documentation_images.py
-
-# Run linter and unit test suite
-uv run ruff check .
-uv run pytest -v
-```
-
----
-
-## Repository Structure
-
-```text
-├── analysis/             # Network topology generation and evaluation (Erdős-Rényi, etc.)
-├── config/               # NEAT configuration parameters (config-ca)
-├── core/                 # Core cellular automata engine, cell agent, and PDE solvers
-├── docs/                 # Project documentation and example figures
-├── evolution/            # Genetic Algorithm (main_ga.py) and NEAT neuroevolution
-├── examples/             # Runnable simulation, evolution, and figure generation scripts
-├── scripts/              # Helper scripts (run_container.sh, run_web_app.sh, teardown_container.sh)
-├── tests/                # Pytest unit test suite
-├── visualization/        # Matplotlib plotting utilities, Gnuplot script, and Streamlit app
-├── CHANGELOG.md          # Release changelog with commit references and timestamps
-├── CITATION.cff          # Citation metadata for GitHub and academic references
-├── CODE_OF_CONDUCT.md    # Contributor Covenant Code of Conduct
-├── CONTRIBUTING.md       # Contribution workflow, coding standards, and pre-PR checks
-├── Dockerfile            # Container image definition (Python 3.12 + uv)
-├── docker-compose.yml    # Docker Compose service configuration
-├── pyproject.toml        # Project metadata, dependencies, and tool configuration
-└── VERSION               # Canonical semantic version file
-```
-
----
+See [docs/getting-started.md](./docs/getting-started.md) for CLI runners, repository layout, and verification commands.
 
 ## Documentation
 
-Detailed guides are located in the [`docs/`](./docs/README.md) directory:
-
-- **[Documentation Index](./docs/README.md)** — Overview of all guides and testing instructions
-- **[Model & Architecture](./docs/architecture.md)** — Mathematical model, cellular automata rules, reaction-diffusion PDEs, and code architecture
-- **[Web Interface Guide](./docs/web-interface.md)** — Interactive Streamlit & Plotly simulation controls
-- **[Docker Guide](./docs/docker.md)** — Container setup, volume mounts, and troubleshooting
-- **[Development History](./docs/history-log.md)** — Chronological research and modernization log
-- **[Changelog](./CHANGELOG.md)** — Versioned release notes with commit references and timestamps
-- **[Contributing Guide](./CONTRIBUTING.md)** — Trunk-Based Development workflow, `uv` setup, and pre-PR verification
-- **[Code of Conduct](./CODE_OF_CONDUCT.md)** — Community standards for scientific and open-source collaboration
-
----
+| Topic | Guide |
+|---|---|
+| **Setup, CLI & Layout** | [Getting Started & CLI](./docs/getting-started.md) |
+| **Model & Architecture** | [Mathematical Model & Software Architecture](./docs/architecture.md) |
+| **Interactive UI & Containers** | [Web Interface](./docs/web-interface.md) · [Docker Guide](./docs/docker.md) |
+| **Project & Governance** | [Full Docs Index](./docs/README.md) · [History](./docs/history-log.md) · [Changelog](./CHANGELOG.md) · [Contributing](./CONTRIBUTING.md) · [Code of Conduct](./CODE_OF_CONDUCT.md) |
 
 ## Authors & License
 
 - **Original 2017 Thesis Baseline (`v0.1.0`)**: **[M.Sc. José Esteban Pérez-Hidalgo](https://orion.tec.ac.cr/en/persons/jos%C3%A9-esteban-p%C3%A9rez-hidalgo/)** ([@j0sees](https://github.com/j0sees), [ORCID `0000-0001-7184-9974`](https://orcid.org/0000-0001-7184-9974), School of Physics, Costa Rica Institute of Technology — M.Sc. in Complex Adaptive Systems, University of Gothenburg), supervised by **[Ph.D. Philip Gerlee](https://research.chalmers.se/en/person/gerlee)** (University of Gothenburg & Chalmers University of Technology) — [Baseline (`6c3fae7`)](https://github.com/j0sees/Simulation-of-Gene-Regulatory-Networks-Driving-Shape-Homeostasis/tree/6c3fae7834a2ca502b1a439d7535c4adab1673f3)
-- **Software Architecture & Lead Maintainer (`v0.2.0`–`v0.3.0`)**: **Reymer Vargas** ([@userravs](https://github.com/userravs), Independent Researcher) — Software architecture, Python 3 refactoring, interactive web platform, containerization, and CI/test suite
+- **Software Architecture, Core Engine & Lead Maintainer (`v0.2.0`–`v0.3.0`)**: **Reymer Vargas** ([@userravs](https://github.com/userravs), Independent Research Software Engineer) — Unified headless simulation engine (`core/engine.py`), $O(N^2)$ Thomas ADI reaction-diffusion solver (`LGFThomasSolver`), evolutionary diversity & NEAT upgrades, interactive phase-space/GRN inspector & vector overlays, accessible Okabe-Ito visualization & timelapse GIF exporter, Podman/Docker containerization, and CI/test suite
 - **Citation**: For academic citation metadata (BibTeX / APA), see [`CITATION.cff`](./CITATION.cff) or use the **"Cite this repository"** button on GitHub.
 - **License**: Released under the [MIT License](./LICENSE).

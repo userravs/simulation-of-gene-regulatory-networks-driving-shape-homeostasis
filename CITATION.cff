@@ -3,7 +3,7 @@ title: "Simulation of Gene Regulatory Networks Driving Shape Homeostasis"
 message: "If you use this software in your research, please cite it using the metadata below."
 type: software
 version: "0.3.0"
-date-released: "2026-11-04"
+date-released: "2026-11-21"
 license: MIT
 repository-code: "https://github.com/j0sees/Simulation-of-Gene-Regulatory-Networks-Driving-Shape-Homeostasis"
 authors:
@@ -15,7 +15,7 @@ authors:
     website: "https://orion.tec.ac.cr/en/persons/jos%C3%A9-esteban-p%C3%A9rez-hidalgo/"
   - family-names: "Vargas"
     given-names: "Reymer"
-    affiliation: "Independent Researcher"
+    affiliation: "Independent Research Software Engineer"
 references:
   - type: thesis
     title: "Classification of Gene Regulatory Networks Driving Shape Homeostasis"

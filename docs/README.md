@@ -1,9 +1,10 @@
 # Documentation Index
 
-This directory contains the technical and scientific documentation for the Gene Regulatory Networks (GRN) shape homeostasis simulation project.
+This directory contains the technical and scientific documentation for the **Simulation of Gene Regulatory Networks Driving Shape Homeostasis** project.
 
 ## Guides
 
+- **[getting-started.md](getting-started.md)** — Installation via Podman/Docker or `uv`, CLI examples, repository layout, and local verification.
 - **[architecture.md](architecture.md)** — Mathematical model, biological background, cellular automata dynamics, SGF/LGF reaction-diffusion equations, evolutionary optimization, and package architecture.
 - **[web-interface.md](web-interface.md)** — Setup, features, and workflow guide for the interactive Streamlit web application (`visualization/web_app.py`).
 - **[docker.md](docker.md)** — Container build architecture, Docker Compose usage, and troubleshooting.
@@ -25,11 +26,10 @@ uv run python examples/generate_documentation_images.py
 
 ## Continuous Integration and Testing
 
-An automated GitHub Actions workflow (`.github/workflows/ci.yml`) runs on free `ubuntu-latest` runners for every push and pull request to `main`:
+Automated GitHub Actions workflows run on free `ubuntu-latest` runners with path filters to avoid redundant builds on unrelated edits:
 
-- **Linting & Static Validation**: Validates shell scripts (`bash -n`), checks Python style with `ruff`, and compiles all Python modules.
-- **Unit Test Suite (`tests/`)**: Runs `pytest` across PDE diffusion solvers, RNN activation dynamics, cell agent state transitions, genetic algorithm operators, and network topology generators.
-- **Docker Build Verification**: Builds the `Dockerfile` and verifies module imports inside the container.
+- **Lint & Unit Tests (`.github/workflows/ci.yml`)**: Triggered on changes to Python packages (`core/`, `evolution/`, `visualization/`, `analysis/`, `examples/`), `config/`, `scripts/`, `tests/`, `pyproject.toml`, or `ci.yml` (skipping docs-only updates). Validates shell scripts (`bash -n`), runs `ruff check`, compiles Python bytecode, and runs `pytest -v` under `MPLBACKEND=Agg`.
+- **Docker Build & Smoke Check (`.github/workflows/docker.yml`)**: Triggered only on changes to `Dockerfile`, `.dockerignore`, `docker-compose.yml`, `pyproject.toml`, container scripts (`scripts/run_container.sh`, `scripts/teardown_container.sh`), or `docker.yml` (plus manual `workflow_dispatch`). Builds `grn-simulation:ci` with Buildx layer caching and verifies package imports inside the container.
 
 To run all checks locally with `uv`:
 

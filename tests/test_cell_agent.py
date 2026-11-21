@@ -73,3 +73,34 @@ def test_cell_actions_quiet_move_split_die() -> None:
     assert agent.amidead
     assert grid[2][2] == 0
 
+
+def test_cell_move_and_split_non_toroidal_and_yx_coordinates() -> None:
+    """North border should block wrap-around and Move/Split should check (y, x) occupancy."""
+    size = 5
+    n_nodes = 8
+    w_matrix = np.zeros((n_nodes, n_nodes), dtype=np.float64)
+
+    # Occupy South (1, 3), East (0, 4), and West (0, 2) around (y=0, x=3)
+    # Preferred North is [-1, 3], which must raise IndexError in flatList rather than wrap.
+    grid = _make_empty_grid(size)
+    agent = cell(0, 3, w_matrix, n_nodes)
+    grid[0][3] = 1
+    grid[1][3] = 1
+    grid[0][4] = 1
+    grid[0][2] = 1
+    agent.orientation = [-1, 3]
+
+    agent.Move(grid)
+    assert (agent.yPos, agent.xPos) == (0, 3)
+    assert grid[size - 1][3] == 0
+    assert grid[0][3] == 1
+
+    # Free West (0, 2) only; Split must pick (y=0, x=2) using row-major (y, x) checks
+    grid[0][2] = 0
+    cell_list = [agent]
+    agent.Split(grid, cell_list)
+    assert len(cell_list) == 2
+    assert (cell_list[1].yPos, cell_list[1].xPos) == (0, 2)
+    assert grid[0][2] == 1
+    assert grid[0][3] == 3
+
