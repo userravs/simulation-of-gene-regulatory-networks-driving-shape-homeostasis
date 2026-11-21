@@ -19,14 +19,9 @@
 
 ---
 
-- **Original Research & Mathematical Model (`v0.1.0`)**: **M.Sc. J. Esteban Pérez-Hidalgo** ([@j0sees](https://github.com/j0sees), School of Physics, Costa Rica Institute of Technology), supervised by **Ph.D. Philip Gerlee** (Department of Mathematical Sciences, University of Gothenburg & Chalmers University of Technology, Sweden) — [Original Baseline (`6c3fae7`)](https://github.com/j0sees/Simulation-of-Gene-Regulatory-Networks-Driving-Shape-Homeostasis/tree/6c3fae7834a2ca502b1a439d7535c4adab1673f3)
-- **Software Architecture & Lead Maintainer (`v0.2.0`–`v0.3.0`)**: **Reymer Vargas** ([@userravs](https://github.com/userravs), Independent Research Software Engineer)
-
----
-
 ## Overview
 
-This software simulates multicellular collectives where shape homeostasis emerges from local cellular interactions. It integrates a 2D discrete **cellular automaton**, reaction-diffusion solvers for **Short-range (SGF)** and **Long-range (LGF)** growth factors, intracellular **recurrent neural networks**, and **evolutionary optimization** (Genetic Algorithms and NEAT), based on the framework of *Gerlee et al. (2015)*.
+This software simulates multicellular collectives where shape homeostasis emerges from local cellular interactions. It integrates a 2D discrete **cellular automaton**, reaction-diffusion solvers for **Short-range (SGF)** and **Long-range (LGF)** growth factors, intracellular **recurrent neural networks**, and **evolutionary optimization** (Genetic Algorithms and NEAT), based on the framework of [*Gerlee et al. (2015)*](https://research.chalmers.se/en/publication/251511).
 
 Key scientific objectives include:
 
@@ -149,6 +144,7 @@ Detailed guides are located in the [`docs/`](./docs/README.md) directory:
 
 ## Authors & License
 
-- **J. Esteban Pérez-Hidalgo** ([@j0sees](https://github.com/j0sees), School of Physics, Costa Rica Institute of Technology) — Original research, mathematical model, and initial simulation engine (`v0.1.0`, master's thesis *"Classification of Gene Regulatory Networks Driving Shape Homeostasis"*, `jose.perez at tec.ac.cr`)
-- **Reymer Vargas** ([@userravs](https://github.com/userravs), Independent Research Software Engineer) — Software architecture, Python 3 refactoring, interactive web platform, containerization, CI/test suite, and lead maintainer (`v0.2.0`–`v0.3.0`)
-- **License**: Released under the [MIT License](LICENSE).
+- **Original 2017 Thesis Baseline (`v0.1.0`)**: **[M.Sc. José Esteban Pérez-Hidalgo](https://orion.tec.ac.cr/en/persons/jos%C3%A9-esteban-p%C3%A9rez-hidalgo/)** ([@j0sees](https://github.com/j0sees), [ORCID `0000-0001-7184-9974`](https://orcid.org/0000-0001-7184-9974), School of Physics, Costa Rica Institute of Technology — M.Sc. in Complex Adaptive Systems, University of Gothenburg), supervised by **[Ph.D. Philip Gerlee](https://research.chalmers.se/en/person/gerlee)** (University of Gothenburg & Chalmers University of Technology) — [Baseline (`6c3fae7`)](https://github.com/j0sees/Simulation-of-Gene-Regulatory-Networks-Driving-Shape-Homeostasis/tree/6c3fae7834a2ca502b1a439d7535c4adab1673f3)
+- **Software Architecture & Lead Maintainer (`v0.2.0`–`v0.3.0`)**: **Reymer Vargas** ([@userravs](https://github.com/userravs), Independent Researcher) — Software architecture, Python 3 refactoring, interactive web platform, containerization, and CI/test suite
+- **Citation**: For academic citation metadata (BibTeX / APA), see [`CITATION.cff`](./CITATION.cff) or use the **"Cite this repository"** button on GitHub.
+- **License**: Released under the [MIT License](./LICENSE).

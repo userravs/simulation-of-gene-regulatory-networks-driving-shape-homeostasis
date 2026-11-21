@@ -2,9 +2,9 @@
 
 ## 1. Scientific Background and Thesis Objectives
 
-This project implements the computational framework developed in the master's thesis **"Classification of Gene Regulatory Networks Driving Shape Homeostasis"** by **M.Sc. J. Esteban Pérez-Hidalgo** ([@j0sees](https://github.com/j0sees), supervised by **Ph.D. Philip Gerlee**; [original `v0.1.0` baseline `6c3fae7`](https://github.com/j0sees/Simulation-of-Gene-Regulatory-Networks-Driving-Shape-Homeostasis/tree/6c3fae7834a2ca502b1a439d7535c4adab1673f3)), with software architecture, Python 3 refactoring, web interface, and containerization engineered and maintained by **Reymer Vargas** ([@userravs](https://github.com/userravs), Independent Research Software Engineer, `v0.2.0`–`v0.3.0`). The model builds upon:
+This project implements the computational framework developed in the master's thesis **"Classification of Gene Regulatory Networks Driving Shape Homeostasis"** (*M.Sc. in Complex Adaptive Systems*) by **[M.Sc. José Esteban Pérez-Hidalgo](https://orion.tec.ac.cr/en/persons/jos%C3%A9-esteban-p%C3%A9rez-hidalgo/)** ([@j0sees](https://github.com/j0sees), [ORCID `0000-0001-7184-9974`](https://orcid.org/0000-0001-7184-9974), School of Physics, Costa Rica Institute of Technology; supervised by **[Ph.D. Philip Gerlee](https://research.chalmers.se/en/person/gerlee)**; [original `v0.1.0` baseline `6c3fae7`](https://github.com/j0sees/Simulation-of-Gene-Regulatory-Networks-Driving-Shape-Homeostasis/tree/6c3fae7834a2ca502b1a439d7535c4adab1673f3)), with software architecture, Python 3 refactoring, web interface, and containerization engineered and maintained by **Reymer Vargas** ([@userravs](https://github.com/userravs), Independent Researcher, `v0.2.0`–`v0.3.0`). The model builds upon:
 
-> Gerlee, P., Basanta, D., & Anderson, A. R. A. (2015). *The influence of cellular characteristics on the evolution of shape homeostasis*. Journal of the Royal Society Interface, 12(103), 20141222.
+> Gerlee, P., Basanta, D., & Anderson, A. R. A. (2015). *The influence of cellular characteristics on the evolution of shape homeostasis*. Journal of the Royal Society Interface, 12(103), 20141222. [Chalmers Publication `251511`](https://research.chalmers.se/en/publication/251511) | [DOI: `10.1098/rsif.2014.1222`](https://doi.org/10.1098/rsif.2014.1222)
 
 ### Core Research Objectives
 The thesis expands the Gerlee et al. framework to investigate how individual cellular capabilities—intracellular gene regulation, spatial polarization, and diffusible chemical signaling—give rise to self-organizing, homeostatic multicellular structures:
@@ -188,8 +188,8 @@ flowchart TD
 
 ## 4. References and Further Reading
 
-1. **Pérez-Hidalgo, J. E.** (2017). *Classification of Gene Regulatory Networks Driving Shape Homeostasis*. Master's Thesis, Department of Mathematical Sciences, University of Gothenburg & Chalmers University of Technology (supervised by Ph.D. Philip Gerlee).
-2. **Gerlee, P., Basanta, D., & Anderson, A. R. A.** (2015). *The influence of cellular characteristics on the evolution of shape homeostasis*. Journal of the Royal Society Interface, 12(103), 20141222.
+1. **Pérez-Hidalgo, J. E.** (2017). *Classification of Gene Regulatory Networks Driving Shape Homeostasis*. M.Sc. Thesis in Complex Adaptive Systems, Department of Mathematical Sciences, University of Gothenburg & Chalmers University of Technology (supervised by [Ph.D. Philip Gerlee](https://research.chalmers.se/en/person/gerlee)).
+2. **Gerlee, P., Basanta, D., & Anderson, A. R. A.** (2015). *The influence of cellular characteristics on the evolution of shape homeostasis*. Journal of the Royal Society Interface, 12(103), 20141222. ([Chalmers Publication `251511`](https://research.chalmers.se/en/publication/251511), [DOI: `10.1098/rsif.2014.1222`](https://doi.org/10.1098/rsif.2014.1222))
 3. **Gerlee, P., Kim, E., & Anderson, A. R. A.** (2015). *Bridging scales in cancer progression: mapping genotype to phenotype using neural networks*. Seminars in Cancer Biology, 30, 30–41.
 4. **Stanley, K. O., & Miikkulainen, R.** (2002). *Evolving Neural Networks through Augmenting Topologies*. Evolutionary Computation, 10(2), 99–127.
 5. **Alon, U.** (2019). *An Introduction to Systems Biology: Design Principles of Biological Circuits* (2nd ed.). CRC Press.

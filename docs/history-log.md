@@ -19,7 +19,7 @@ This document summarizes the major development milestones of the Gene Regulatory
 - **Modular Codebase**: Separated the flat root scripts into `core/`, `evolution/`, `visualization/`, `analysis/`, and `examples/`.
 
 ### `v0.1.0` — Original Master's Thesis Research (2017)
-- **Baseline Commit**: [`j0sees/Simulation-of-Gene-Regulatory-Networks-Driving-Shape-Homeostasis@6c3fae7`](https://github.com/j0sees/Simulation-of-Gene-Regulatory-Networks-Driving-Shape-Homeostasis/tree/6c3fae7834a2ca502b1a439d7535c4adab1673f3) (*Sept–Dec 2017*, M.Sc. J. Esteban Pérez-Hidalgo, supervised by Ph.D. Philip Gerlee).
+- **Baseline Commit**: [`j0sees/Simulation-of-Gene-Regulatory-Networks-Driving-Shape-Homeostasis@6c3fae7`](https://github.com/j0sees/Simulation-of-Gene-Regulatory-Networks-Driving-Shape-Homeostasis/tree/6c3fae7834a2ca502b1a439d7535c4adab1673f3) (*Sept–Dec 2017*, [M.Sc. José Esteban Pérez-Hidalgo](https://orion.tec.ac.cr/en/persons/jos%C3%A9-esteban-p%C3%A9rez-hidalgo/), M.Sc. in Complex Adaptive Systems, supervised by [Ph.D. Philip Gerlee](https://research.chalmers.se/en/person/gerlee), University of Gothenburg & Chalmers University of Technology).
 - **Core Model Implementation**:
   - 2D discrete cellular automaton with four cellular actions (`Quiet`, `Move`, `Split`, `Die`) and polarization compass.
   - Non-toroidal boundary enforcement via `flatList` and Crank-Nicolson reaction-diffusion solver (`LGFDiffEq`) with zero-flux Neumann boundary conditions (`GenerateTMatrix`).

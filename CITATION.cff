@@ -8,11 +8,52 @@ license: MIT
 repository-code: "https://github.com/j0sees/Simulation-of-Gene-Regulatory-Networks-Driving-Shape-Homeostasis"
 authors:
   - family-names: "Pérez-Hidalgo"
-    given-names: "J. Esteban"
-    affiliation: "School of Physics, Costa Rica Institute of Technology"
+    given-names: "José Esteban"
+    email: "jose.perez@tec.ac.cr"
+    affiliation: "School of Physics, Costa Rica Institute of Technology (TEC)"
+    orcid: "https://orcid.org/0000-0001-7184-9974"
+    website: "https://orion.tec.ac.cr/en/persons/jos%C3%A9-esteban-p%C3%A9rez-hidalgo/"
   - family-names: "Vargas"
     given-names: "Reymer"
-    affiliation: "Independent Research Software Engineer"
+    affiliation: "Independent Researcher"
+references:
+  - type: thesis
+    title: "Classification of Gene Regulatory Networks Driving Shape Homeostasis"
+    thesis-type: "M.Sc. Thesis in Complex Adaptive Systems"
+    year: 2017
+    authors:
+      - family-names: "Pérez-Hidalgo"
+        given-names: "José Esteban"
+        email: "jose.perez@tec.ac.cr"
+        affiliation: "School of Physics, Costa Rica Institute of Technology (TEC)"
+        orcid: "https://orcid.org/0000-0001-7184-9974"
+        website: "https://orion.tec.ac.cr/en/persons/jos%C3%A9-esteban-p%C3%A9rez-hidalgo/"
+    institution:
+      name: "Department of Mathematical Sciences, University of Gothenburg & Chalmers University of Technology"
+    url: "https://github.com/j0sees/Simulation-of-Gene-Regulatory-Networks-Driving-Shape-Homeostasis/tree/6c3fae7834a2ca502b1a439d7535c4adab1673f3"
+    contacts:
+      - family-names: "Gerlee"
+        given-names: "Philip"
+        affiliation: "Department of Mathematical Sciences, University of Gothenburg & Chalmers University of Technology"
+        website: "https://research.chalmers.se/en/person/gerlee"
+    notes: "Supervised by Ph.D. Philip Gerlee (https://research.chalmers.se/en/person/gerlee). Original v0.1.0 baseline commit: 6c3fae7834a2ca502b1a439d7535c4adab1673f3."
+  - type: article
+    title: "The influence of cellular characteristics on the evolution of shape homeostasis"
+    journal: "Journal of the Royal Society Interface"
+    volume: 12
+    issue: 103
+    year: 2015
+    doi: "10.1098/rsif.2014.1222"
+    url: "https://research.chalmers.se/en/publication/251511"
+    authors:
+      - family-names: "Gerlee"
+        given-names: "Philip"
+        affiliation: "Department of Mathematical Sciences, University of Gothenburg & Chalmers University of Technology"
+        website: "https://research.chalmers.se/en/person/gerlee"
+      - family-names: "Basanta"
+        given-names: "David"
+      - family-names: "Anderson"
+        given-names: "Alexander R. A."
 keywords:
   - gene-regulatory-networks
   - cellular-automata
