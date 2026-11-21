@@ -21,6 +21,12 @@ class cell:
     - 1: Quiet cell (or failed move/split action)
     - 2: Moving cell
     - 3: Newly divided cell
+
+    Coordinate Convention
+    ---------------------
+    All spatial coordinates and grids follow row-major ``(y, x)`` ordering:
+    - ``yPos`` indexes the row (North: ``y - 1``, South: ``y + 1``)
+    - ``xPos`` indexes the column (West: ``x - 1``, East: ``x + 1``)
     """
 
     def __init__(self, yPos: int, xPos: int, genome, config) -> None:
@@ -124,22 +130,22 @@ class cell:
         else:
             grid[self.yPos][self.xPos] = 1
 
-    def Move(self, grid) -> None:
+    def Move(self, grid, rng: np.random.Generator | None = None) -> None:
         """Move the cell to its preferred or another available Von Neumann neighbor."""
         available_spots = []
         need_other_neighbours = True
+        y_ori, x_ori = self.orientation
 
         for neighbr in self.neighbourList:
+            cand_y, cand_x = neighbr
             try:
-                if CheckifOccupied(neighbr[1], neighbr[0], grid):
+                if CheckifOccupied(cand_y, cand_x, grid):
                     continue
-                x_ori = self.orientation[1]
-                y_ori = self.orientation[0]
-                if CheckifPreferred(x_ori, y_ori, neighbr[1], neighbr[0]):
+                if CheckifPreferred(y_ori, x_ori, cand_y, cand_x):
                     grid[y_ori][x_ori] = 2
                     grid[self.yPos][self.xPos] = 0
-                    self.xPos = x_ori
                     self.yPos = y_ori
+                    self.xPos = x_ori
                     need_other_neighbours = False
                     break
                 available_spots.append(neighbr)
@@ -148,7 +154,11 @@ class cell:
 
         if need_other_neighbours:
             if len(available_spots) > 0:
-                idx = np.random.randint(len(available_spots))
+                idx = (
+                    int(rng.integers(len(available_spots)))
+                    if rng is not None
+                    else int(np.random.randint(len(available_spots)))
+                )
                 target_y, target_x = available_spots[idx]
                 grid[target_y][target_x] = 2
                 grid[self.yPos][self.xPos] = 0
@@ -157,21 +167,26 @@ class cell:
             else:
                 grid[self.yPos][self.xPos] = 1
 
-    def Split(self, grid, cellList: list) -> None:
+    def Split(
+        self,
+        grid,
+        cellList: list,
+        rng: np.random.Generator | None = None,
+    ) -> None:
         """Divide the cell, placing a daughter cell in an available neighboring spot."""
         self.splitCounter += 1
         if self.splitCounter == self.splitTime:
             self.splitCounter = 0
             available_spots = []
             need_other_neighbours = True
+            y_ori, x_ori = self.orientation
 
             for neighbr in self.neighbourList:
+                cand_y, cand_x = neighbr
                 try:
-                    if CheckifOccupied(neighbr[1], neighbr[0], grid):
+                    if CheckifOccupied(cand_y, cand_x, grid):
                         continue
-                    y_ori = self.orientation[0]
-                    x_ori = self.orientation[1]
-                    if CheckifPreferred(x_ori, y_ori, neighbr[1], neighbr[0]):
+                    if CheckifPreferred(y_ori, x_ori, cand_y, cand_x):
                         grid[y_ori][x_ori] = 1
                         grid[self.yPos][self.xPos] = 3
                         cellList.append(cell(y_ori, x_ori, self.genome, self.config))
@@ -183,7 +198,11 @@ class cell:
 
             if need_other_neighbours:
                 if len(available_spots) > 0:
-                    idx = np.random.randint(len(available_spots))
+                    idx = (
+                        int(rng.integers(len(available_spots)))
+                        if rng is not None
+                        else int(np.random.randint(len(available_spots)))
+                    )
                     target_y, target_x = available_spots[idx]
                     grid[target_y][target_x] = 1
                     grid[self.yPos][self.xPos] = 3

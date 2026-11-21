@@ -4,11 +4,17 @@ from __future__ import annotations
 
 import sys
 import matplotlib.pyplot as plt
-from matplotlib.colors import ListedColormap
 import networkx as nx
 import numpy as np
 
 import core.tools as tools
+from visualization.palettes import (
+    CELL_STATE_LABELS,
+    DEFAULT_PALETTE,
+    get_cell_state_cmap,
+    get_map_state_cmap,
+)
+from visualization.timelapse import TimelapseExporter
 
 
 class Environment:
@@ -22,7 +28,7 @@ class Environment:
     """
 
     @staticmethod
-    def CellsGridFigure(fieldSize: int, mode: bool):
+    def CellsGridFigure(fieldSize: int, mode: bool, palette: str = DEFAULT_PALETTE):
         """
         Create the main figure with subplots for cell system visualization.
 
@@ -33,6 +39,8 @@ class Environment:
         mode : bool
             True: run in headless fitness mode (no display window).
             False: run with interactive display window.
+        palette : str
+            Palette key for cell state colors ('colorblind_safe' or 'legacy').
 
         Returns
         -------
@@ -41,7 +49,7 @@ class Environment:
         """
         plt.close()
 
-        c_map = ListedColormap(["w", "g", "b", "r"])
+        c_map = get_cell_state_cmap(palette)
         cells_figure, (cells_subplot, sgf_subplot, lgf_subplot) = plt.subplots(
             1, 3, figsize=(15, 5)
         )
@@ -65,11 +73,11 @@ class Environment:
             origin="lower",
             cmap=c_map,
             interpolation="none",
-            vmin=0,
-            vmax=3,
+            vmin=-0.5,
+            vmax=3.5,
         )
         cbar1 = cells_figure.colorbar(
-            cell_plot, ax=cells_subplot, ticks=[], orientation="horizontal"
+            cell_plot, ax=cells_subplot, ticks=[0, 1, 2, 3], orientation="horizontal"
         )
 
         cells_subplot.axes.xaxis.set_ticklabels([])
@@ -77,11 +85,8 @@ class Environment:
         cells_subplot.axes.get_xaxis().set_visible(False)
         cells_subplot.axes.get_yaxis().set_visible(False)
 
-        cbar1.ax.get_yaxis().set_ticks([])
-        for j, lab in enumerate(["$empty$", "$quiet$", "$moving$", "$divided$"]):
-            cbar1.ax.text((2 * j + 1) / 8.0, 0.5, lab, ha="center", va="center")
-        cbar1.ax.get_yaxis().labelpad = 15
-        cbar1.ax.set_ylabel("states", rotation=270)
+        cbar1.set_ticklabels(list(CELL_STATE_LABELS))
+        cbar1.set_label("Cell States")
 
         sgf_plot = sgf_subplot.imshow(
             sgf_grid,
@@ -144,6 +149,7 @@ class Environment:
         lgfPlot,
         tStep: int,
         mode: bool,
+        timelapse_exporter: TimelapseExporter | None = None,
     ) -> None:
         """Extract grid and chemical layers and refresh the Matplotlib figure."""
         cell_data = cellGrid
@@ -163,6 +169,7 @@ class Environment:
             lgf_data,
             tStep,
             mode,
+            timelapse_exporter=timelapse_exporter,
         )
 
     @staticmethod
@@ -179,6 +186,7 @@ class Environment:
         lgf_data: np.ndarray,
         tStep: int,
         mode: bool,
+        timelapse_exporter: TimelapseExporter | None = None,
     ) -> None:
         """Update image plot artists with the latest grid and chemical arrays."""
         cellPlot.set_data(cell_data)
@@ -187,6 +195,9 @@ class Environment:
 
         cellsFigure.canvas.draw_idle()
         cellsFigure.canvas.flush_events()
+
+        if timelapse_exporter is not None:
+            timelapse_exporter.capture(tStep, cell_data, sgf_data, lgf_data)
 
 
 def FitvsNnodesPlot(statsFile: str) -> None:
@@ -312,7 +323,7 @@ def Histogram(fitArray: str) -> None:
     plt.show()
 
 
-def MapPlot(mapFile: str) -> None:
+def MapPlot(mapFile: str, palette: str = DEFAULT_PALETTE) -> None:
     """Plot a discrete state map from a CSV file in maps/."""
     plt.close()
     fig = plt.figure()
@@ -321,17 +332,55 @@ def MapPlot(mapFile: str) -> None:
     with open(file_name, "r", encoding="utf-8") as data_file:
         network_map = np.loadtxt(data_file, delimiter=",")
 
-    c_map = ListedColormap(["y", "g", "r", "b", "w"])
+    c_map = get_map_state_cmap(palette)
     map_plot = ax.imshow(
         network_map,
         origin="lower",
         cmap=c_map,
         interpolation="none",
-        vmin=0,
-        vmax=4,
+        vmin=-0.5,
+        vmax=4.5,
     )
-    fig.colorbar(map_plot, ax=ax, ticks=[], orientation="horizontal")
+    fig.colorbar(map_plot, ax=ax, ticks=[0, 1, 2, 3, 4], orientation="horizontal")
     plt.show()
+
+
+def make_live_plot_observer(
+    n_lattice: int,
+    *,
+    mode: bool = False,
+    palette: str = DEFAULT_PALETTE,
+    timelapse_exporter: TimelapseExporter | None = None,
+):
+    """Create an on_step callback and Matplotlib figure for SimulationEngine.run()."""
+    (
+        cells_figure,
+        cells_subplot,
+        sgf_subplot,
+        lgf_subplot,
+        cell_plot,
+        sgf_plot,
+        lgf_plot,
+    ) = Environment.CellsGridFigure(n_lattice, mode, palette=palette)
+
+    def _on_step(snapshot) -> None:
+        Environment.UpdatePlot(
+            cells_figure,
+            cells_subplot,
+            sgf_subplot,
+            lgf_subplot,
+            cell_plot,
+            sgf_plot,
+            lgf_plot,
+            snapshot.cell_grid,
+            snapshot.sgf_grid,
+            snapshot.lgf_grid,
+            snapshot.step,
+            mode,
+            timelapse_exporter=timelapse_exporter,
+        )
+
+    return _on_step, cells_figure
 
 
 if __name__ == "__main__":

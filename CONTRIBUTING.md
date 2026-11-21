@@ -92,7 +92,7 @@ All commit messages and Pull Request titles must follow the [Conventional Commit
 | `refactor` | Code restructuring without changing external mathematical behavior |
 | `docs` | Documentation, mathematical explanations, citation metadata, or changelog updates |
 | `test` | Adding or updating `pytest` unit tests in `tests/` |
-| `ci` | GitHub Actions workflows (`.github/workflows/ci.yml`) or container build checks |
+| `ci` | GitHub Actions workflows (`.github/workflows/*.yml`) or container build checks |
 | `chore` | Dependency updates (`pyproject.toml`, `uv.lock`) or repository maintenance |
 | `style` | PEP 8 / Ruff formatting and lint cleanups |
 

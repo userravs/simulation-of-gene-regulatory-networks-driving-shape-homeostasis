@@ -8,7 +8,7 @@ import sys
 import matplotlib.pyplot as plt
 import numpy as np
 
-import evolution.main_ga as main_ga
+from core.engine import run_simulation
 
 
 def partialEval(ind: int) -> float:
@@ -19,12 +19,25 @@ def partialEval(ind: int) -> float:
     return EvaluateIndividual(time_steps, n_nodes, n_lattice, ind)
 
 
-def EvaluateIndividual(timeSteps: int, nNodes: int, nLattice: int, ind: int) -> float:
+def EvaluateIndividual(
+    timeSteps: int,
+    nNodes: int,
+    nLattice: int,
+    ind: int,
+    *,
+    seed: int | None = None,
+) -> float:
     """Run the cellular automata simulation and compute the shape homeostasis fitness."""
     w_matrix = networkArrays[ind]
-    delta_m = main_ga.sim(w_matrix, timeSteps, 0, nNodes, ind, nLattice, True)
-    tot_sum = float(np.sum(delta_m))
-    return 1.0 - (tot_sum / (nLattice**2))
+    result = run_simulation(
+        w_matrix,
+        time_steps=timeSteps,
+        n_nodes=nNodes,
+        n_lattice=nLattice,
+        early_stop=True,
+        seed=seed,
+    )
+    return result.fitness
 
 
 @contextmanager

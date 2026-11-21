@@ -1,0 +1,57 @@
+name: Docker
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - "Dockerfile"
+      - ".dockerignore"
+      - "docker-compose.yml"
+      - "pyproject.toml"
+      - "scripts/run_container.sh"
+      - "scripts/teardown_container.sh"
+      - ".github/workflows/docker.yml"
+  pull_request:
+    branches: [main, master]
+    paths:
+      - "Dockerfile"
+      - ".dockerignore"
+      - "docker-compose.yml"
+      - "pyproject.toml"
+      - "scripts/run_container.sh"
+      - "scripts/teardown_container.sh"
+      - ".github/workflows/docker.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master' }}
+
+jobs:
+  docker-build:
+    name: Docker Build & Smoke Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: grn-simulation:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Verify container imports
+        run: >-
+          docker run --rm -e MPLBACKEND=Agg grn-simulation:ci
+          python -c "import core.engine, core.main, evolution.main_ga, visualization.palettes, visualization.plot, visualization.timelapse, visualization.web_app"

@@ -14,10 +14,31 @@ from core.tools import (
     GetStructure,
     GetrNN,
     LGFDiffEq,
+    LGFThomasSolver,
     RecurrentNeuralNetwork,
     SGFDiffEq,
     flatList,
 )
+
+
+def _dense_crank_nicolson_reference(
+    i_matrix: np.ndarray,
+    t_matrix: np.ndarray,
+    l_matrix: np.ndarray,
+    lambda_matrix: np.ndarray,
+    delta_l: float,
+    delta_t: float,
+    delta_r: float,
+    diff_const: float,
+) -> np.ndarray:
+    """Dense matrix-inversion Crank-Nicolson reference implementation."""
+    alpha = diff_const * delta_t / (delta_r**2)
+    g = np.linalg.inv(i_matrix - (alpha / 2.0) * t_matrix)
+    h = i_matrix + (alpha / 2.0) * t_matrix
+    f_1 = (delta_t / 2.0) * (lambda_matrix - delta_l * l_matrix)
+    l_half = g @ (l_matrix @ h + f_1)
+    f_2 = (delta_t / 2.0) * (lambda_matrix - delta_l * l_half)
+    return ((h @ l_half) + f_2) @ g
 
 
 def test_flat_list_rejects_negative_indices() -> None:
@@ -30,11 +51,11 @@ def test_flat_list_rejects_negative_indices() -> None:
 
 
 def test_check_if_occupied_and_preferred() -> None:
-    """CheckifOccupied and CheckifPreferred should evaluate grid coordinates accurately."""
-    grid = [[0, 1], [2, 0]]
+    """CheckifOccupied and CheckifPreferred should use row-major (y, x) coordinates."""
+    grid = [[0, 1], [0, 0]]
     assert not CheckifOccupied(0, 0, grid)
-    assert CheckifOccupied(1, 0, grid)
     assert CheckifOccupied(0, 1, grid)
+    assert not CheckifOccupied(1, 0, grid)
 
     assert CheckifPreferred(3, 4, 3, 4)
     assert not CheckifPreferred(3, 4, 4, 3)
@@ -79,6 +100,86 @@ def test_sgf_and_lgf_diffusion_equations() -> None:
     assert l_next.shape == (size, size)
     assert not np.isnan(l_next).any()
     assert l_next[size // 2, size // 2] > 0.0
+
+
+@pytest.mark.parametrize("size", [2, 5, 16, 32])
+@pytest.mark.parametrize(
+    ("delta_l", "delta_t", "delta_r", "diff_const"),
+    [
+        (0.1, 1.0, 1.0, 1.0),
+        (0.05, 0.5, 1.0, 1.5),
+        (0.0, 0.25, 0.5, 0.8),
+    ],
+)
+def test_lgf_thomas_matches_dense_crank_nicolson_reference(
+    size: int,
+    delta_l: float,
+    delta_t: float,
+    delta_r: float,
+    diff_const: float,
+) -> None:
+    """Thomas ADI solver and LGFDiffEq should match dense Crank-Nicolson within 1e-12."""
+    rng = np.random.default_rng(1234 + size)
+    i_mat = GenerateIMatrix(size)
+    t_mat = GenerateTMatrix(size)
+    solver = LGFThomasSolver(
+        size,
+        delta_l=delta_l,
+        delta_t=delta_t,
+        delta_r=delta_r,
+        diff_const=diff_const,
+    )
+
+    l_ref = rng.uniform(0.0, 2.0, size=(size, size))
+    l_solver = l_ref.copy()
+    l_func = l_ref.copy()
+    lambda_mat = rng.uniform(0.0, 0.5, size=(size, size))
+
+    for _ in range(5):
+        l_ref = _dense_crank_nicolson_reference(
+            i_mat, t_mat, l_ref, lambda_mat, delta_l, delta_t, delta_r, diff_const
+        )
+        l_solver = solver.step(l_solver, lambda_mat)
+        l_func = LGFDiffEq(
+            i_mat, t_mat, l_func, lambda_mat, delta_l, delta_t, delta_r, diff_const
+        )
+
+    assert np.allclose(l_solver, l_ref, atol=1e-12, rtol=1e-12)
+    assert np.allclose(l_func, l_ref, atol=1e-12, rtol=1e-12)
+
+
+def test_lgf_thomas_conserves_mass_under_neumann_boundaries() -> None:
+    """Zero-flux Neumann boundaries should conserve total LGF mass when lambda=0 and decay=0."""
+    size = 12
+    solver = LGFThomasSolver(size, delta_l=0.0, delta_t=1.0, delta_r=1.0, diff_const=1.0)
+    l_mat = np.zeros((size, size), dtype=np.float64)
+    l_mat[0, 0] = 3.5
+    l_mat[4, 9] = 1.5
+    lambda_zero = np.zeros((size, size), dtype=np.float64)
+    initial_mass = float(np.sum(l_mat))
+
+    for _ in range(20):
+        l_mat = solver.step(l_mat, lambda_zero)
+
+    assert np.isclose(float(np.sum(l_mat)), initial_mass, atol=1e-12)
+
+
+def test_lgf_thomas_solver_validation() -> None:
+    """LGFThomasSolver should reject invalid parameters and mismatched array shapes."""
+    with pytest.raises(ValueError, match="n_lattice"):
+        LGFThomasSolver(0)
+    with pytest.raises(ValueError, match="delta_r"):
+        LGFThomasSolver(4, delta_r=0.0)
+    with pytest.raises(ValueError, match="delta_t"):
+        LGFThomasSolver(4, delta_t=-1.0)
+    with pytest.raises(ValueError, match="delta_l"):
+        LGFThomasSolver(4, delta_l=-0.1)
+    with pytest.raises(ValueError, match="diff_const"):
+        LGFThomasSolver(4, diff_const=-0.5)
+
+    solver = LGFThomasSolver(4)
+    with pytest.raises(ValueError, match="Expected arrays of shape"):
+        solver.step(np.zeros((3, 3)), np.zeros((4, 4)))
 
 
 def test_recurrent_neural_network_bounds() -> None:

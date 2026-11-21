@@ -10,12 +10,14 @@ from __future__ import annotations
 
 import os
 import sys
+import matplotlib.pyplot as plt
 import numpy as np
 
 # Add parent directory to path to import modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from core import main
+from visualization.plot import make_live_plot_observer
 
 
 def run_basic_simulation() -> None:
@@ -25,7 +27,8 @@ def run_basic_simulation() -> None:
     n_lattice = 20
     mode = False  # Visualization mode
 
-    w_matrix = np.random.rand(n_nodes, n_nodes) * 2.0 - 1.0
+    rng = np.random.default_rng(42)
+    w_matrix = rng.uniform(-1.0, 1.0, size=(n_nodes, n_nodes))
 
     print("Running simulation with:")
     print(f"  Nodes: {n_nodes}")
@@ -33,8 +36,27 @@ def run_basic_simulation() -> None:
     print(f"  Lattice size: {n_lattice}x{n_lattice}")
     print(f"  Mode: {'Fitness' if mode else 'Visualization'}")
 
-    main.sim(w_matrix, time_steps, n_nodes, n_lattice, mode)
-    print("Simulation completed!")
+    observer = None
+    fig = None
+    if not mode:
+        observer, fig = make_live_plot_observer(n_lattice, mode=mode)
+
+    result = main.sim(
+        w_matrix,
+        time_steps,
+        n_nodes,
+        n_lattice,
+        mode,
+        seed=42,
+        on_step=observer,
+    )
+    if fig is not None:
+        plt.close(fig)
+
+    print(
+        f"Simulation completed! Living cells: {result.final_cell_count}, "
+        f"Fitness: {result.fitness:.4f}"
+    )
 
 
 if __name__ == "__main__":

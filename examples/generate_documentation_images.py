@@ -11,15 +11,20 @@ from __future__ import annotations
 import os
 import sys
 import matplotlib.pyplot as plt
-from matplotlib.colors import ListedColormap
 import networkx as nx
 import numpy as np
 
 # Add parent directory to path to import modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from visualization.palettes import (
+    CELL_STATE_LABELS,
+    DEFAULT_PALETTE,
+    get_cell_state_cmap,
+)
 
-def generate_cell_system_example() -> None:
+
+def generate_cell_system_example(palette: str = DEFAULT_PALETTE) -> None:
     """Generate an example cell system visualization."""
     print("Generating cell system example...")
 
@@ -36,10 +41,11 @@ def generate_cell_system_example() -> None:
     cell_grid[30:35, 30:35] = 2  # Moving cells
     cell_grid[40:45, 40:45] = 3  # Dividing cells
 
-    sgf_grid[15:35, 15:35] = np.random.uniform(0.0, 0.05, (20, 20))
-    lgf_grid[10:40, 10:40] = np.random.uniform(0.0, 3.0, (30, 30))
+    rng = np.random.default_rng(42)
+    sgf_grid[15:35, 15:35] = rng.uniform(0.0, 0.05, (20, 20))
+    lgf_grid[10:40, 10:40] = rng.uniform(0.0, 3.0, (30, 30))
 
-    c_map = ListedColormap(["w", "g", "b", "r"])
+    c_map = get_cell_state_cmap(palette)
 
     cells_subplot.set_aspect("equal")
     sgf_subplot.set_aspect("equal")
@@ -52,7 +58,7 @@ def generate_cell_system_example() -> None:
     lgf_subplot.set_title("LGF (Long-range Growth Factor)")
 
     cell_plot = cells_subplot.imshow(
-        cell_grid, origin="lower", cmap=c_map, interpolation="none", vmin=0, vmax=3
+        cell_grid, origin="lower", cmap=c_map, interpolation="none", vmin=-0.5, vmax=3.5
     )
     sgf_plot = sgf_subplot.imshow(
         sgf_grid, origin="lower", cmap="Reds", interpolation="none", vmin=0, vmax=0.05
@@ -62,13 +68,13 @@ def generate_cell_system_example() -> None:
     )
 
     cbar1 = cells_figure.colorbar(
-        cell_plot, ax=cells_subplot, ticks=[], orientation="horizontal"
+        cell_plot, ax=cells_subplot, ticks=[0, 1, 2, 3], orientation="horizontal"
     )
     cells_figure.colorbar(sgf_plot, ax=sgf_subplot, orientation="horizontal")
     cells_figure.colorbar(lgf_plot, ax=lgf_subplot, orientation="horizontal")
 
-    for j, lab in enumerate(["Empty", "Quiet", "Moving", "Dividing"]):
-        cbar1.ax.text((2 * j + 1) / 8.0, 0.5, lab, ha="center", va="center")
+    cbar1.set_ticklabels(list(CELL_STATE_LABELS))
+    cbar1.set_label("Cell States")
 
     for ax in (cells_subplot, sgf_subplot, lgf_subplot):
         ax.axes.xaxis.set_ticklabels([])
@@ -76,6 +82,7 @@ def generate_cell_system_example() -> None:
         ax.axes.get_xaxis().set_visible(False)
         ax.axes.get_yaxis().set_visible(False)
 
+    plt.tight_layout()
     os.makedirs("docs/images", exist_ok=True)
     plt.savefig("docs/images/cell_system_example.png", dpi=300, bbox_inches="tight")
     plt.close()

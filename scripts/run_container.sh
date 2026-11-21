@@ -98,8 +98,13 @@ else
     IMAGE_NAME="grn-simulation:latest"
     echo -e "${YELLOW}Building container image directly with ${ENGINE}...${NC}"
     "${ENGINE}" build -t "${IMAGE_NAME}" .
+    "${ENGINE}" rm -f grn-simulation >/dev/null 2>&1 || true
+    TTY_FLAGS=(-i)
+    if [[ -t 0 ]]; then
+        TTY_FLAGS=(-it)
+    fi
     echo -e "${YELLOW}Starting container with ${ENGINE}...${NC}"
-    "${ENGINE}" run --rm -it \
+    "${ENGINE}" run --rm "${TTY_FLAGS[@]}" \
         --name grn-simulation \
         -p 8501:8501 \
         -v "$(pwd):/app" \
